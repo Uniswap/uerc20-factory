@@ -1,4 +1,4 @@
-name: Forge Tests
+name: Lint
 
 on:
   push:
@@ -11,8 +11,8 @@ env:
   FOUNDRY_PROFILE: ci
 
 jobs:
-  forge-tests:
-    name: Forge Tests
+  run-linters:
+    name: Run linters
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,10 +24,5 @@ jobs:
         with:
           version: stable
 
-      - name: Build
-        run: forge build
-
-      - name: Run tests
-        run: forge test --isolate -vvv
-        env:
-          FORGE_SNAPSHOT_CHECK: true
+      - name: Lint
+        run: forge fmt --check
