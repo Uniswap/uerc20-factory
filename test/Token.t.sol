@@ -35,12 +35,12 @@ contract TokenTest is Test {
     function testNonPermit2CanTransferWithAllowance() public {
         vm.prank(alice);
         token.approve(bob, TRANSFER_AMOUNT);
-        
+
         vm.prank(bob);
         token.transferFrom(alice, bob, TRANSFER_AMOUNT);
-        
+
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         assertEq(token.balanceOf(alice), INITIAL_BALANCE - TRANSFER_AMOUNT);
         assertEq(token.allowance(alice, bob), 0);
     }
-} 
+}
