@@ -3,8 +3,8 @@ pragma solidity ^0.8.28;
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IERC7802, IERC165} from "../interfaces/IERC7802.sol";
-contract Token is ERC20, IERC7802 {
 
+contract Token is ERC20, IERC7802 {
     address public constant SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
 
     error OnlySuperchainERC20Bridge();
