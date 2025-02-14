@@ -36,7 +36,7 @@ contract TokenFactoryTest is Test {
         uint256 totalSupply = 1e18;
         address recipient = makeAddr("recipient");
 
-        // the home chain of this token is a different chain
+        // the home chain of this token is different than the current chain
         uint256 homeChainId = block.chainid + 1;
 
         Token tokenAddress = factory.create(name, symbol, totalSupply, recipient, homeChainId);
