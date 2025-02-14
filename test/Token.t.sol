@@ -37,8 +37,8 @@ contract TokenTest is Test {
     }
 
     function test_crosschainMint_fails() public {
-        vm.prank(address(0x123));
-        vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector));
+        vm.prank(bob);
+        vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE));
         token.crosschainMint(bob, 100);
         assertEq(token.balanceOf(bob), 0);
         assertEq(token.totalSupply(), 0);
@@ -66,8 +66,8 @@ contract TokenTest is Test {
     function test_crosschainBurn_fails() public {
         deal(address(token), bob, 100);
         assertEq(token.balanceOf(bob), 100);
-        vm.prank(address(0x123));
-        vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector));
+        vm.prank(bob);
+        vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE));
         token.crosschainBurn(bob, 100);
         assertEq(token.balanceOf(bob), 100);
     }
