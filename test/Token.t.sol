@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {Token} from "../src/Token.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC7802, IERC165} from "../interfaces/IERC7802.sol";
+import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 
 contract TokenTest is Test {
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
