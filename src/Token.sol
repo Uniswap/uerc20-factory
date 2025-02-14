@@ -10,7 +10,9 @@ contract Token is ERC20, IERC7802 {
     error OnlySuperchainERC20Bridge(address sender, address bridge);
 
     modifier onlySuperchainERC20Bridge() {
-        if (msg.sender != SUPERCHAIN_ERC20_BRIDGE) revert OnlySuperchainERC20Bridge(msg.sender, SUPERCHAIN_ERC20_BRIDGE);
+        if (msg.sender != SUPERCHAIN_ERC20_BRIDGE) {
+            revert OnlySuperchainERC20Bridge(msg.sender, SUPERCHAIN_ERC20_BRIDGE);
+        }
         _;
     }
 
