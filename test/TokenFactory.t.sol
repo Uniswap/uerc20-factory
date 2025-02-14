@@ -16,13 +16,13 @@ contract TokenFactoryTest is Test {
         string memory name = "Test Token";
         string memory symbol = "TOKEN";
 
-        Token tokenAddress = factory.create(name, symbol);
+        Token token = factory.create(name, symbol);
         vm.snapshotGasLastCall("deploy new token");
 
-        assert(address(tokenAddress) != address(0));
-        assertEq(tokenAddress.name(), name);
-        assertEq(tokenAddress.symbol(), symbol);
-        assertEq(tokenAddress.decimals(), 18);
+        assert(address(token) != address(0));
+        assertEq(token.name(), name);
+        assertEq(token.symbol(), symbol);
+        assertEq(token.decimals(), 18);
     }
 
     function test_bytecodeSize_factory() public {
@@ -33,7 +33,7 @@ contract TokenFactoryTest is Test {
         string memory name = "Test Token";
         string memory symbol = "TOKEN";
 
-        Token tokenAddress = factory.create(name, symbol);
-        vm.snapshotValue("Token bytecode size", address(tokenAddress).code.length);
+        Token token = factory.create(name, symbol);
+        vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
 }
