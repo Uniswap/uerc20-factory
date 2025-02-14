@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {Token} from "../src/Token.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "../interfaces/IERC7802.sol";
 
 contract TokenTest is Test {
@@ -27,6 +28,7 @@ contract TokenTest is Test {
         assertEq(token.totalSupply(), 100);
         token.crosschainMint(bob, 100);
         vm.snapshotGasLastCall("crosschainMint - second");
+        assertEq(token.balanceOf(bob), 200);
     }
 
     function test_fuzz_crosschainMint_succeeds(uint256 mintAmount) public {
@@ -36,7 +38,7 @@ contract TokenTest is Test {
         assertEq(token.totalSupply(), mintAmount);
     }
 
-    function test_crosschainMint_fails() public {
+    function test_crosschainMint_revertsWithOnlySuperchainERC20Bridge() public {
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE));
         token.crosschainMint(bob, 100);
@@ -63,7 +65,7 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(bob), 0);
     }
 
-    function test_crosschainBurn_fails() public {
+    function test_crosschainBurn_revertsWithOnlySuperchainERC20Bridge() public {
         deal(address(token), bob, 100);
         assertEq(token.balanceOf(bob), 100);
         vm.prank(bob);
@@ -77,5 +79,7 @@ contract TokenTest is Test {
         assertTrue(token.supportsInterface(0x01ffc9a7)); // IERC165
         assertTrue(bytes4(0x33331994) == type(IERC7802).interfaceId);
         assertTrue(token.supportsInterface(0x33331994)); // IERC165
+        assertTrue(bytes4(0x36372b07) == type(IERC20).interfaceId);
+        assertTrue(token.supportsInterface(0x36372b07)); // IERC20
     }
 }
