@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-import {ERC20} from "solmate/tokens/ERC20.sol";
+import {ERC20} from "solady/tokens/ERC20.sol";
 
 contract Token is ERC20 {
-    address constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+    string private _name;
+    string private _symbol;
 
-    constructor(string memory name, string memory symbol) ERC20(name, symbol, 18) {}
+    constructor(string memory tokenName, string memory tokenSymbol) {
+        _name = tokenName;
+        _symbol = tokenSymbol;
+    }
 
-    function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
-        if (msg.sender == PERMIT2) {
-            balanceOf[from] -= amount;
-            unchecked {
-                balanceOf[to] += amount;
-            }
-            emit Transfer(from, to, amount);
-            return true;
-        }
-        return super.transferFrom(from, to, amount);
+    function name() public view override returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view override returns (string memory) {
+        return _symbol;
     }
 }
