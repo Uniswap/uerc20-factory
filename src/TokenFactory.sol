@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Token} from "./Token.sol";
 
 contract TokenFactory {
-    bytes32 SALT = bytes32(uint256(1));
+    bytes32 internal constant SALT = bytes32(uint256(1));
 
     function create(
         string memory name,
