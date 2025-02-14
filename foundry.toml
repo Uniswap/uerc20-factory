@@ -4,4 +4,10 @@ out = "out"
 libs = ["lib"]
 solc = "0.8.28"
 
+[profile.default.fuzz]
+runs = 10000
+
+[profile.ci.fuzz]
+runs = 100000
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
