@@ -47,7 +47,7 @@ contract TokenFactoryTest is Test {
         assertEq(tokenAddress.symbol(), symbol);
         assertEq(tokenAddress.decimals(), 18);
 
-        // no tokens have been minted because the chain is not the token's home chain
+        // no tokens have been minted because the current chain is not the token's home chain
         assertEq(tokenAddress.totalSupply(), 0);
         assertEq(tokenAddress.balanceOf(recipient), 0);
     }
