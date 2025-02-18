@@ -23,6 +23,7 @@ contract TokenFactoryTest is Test {
         uint256 homeChainId = block.chainid;
 
         Token token = factory.create(name, symbol, totalSupply, recipient, homeChainId);
+        vm.snapshotGasLastCall("deploy new token");
 
         assert(address(token) != address(0));
 
@@ -70,6 +71,21 @@ contract TokenFactoryTest is Test {
 
         vm.expectEmit(true, true, false, false);
         emit TokenCreated(tokenAddress, block.chainid);
+        factory.create(name, symbol, totalSupply, recipient, homeChainId);
+    }
+
+    function test_bytecodeSize_factory() public {
+        vm.snapshotValue("TokenFactory bytecode size", address(factory).code.length);
+    }
+
+    function test_bytecodeSize_token() public {
+        string memory name = "Test Token";
+        string memory symbol = "TOKEN";
+        uint256 totalSupply = 1e18;
+        address recipient = makeAddr("recipient");
+        uint256 homeChainId = block.chainid;
+
         Token token = factory.create(name, symbol, totalSupply, recipient, homeChainId);
+        vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
 }
