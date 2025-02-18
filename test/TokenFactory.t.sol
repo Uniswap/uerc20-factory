@@ -19,15 +19,15 @@ contract TokenFactoryTest is Test {
         address recipient = makeAddr("recipient");
         uint256 homeChainId = block.chainid;
 
-        Token tokenAddress = factory.create(name, symbol, totalSupply, recipient, homeChainId);
+        Token token = factory.create(name, symbol, totalSupply, recipient, homeChainId);
 
-        assert(address(tokenAddress) != address(0));
+        assert(address(token) != address(0));
 
-        assertEq(tokenAddress.name(), name);
-        assertEq(tokenAddress.symbol(), symbol);
-        assertEq(tokenAddress.decimals(), 18);
-        assertEq(tokenAddress.totalSupply(), totalSupply);
-        assertEq(tokenAddress.balanceOf(recipient), totalSupply);
+        assertEq(token.name(), name);
+        assertEq(token.symbol(), symbol);
+        assertEq(token.decimals(), 18);
+        assertEq(token.totalSupply(), totalSupply);
+        assertEq(token.balanceOf(recipient), totalSupply);
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {
@@ -39,16 +39,16 @@ contract TokenFactoryTest is Test {
         // the home chain of this token is different than the current chain
         uint256 homeChainId = block.chainid + 1;
 
-        Token tokenAddress = factory.create(name, symbol, totalSupply, recipient, homeChainId);
+        Token token = factory.create(name, symbol, totalSupply, recipient, homeChainId);
 
-        assert(address(tokenAddress) != address(0));
+        assert(address(token) != address(0));
 
-        assertEq(tokenAddress.name(), name);
-        assertEq(tokenAddress.symbol(), symbol);
-        assertEq(tokenAddress.decimals(), 18);
+        assertEq(token.name(), name);
+        assertEq(token.symbol(), symbol);
+        assertEq(token.decimals(), 18);
 
         // no tokens have been minted because the current chain is not the token's home chain
-        assertEq(tokenAddress.totalSupply(), 0);
-        assertEq(tokenAddress.balanceOf(recipient), 0);
+        assertEq(token.totalSupply(), 0);
+        assertEq(token.balanceOf(recipient), 0);
     }
 }
