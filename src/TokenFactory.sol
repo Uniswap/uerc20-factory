@@ -6,6 +6,8 @@ import {Token} from "./Token.sol";
 contract TokenFactory {
     bytes32 internal constant SALT = bytes32(uint256(1));
 
+    event TokenCreated(address indexed token, uint256 indexed chainId);
+
     function create(
         string memory name,
         string memory symbol,
@@ -14,5 +16,6 @@ contract TokenFactory {
         uint256 homeChainId
     ) external returns (Token newToken) {
         newToken = new Token{salt: SALT}(name, symbol, totalSupply, recipient, homeChainId);
+        emit TokenCreated(address(newToken), block.chainid);
     }
 }

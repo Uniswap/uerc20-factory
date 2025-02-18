@@ -4,9 +4,12 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {TokenFactory} from "../src/TokenFactory.sol";
 import {Token} from "../src/Token.sol";
+import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 contract TokenFactoryTest is Test {
     TokenFactory public factory;
+
+    event TokenCreated(address indexed token, uint256 indexed chainId);
 
     function setUp() public {
         factory = new TokenFactory();
@@ -50,5 +53,23 @@ contract TokenFactoryTest is Test {
         // no tokens have been minted because the current chain is not the token's home chain
         assertEq(token.totalSupply(), 0);
         assertEq(token.balanceOf(recipient), 0);
+    }
+
+    function test_create_succeeds_withEventEmitted() public {
+        string memory name = "Test Token";
+        string memory symbol = "TOKEN";
+        uint256 totalSupply = 1e18;
+        address recipient = makeAddr("recipient");
+        uint256 homeChainId = block.chainid;
+
+        bytes32 initCodeHash = keccak256(
+            abi.encodePacked(type(Token).creationCode, abi.encode(name, symbol, totalSupply, recipient, homeChainId))
+        );
+
+        address tokenAddress = Create2.computeAddress(bytes32(uint256(1)), initCodeHash, address(factory));
+
+        vm.expectEmit(true, true, false, false);
+        emit TokenCreated(tokenAddress, block.chainid);
+        Token token = factory.create(name, symbol, totalSupply, recipient, homeChainId);
     }
 }
