@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {Token} from "../src/Token.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
+import {SuperchainERC20} from "../src/SuperchainERC20.sol";
 
 contract TokenTest is Test {
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
@@ -38,9 +39,11 @@ contract TokenTest is Test {
         assertEq(token.totalSupply(), mintAmount);
     }
 
-    function test_crosschainMint_revertsWithOnlySuperchainERC20Bridge() public {
+    function test_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
         vm.prank(bob);
-        vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE));
+        vm.expectRevert(
+            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+        );
         token.crosschainMint(bob, 100);
         assertEq(token.balanceOf(bob), 0);
         assertEq(token.totalSupply(), 0);
@@ -65,11 +68,13 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(bob), 0);
     }
 
-    function test_crosschainBurn_revertsWithOnlySuperchainERC20Bridge() public {
+    function test_crosschainBurn_revertsWithNotSuperchainERC20Bridge() public {
         deal(address(token), bob, 100);
         assertEq(token.balanceOf(bob), 100);
         vm.prank(bob);
-        vm.expectRevert(abi.encodeWithSelector(Token.OnlySuperchainERC20Bridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE));
+        vm.expectRevert(
+            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+        );
         token.crosschainBurn(bob, 100);
         assertEq(token.balanceOf(bob), 100);
     }
