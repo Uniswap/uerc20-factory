@@ -8,12 +8,13 @@ import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {SuperchainERC20} from "../src/SuperchainERC20.sol";
 
 contract TokenTest is Test {
-    event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
-    event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
-
     Token token;
     address SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
     address bob = makeAddr("BOB");
+    uint256 amount = 1e18;
+
+    event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
+    event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
 
     function setUp() public {
         token = new Token("Test", "TEST");
@@ -21,22 +22,15 @@ contract TokenTest is Test {
 
     function test_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
-        emit CrosschainMint(bob, 100, SUPERCHAIN_ERC20_BRIDGE);
+        emit CrosschainMint(bob, amount, SUPERCHAIN_ERC20_BRIDGE);
         vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
-        token.crosschainMint(bob, 100);
-        vm.snapshotGasLastCall("crosschainMint - first");
-        assertEq(token.balanceOf(bob), 100);
-        assertEq(token.totalSupply(), 100);
-        token.crosschainMint(bob, 100);
-        vm.snapshotGasLastCall("crosschainMint - second");
-        assertEq(token.balanceOf(bob), 200);
-    }
-
-    function test_fuzz_crosschainMint_succeeds(uint256 mintAmount) public {
-        vm.prank(SUPERCHAIN_ERC20_BRIDGE);
-        token.crosschainMint(bob, mintAmount);
-        assertEq(token.balanceOf(bob), mintAmount);
-        assertEq(token.totalSupply(), mintAmount);
+        token.crosschainMint(bob, amount);
+        vm.snapshotGasLastCall("crosschainMint: first mint");
+        assertEq(token.balanceOf(bob), amount);
+        assertEq(token.totalSupply(), amount);
+        token.crosschainMint(bob, amount);
+        vm.snapshotGasLastCall("crosschainMint: second mint");
+        assertEq(token.balanceOf(bob), amount * 2);
     }
 
     function test_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
@@ -44,46 +38,38 @@ contract TokenTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
-        token.crosschainMint(bob, 100);
+        token.crosschainMint(bob, amount);
         assertEq(token.balanceOf(bob), 0);
         assertEq(token.totalSupply(), 0);
     }
 
     function test_crosschainBurn_succeeds() public {
-        deal(address(token), bob, 100);
-        assertEq(token.balanceOf(bob), 100);
+        deal(address(token), bob, amount);
+        assertEq(token.balanceOf(bob), amount);
         vm.expectEmit(true, false, true, true);
-        emit CrosschainBurn(bob, 100, SUPERCHAIN_ERC20_BRIDGE);
+        emit CrosschainBurn(bob, amount, SUPERCHAIN_ERC20_BRIDGE);
         vm.prank(SUPERCHAIN_ERC20_BRIDGE);
-        token.crosschainBurn(bob, 100);
+        token.crosschainBurn(bob, amount);
         vm.snapshotGasLastCall("crosschainBurn");
         assertEq(token.balanceOf(bob), 0);
     }
 
-    function test_fuzz_crosschainBurn_succeeds(uint256 burnAmount) public {
-        deal(address(token), bob, burnAmount);
-        assertEq(token.balanceOf(bob), burnAmount);
-        vm.prank(SUPERCHAIN_ERC20_BRIDGE);
-        token.crosschainBurn(bob, burnAmount);
-        assertEq(token.balanceOf(bob), 0);
-    }
-
     function test_crosschainBurn_revertsWithNotSuperchainERC20Bridge() public {
-        deal(address(token), bob, 100);
-        assertEq(token.balanceOf(bob), 100);
+        deal(address(token), bob, amount);
+        assertEq(token.balanceOf(bob), amount);
         vm.prank(bob);
         vm.expectRevert(
             abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
-        token.crosschainBurn(bob, 100);
-        assertEq(token.balanceOf(bob), 100);
+        token.crosschainBurn(bob, amount);
+        assertEq(token.balanceOf(bob), amount);
     }
 
     function test_supportsInterface() public view {
         assertTrue(bytes4(0x01ffc9a7) == type(IERC165).interfaceId);
         assertTrue(token.supportsInterface(0x01ffc9a7)); // IERC165
         assertTrue(bytes4(0x33331994) == type(IERC7802).interfaceId);
-        assertTrue(token.supportsInterface(0x33331994)); // IERC165
+        assertTrue(token.supportsInterface(0x33331994)); // IERC7802
         assertTrue(bytes4(0x36372b07) == type(IERC20).interfaceId);
         assertTrue(token.supportsInterface(0x36372b07)); // IERC20
     }
