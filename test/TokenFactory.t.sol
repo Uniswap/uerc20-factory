@@ -9,7 +9,9 @@ import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 contract TokenFactoryTest is Test {
     TokenFactory public factory;
 
-    event TokenCreated(address indexed token, uint256 indexed chainId);
+    event TokenCreated(
+        address indexed tokenAddress, uint256 indexed chainId, string name, string symbol, uint256 homeChainId
+    );
 
     function setUp() public {
         factory = new TokenFactory();
@@ -69,8 +71,8 @@ contract TokenFactoryTest is Test {
 
         address tokenAddress = Create2.computeAddress(bytes32(uint256(1)), initCodeHash, address(factory));
 
-        vm.expectEmit(true, true, false, false);
-        emit TokenCreated(tokenAddress, block.chainid);
+        vm.expectEmit(true, true, true, true);
+        emit TokenCreated(tokenAddress, block.chainid, name, symbol, homeChainId);
         factory.create(name, symbol, totalSupply, recipient, homeChainId);
     }
 
