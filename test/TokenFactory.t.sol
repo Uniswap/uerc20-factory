@@ -7,6 +7,7 @@ import {Token} from "../src/Token.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 contract TokenFactoryTest is Test {
+    bytes32 constant SALT = bytes32(uint256(1));
     TokenFactory public factory;
 
     event TokenCreated(
@@ -69,10 +70,51 @@ contract TokenFactoryTest is Test {
             abi.encodePacked(type(Token).creationCode, abi.encode(name, symbol, totalSupply, recipient, homeChainId))
         );
 
-        address tokenAddress = Create2.computeAddress(bytes32(uint256(1)), initCodeHash, address(factory));
+        address tokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
 
         vm.expectEmit(true, true, true, true);
         emit TokenCreated(tokenAddress, block.chainid, name, symbol, homeChainId);
+        factory.create(name, symbol, totalSupply, recipient, homeChainId);
+    }
+
+    function test_create_succeeds_withDifferentAddresses() public {
+        string memory name = "Test Token";
+        string memory symbol = "TOKEN";
+        uint256 totalSupply = 1e18;
+        address recipient = makeAddr("recipient");
+        uint256 homeChainId = block.chainid;
+
+        bytes32 initCodeHash = keccak256(
+            abi.encodePacked(type(Token).creationCode, abi.encode(name, symbol, totalSupply, recipient, homeChainId))
+        );
+
+        address expectedTokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
+
+        Token token = factory.create(name, symbol, totalSupply, recipient, homeChainId);
+
+        assertEq(address(token), expectedTokenAddress);
+
+        // symbol changes which causes a different initCodeHash and thus a different address
+        symbol = "TOKEN2";
+        initCodeHash = keccak256(
+            abi.encodePacked(type(Token).creationCode, abi.encode(name, symbol, totalSupply, recipient, homeChainId))
+        );
+        address newExpectedTokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
+        Token newToken = factory.create(name, symbol, totalSupply, recipient, homeChainId);
+        assertEq(address(newToken), newExpectedTokenAddress);
+        assertNotEq(address(newToken), address(token));
+    }
+
+    function test_create_revertsWithCreateCollision() public {
+        string memory name = "Test Token";
+        string memory symbol = "TOKEN";
+        uint256 totalSupply = 1e18;
+        address recipient = makeAddr("recipient");
+        uint256 homeChainId = block.chainid;
+
+        factory.create(name, symbol, totalSupply, recipient, homeChainId);
+
+        vm.expectRevert();
         factory.create(name, symbol, totalSupply, recipient, homeChainId);
     }
 
