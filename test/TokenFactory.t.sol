@@ -15,11 +15,27 @@ contract TokenFactoryTest is Test {
     function test_create_succeeds() public {
         string memory name = "Test Token";
         string memory symbol = "TOKEN";
-        Token tokenAddress = factory.create(name, symbol, 18);
+        uint8 decimals = 18;
 
-        assert(address(tokenAddress) != address(0));
-        assertEq(tokenAddress.name(), name);
-        assertEq(tokenAddress.symbol(), symbol);
-        assertEq(tokenAddress.decimals(), 18);
+        Token token = factory.create(name, symbol, decimals);
+        vm.snapshotGasLastCall("deploy new token");
+
+        assert(address(token) != address(0));
+        assertEq(token.name(), name);
+        assertEq(token.symbol(), symbol);
+        assertEq(token.decimals(), decimals);
+    }
+
+    function test_bytecodeSize_factory() public {
+        vm.snapshotValue("TokenFactory bytecode size", address(factory).code.length);
+    }
+
+    function test_bytecodeSize_token() public {
+        string memory name = "Test Token";
+        string memory symbol = "TOKEN";
+        uint8 decimals = 18;
+
+        Token token = factory.create(name, symbol, decimals);
+        vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
 }
