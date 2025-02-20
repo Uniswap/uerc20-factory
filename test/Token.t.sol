@@ -17,7 +17,7 @@ contract TokenTest is Test {
         deal(address(token), alice, INITIAL_BALANCE);
     }
 
-    function testPermit2CanTransferWithoutAllowance() public {
+    function test_permit2CanTransferWithoutAllowance() public {
         vm.startPrank(PERMIT2);
         token.transferFrom(alice, bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -25,14 +25,14 @@ contract TokenTest is Test {
         vm.stopPrank();
     }
 
-    function testNonPermit2CannotTransferWithoutAllowance() public {
+    function test_nonPermit2CannotTransferWithoutAllowance() public {
         vm.startPrank(bob);
         vm.expectRevert();
         token.transferFrom(alice, bob, TRANSFER_AMOUNT);
         vm.stopPrank();
     }
 
-    function testNonPermit2CanTransferWithAllowance() public {
+    function test_nonPermit2CanTransferWithAllowance() public {
         vm.prank(alice);
         token.approve(bob, TRANSFER_AMOUNT);
 
@@ -44,11 +44,11 @@ contract TokenTest is Test {
         assertEq(token.allowance(alice, bob), 0);
     }
 
-    function testPermit2InfiniteAllowance() public view {
+    function test_permit2InfiniteAllowance() public view {
         assertEq(token.allowance(alice, PERMIT2), type(uint256).max);
     }
 
-    function testNameSymbolDecimals() public view {
+    function test_nameSymbolDecimals() public view {
         assertEq(token.name(), "Test");
         assertEq(token.symbol(), "TEST");
         assertEq(token.decimals(), 18);
