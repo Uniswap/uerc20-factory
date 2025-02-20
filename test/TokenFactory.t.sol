@@ -15,7 +15,7 @@ contract TokenFactoryTest is Test {
     function test_create_succeeds() public {
         string memory name = "Test Token";
         string memory symbol = "TOKEN";
-        Token tokenAddress = factory.create(name, symbol);
+        Token tokenAddress = factory.create(name, symbol, 18);
 
         assert(address(tokenAddress) != address(0));
         assertEq(tokenAddress.name(), name);

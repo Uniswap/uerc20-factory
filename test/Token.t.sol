@@ -13,7 +13,7 @@ contract TokenTest is Test {
     uint256 constant TRANSFER_AMOUNT = 50e18;
 
     function setUp() public {
-        token = new Token("Test", "TEST");
+        token = new Token("Test", "TEST", 18);
         deal(address(token), alice, INITIAL_BALANCE);
     }
 
@@ -48,8 +48,9 @@ contract TokenTest is Test {
         assertEq(token.allowance(alice, PERMIT2), type(uint256).max);
     }
 
-    function testNameAndSymbol() public view {
+    function testNameSymbolDecimals() public view {
         assertEq(token.name(), "Test");
         assertEq(token.symbol(), "TEST");
+        assertEq(token.decimals(), 18);
     }
 }
