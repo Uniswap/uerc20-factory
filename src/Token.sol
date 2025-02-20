@@ -8,11 +8,7 @@ contract Token is ERC20 {
     string private _symbol;
     uint8 private _decimals;
 
-    constructor(
-        string memory tokenName,
-        string memory tokenSymbol,
-        uint8 tokenDecimals
-    ) {
+    constructor(string memory tokenName, string memory tokenSymbol, uint8 tokenDecimals) {
         _name = tokenName;
         _symbol = tokenSymbol;
         _decimals = tokenDecimals;
