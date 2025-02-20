@@ -1,1 +1,2 @@
 @openzeppelin/=lib/openzeppelin-contracts/
+@optimism/=lib/optimism/packages/contracts-bedrock/
