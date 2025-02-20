@@ -10,16 +10,22 @@ import {SuperchainERC20} from "../src/SuperchainERC20.sol";
 contract TokenTest is Test {
     Token token;
     address SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
+    address constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
     address recipient = makeAddr("recipient");
+    address alice = makeAddr("alice");
     address bob = makeAddr("bob");
     uint256 amount = 1e18;
     uint256 totalSupply = 5e18;
+
+    uint256 constant INITIAL_BALANCE = 5e18;
+    uint256 constant TRANSFER_AMOUNT = 1e18;
 
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
     event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
 
     function setUp() public {
-        token = new Token("Test", "TEST", totalSupply, recipient, block.chainid);
+        token = new Token("Test", "TEST", 18, totalSupply, recipient, block.chainid);
+        deal(address(token), alice, INITIAL_BALANCE);
     }
 
     function test_crosschainMint_succeeds() public {
@@ -74,5 +80,42 @@ contract TokenTest is Test {
         assertTrue(token.supportsInterface(0x33331994)); // IERC7802
         assertTrue(bytes4(0x36372b07) == type(IERC20).interfaceId);
         assertTrue(token.supportsInterface(0x36372b07)); // IERC20
+    }
+
+    function test_permit2CanTransferWithoutAllowance() public {
+        vm.startPrank(PERMIT2);
+        token.transferFrom(alice, bob, TRANSFER_AMOUNT);
+        assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
+        assertEq(token.balanceOf(alice), INITIAL_BALANCE - TRANSFER_AMOUNT);
+        vm.stopPrank();
+    }
+
+    function test_nonPermit2CannotTransferWithoutAllowance() public {
+        vm.startPrank(bob);
+        vm.expectRevert();
+        token.transferFrom(alice, bob, TRANSFER_AMOUNT);
+        vm.stopPrank();
+    }
+
+    function test_nonPermit2CanTransferWithAllowance() public {
+        vm.prank(alice);
+        token.approve(bob, TRANSFER_AMOUNT);
+
+        vm.prank(bob);
+        token.transferFrom(alice, bob, TRANSFER_AMOUNT);
+
+        assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
+        assertEq(token.balanceOf(alice), INITIAL_BALANCE - TRANSFER_AMOUNT);
+        assertEq(token.allowance(alice, bob), 0);
+    }
+
+    function test_permit2InfiniteAllowance() public view {
+        assertEq(token.allowance(alice, PERMIT2), type(uint256).max);
+    }
+
+    function test_nameSymbolDecimals() public view {
+        assertEq(token.name(), "Test");
+        assertEq(token.symbol(), "TEST");
+        assertEq(token.decimals(), 18);
     }
 }

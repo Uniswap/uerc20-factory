@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-import {ERC20} from "solmate/tokens/ERC20.sol";
+import {ERC20} from "@solady/tokens/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Predeploys} from "@optimism/src/libraries/Predeploys.sol";
@@ -17,8 +17,6 @@ abstract contract SuperchainERC20 is ERC20, IERC7802 {
         }
         _;
     }
-
-    constructor(string memory name, string memory symbol) ERC20(name, symbol, 18) {}
 
     /// @inheritdoc IERC7802
     function crosschainMint(address _to, uint256 _amount) external onlySuperchainTokenBridge {

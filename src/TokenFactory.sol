@@ -7,17 +7,23 @@ contract TokenFactory {
     bytes32 internal constant SALT = bytes32(uint256(1));
 
     event TokenCreated(
-        address indexed tokenAddress, uint256 indexed chainId, string name, string symbol, uint256 homeChainId
+        address indexed tokenAddress,
+        uint256 indexed chainId,
+        string name,
+        string symbol,
+        uint8 decimals,
+        uint256 homeChainId
     );
 
     function create(
         string memory name,
         string memory symbol,
+        uint8 decimals,
         uint256 totalSupply,
         address recipient,
         uint256 homeChainId
     ) external returns (Token newToken) {
-        newToken = new Token{salt: SALT}(name, symbol, totalSupply, recipient, homeChainId);
-        emit TokenCreated(address(newToken), block.chainid, name, symbol, homeChainId);
+        newToken = new Token{salt: SALT}(name, symbol, decimals, totalSupply, recipient, homeChainId);
+        emit TokenCreated(address(newToken), block.chainid, name, symbol, decimals, homeChainId);
     }
 }
