@@ -8,10 +8,10 @@ contract Token is ERC20 {
     string private _symbol;
     uint8 private _decimals;
 
-    constructor(string memory tokenName, string memory tokenSymbol, uint8 tokenDecimals) {
-        _name = tokenName;
-        _symbol = tokenSymbol;
-        _decimals = tokenDecimals;
+    constructor(string memory _tokenName, string memory _tokenSymbol, uint8 _tokenDecimals) {
+        _name = _tokenName;
+        _symbol = _tokenSymbol;
+        _decimals = _tokenDecimals;
     }
 
     function name() public view override returns (string memory) {
