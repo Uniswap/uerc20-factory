@@ -10,14 +10,16 @@ import {SuperchainERC20} from "../src/SuperchainERC20.sol";
 contract TokenTest is Test {
     Token token;
     address SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
-    address bob = makeAddr("BOB");
+    address recipient = makeAddr("recipient");
+    address bob = makeAddr("bob");
     uint256 amount = 1e18;
+    uint256 totalSupply = 5e18;
 
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
     event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
 
     function setUp() public {
-        token = new Token("Test", "TEST");
+        token = new Token("Test", "TEST", totalSupply, recipient, block.chainid);
     }
 
     function test_crosschainMint_succeeds() public {
@@ -27,7 +29,7 @@ contract TokenTest is Test {
         token.crosschainMint(bob, amount);
         vm.snapshotGasLastCall("crosschainMint: first mint");
         assertEq(token.balanceOf(bob), amount);
-        assertEq(token.totalSupply(), amount);
+        assertEq(token.totalSupply(), totalSupply + amount);
         token.crosschainMint(bob, amount);
         vm.snapshotGasLastCall("crosschainMint: second mint");
         assertEq(token.balanceOf(bob), amount * 2);
@@ -40,7 +42,7 @@ contract TokenTest is Test {
         );
         token.crosschainMint(bob, amount);
         assertEq(token.balanceOf(bob), 0);
-        assertEq(token.totalSupply(), 0);
+        assertEq(token.totalSupply(), totalSupply);
     }
 
     function test_crosschainBurn_succeeds() public {
