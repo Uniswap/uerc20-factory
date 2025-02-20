@@ -43,4 +43,13 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(alice), INITIAL_BALANCE - TRANSFER_AMOUNT);
         assertEq(token.allowance(alice, bob), 0);
     }
+
+    function testPermit2InfiniteAllowance() public view {
+        assertEq(token.allowance(alice, PERMIT2), type(uint256).max);
+    }
+
+    function testNameAndSymbol() public view {
+        assertEq(token.name(), "Test");
+        assertEq(token.symbol(), "TEST");
+    }
 }
