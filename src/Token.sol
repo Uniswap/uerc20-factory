@@ -54,11 +54,7 @@ contract Token is SuperchainERC20 {
                 Base64.encode(
                     bytes(
                         abi.encodePacked(
-                            '{"Name":"',
-                            name(),
-                            '", "Symbol":"',
-                            symbol(),
-                            '", "Description":"',
+                            '{"Description":"',
                             _metadata.description,
                             '", "Website":"',
                             _metadata.website,

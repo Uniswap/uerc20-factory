@@ -29,8 +29,6 @@ contract TokenTest is Test {
     //     string creator;
     //     string description;
     //     string image;
-    //     string name;
-    //     string symbol;
     //     string website;
     // }
 
@@ -160,8 +158,6 @@ contract TokenTest is Test {
 
         // // Parse JSON to extract individual fields
         // assertEq(jsonToken.creator, addressToString(address(this)));
-        // assertEq(jsonToken.name, "Test");
-        // assertEq(jsonToken.symbol, "TEST");
         // assertEq(jsonToken.description, "A test token");
         // assertEq(jsonToken.website, "https://example.com");
         // assertEq(jsonToken.image, "https://example.com/image.png");
