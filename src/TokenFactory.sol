@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Token} from "./Token.sol";
-import {TokenMetadata} from "./types/TokenMetadata.sol";
+import {TokenMetadata} from "./libraries/TokenMetadata.sol";
 
 contract TokenFactory {
     bytes32 internal constant SALT = bytes32(uint256(1));

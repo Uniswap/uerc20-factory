@@ -2,13 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
-import {TokenFactory} from "./TokenFactory.sol";
-import {TokenMetadata} from "./types/TokenMetadata.sol";
-import {Base64} from "openzeppelin-contracts/contracts/utils/Base64.sol";
-import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol";
 
 contract Token is SuperchainERC20 {
-    using Strings for address;
+    using TokenMetadataLibrary for TokenMetadata;
 
     TokenMetadata private _metadata;
     string private _name;
@@ -47,25 +44,6 @@ contract Token is SuperchainERC20 {
     }
 
     function tokenURI() public view returns (string memory) {
-        return string(
-            abi.encodePacked(
-                "data:application/json;base64,",
-                Base64.encode(
-                    bytes(
-                        abi.encodePacked(
-                            '{"Description":"',
-                            _metadata.description,
-                            '", "Website":"',
-                            _metadata.website,
-                            '", "Image":"',
-                            _metadata.image,
-                            '", "Creator":"',
-                            _metadata.creator.toHexString(),
-                            '"}'
-                        )
-                    )
-                )
-            )
-        );
+        return _metadata.toJSON();
     }
 }

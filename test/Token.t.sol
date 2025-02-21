@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {Token} from "../src/Token.sol";
-import {TokenMetadata} from "../src/types/TokenMetadata.sol";
+import {TokenMetadata} from "../src/libraries/TokenMetadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {SuperchainERC20} from "../src/base/SuperchainERC20.sol";

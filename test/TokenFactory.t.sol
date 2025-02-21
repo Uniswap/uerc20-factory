@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {TokenFactory} from "../src/TokenFactory.sol";
 import {Token} from "../src/Token.sol";
-import {TokenMetadata} from "../src/types/TokenMetadata.sol";
+import {TokenMetadata} from "../src/libraries/TokenMetadata.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 contract TokenFactoryTest is Test {
