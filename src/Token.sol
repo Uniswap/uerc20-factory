@@ -3,13 +3,12 @@ pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {TokenFactory} from "./TokenFactory.sol";
-
 import {TokenMetadata} from "./types/TokenMetadata.sol";
 import {Base64} from "openzeppelin-contracts/contracts/utils/Base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract Token is SuperchainERC20 {
-    using Strings for uint256;
+    using Strings for address;
 
     TokenMetadata private _metadata;
     string private _name;
@@ -61,16 +60,12 @@ contract Token is SuperchainERC20 {
                             '", "Image":"',
                             _metadata.image,
                             '", "Creator":"',
-                            addressToString(_metadata.creator),
+                            _metadata.creator.toHexString(),
                             '"}'
                         )
                     )
                 )
             )
         );
-    }
-
-    function addressToString(address addr) internal pure returns (string memory) {
-        return (uint256(uint160(addr))).toHexString(20);
     }
 }
