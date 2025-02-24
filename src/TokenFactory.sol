@@ -27,10 +27,8 @@ contract TokenFactory {
         uint8 decimals,
         TokenMetadata memory tokenMetadata
     ) external returns (Token newToken) {
-        if (block.chainid == homeChainId) {
-            if (msg.sender != tokenMetadata.creator) {
-                revert NotCreator(msg.sender, tokenMetadata.creator);
-            }
+        if (block.chainid == homeChainId && msg.sender != tokenMetadata.creator) {
+            revert NotCreator(msg.sender, tokenMetadata.creator);
         }
         newToken = new Token{salt: SALT}(name, symbol, recipient, totalSupply, homeChainId, decimals, tokenMetadata);
         emit TokenCreated(address(newToken), block.chainid, name, symbol, decimals, homeChainId);
