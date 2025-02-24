@@ -2,7 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./SuperchainERC20.sol";
+import {ERC20} from "@solady/tokens/ERC20.sol";
 
+/// @title Token
+/// @notice ERC20 token contract that is Superchain compatible
+/// @dev Uses solady for default permit2 approval
 contract Token is SuperchainERC20 {
     string private _name;
     string private _symbol;
@@ -25,14 +29,17 @@ contract Token is SuperchainERC20 {
         }
     }
 
+    /// @inheritdoc ERC20
     function name() public view override returns (string memory) {
         return _name;
     }
 
+    /// @inheritdoc ERC20
     function symbol() public view override returns (string memory) {
         return _symbol;
     }
 
+    /// @inheritdoc ERC20
     function decimals() public view override returns (uint8) {
         return _decimals;
     }
