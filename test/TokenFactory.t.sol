@@ -14,9 +14,15 @@ contract TokenFactoryTest is Test {
     address recipient = makeAddr("recipient");
     string name = "Test Token";
     string symbol = "TOKEN";
+    uint8 decimals = 18;
 
     event TokenCreated(
-        address indexed tokenAddress, uint256 indexed chainId, string name, string symbol, uint256 homeChainId
+        address indexed tokenAddress,
+        uint256 indexed chainId,
+        string name,
+        string symbol,
+        uint8 decimals,
+        uint256 homeChainId
     );
 
     function setUp() public {
@@ -30,26 +36,26 @@ contract TokenFactoryTest is Test {
     }
 
     function test_create_succeeds_withMint() public {
-        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata);
+        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
         vm.snapshotGasLastCall("deploy new token");
 
         assert(address(token) != address(0));
 
         assertEq(token.name(), name);
         assertEq(token.symbol(), symbol);
-        assertEq(token.decimals(), 18);
+        assertEq(token.decimals(), decimals);
         assertEq(token.totalSupply(), 1e18);
         assertEq(token.balanceOf(recipient), 1e18);
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {
-        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid + 1, 18, tokenMetadata); // the home chain of this token is different than the current chain
+        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid + 1, decimals, tokenMetadata); // the home chain of this token is different than the current chain
 
         assert(address(token) != address(0));
 
         assertEq(token.name(), name);
         assertEq(token.symbol(), symbol);
-        assertEq(token.decimals(), 18);
+        assertEq(token.decimals(), decimals);
 
         // no tokens have been minted because the current chain is not the token's home chain
         assertEq(token.totalSupply(), 0);
@@ -59,47 +65,50 @@ contract TokenFactoryTest is Test {
     function test_create_succeeds_withEventEmitted() public {
         bytes32 initCodeHash = keccak256(
             abi.encodePacked(
-                type(Token).creationCode, abi.encode(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata)
+                type(Token).creationCode,
+                abi.encode(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata)
             )
         );
 
         address tokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
 
         vm.expectEmit(true, true, true, true);
-        emit TokenCreated(tokenAddress, block.chainid, name, symbol, block.chainid);
-        factory.create(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata);
+        emit TokenCreated(tokenAddress, block.chainid, name, symbol, decimals, block.chainid);
+        factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
     }
 
     function test_create_succeeds_withDifferentAddresses() public {
         bytes32 initCodeHash = keccak256(
             abi.encodePacked(
-                type(Token).creationCode, abi.encode(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata)
+                type(Token).creationCode,
+                abi.encode(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata)
             )
         );
 
         address expectedTokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
 
-        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata);
+        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
 
         assertEq(address(token), expectedTokenAddress);
 
         // symbol changes which causes a different initCodeHash and thus a different address
         initCodeHash = keccak256(
             abi.encodePacked(
-                type(Token).creationCode, abi.encode(name, "TOKEN2", recipient, 1e18, block.chainid, 18, tokenMetadata)
+                type(Token).creationCode,
+                abi.encode(name, "TOKEN2", recipient, 1e18, block.chainid, decimals, tokenMetadata)
             )
         );
         address newExpectedTokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
-        Token newToken = factory.create(name, "TOKEN2", recipient, 1e18, block.chainid, 18, tokenMetadata);
+        Token newToken = factory.create(name, "TOKEN2", recipient, 1e18, block.chainid, decimals, tokenMetadata);
         assertEq(address(newToken), newExpectedTokenAddress);
         assertNotEq(address(newToken), address(token));
     }
 
     function test_create_revertsWithCreateCollision() public {
-        factory.create(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata);
+        factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
 
         vm.expectRevert();
-        factory.create(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata);
+        factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
     }
 
     function test_bytecodeSize_factory() public {
@@ -107,7 +116,7 @@ contract TokenFactoryTest is Test {
     }
 
     function test_bytecodeSize_token() public {
-        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, 18, tokenMetadata);
+        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
         vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
 }

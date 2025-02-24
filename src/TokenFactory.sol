@@ -8,7 +8,12 @@ contract TokenFactory {
     bytes32 internal constant SALT = bytes32(uint256(1));
 
     event TokenCreated(
-        address indexed tokenAddress, uint256 indexed chainId, string name, string symbol, uint256 homeChainId
+        address indexed tokenAddress,
+        uint256 indexed chainId,
+        string name,
+        string symbol,
+        uint8 decimals,
+        uint256 homeChainId
     );
 
     error NotCreator(address sender, address creator);
@@ -28,6 +33,6 @@ contract TokenFactory {
             }
         }
         newToken = new Token{salt: SALT}(name, symbol, recipient, totalSupply, homeChainId, decimals, tokenMetadata);
-        emit TokenCreated(address(newToken), block.chainid, name, symbol, homeChainId);
+        emit TokenCreated(address(newToken), block.chainid, name, symbol, decimals, homeChainId);
     }
 }

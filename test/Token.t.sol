@@ -12,7 +12,7 @@ import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract TokenTest is Test {
     using Base64 for string;
-    using Strings for uint256;
+    using Strings for address;
 
     address constant SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
     address constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
@@ -25,12 +25,12 @@ contract TokenTest is Test {
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
 
-    // struct JsonToken {
-    //     string creator;
-    //     string description;
-    //     string image;
-    //     string website;
-    // }
+    struct JsonToken {
+        address creator;
+        string description;
+        string image;
+        string website;
+    }
 
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
     event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
@@ -153,17 +153,17 @@ contract TokenTest is Test {
         }
 
         // Decode the base64-encoded part
-        // bytes memory decoded = Base64.decode(string(base64Part));
-        // string memory json = string(decoded);
+        bytes memory decoded = Base64.decode(string(base64Part));
+        string memory json = string(decoded);
 
-        // // Parse JSON to extract individual fields
-        // assertEq(jsonToken.creator, addressToString(address(this)));
-        // assertEq(jsonToken.description, "A test token");
-        // assertEq(jsonToken.website, "https://example.com");
-        // assertEq(jsonToken.image, "https://example.com/image.png");
-    }
+        // decode json
+        bytes memory data = vm.parseJson(json);
+        JsonToken memory jsonToken = abi.decode(data, (JsonToken));
 
-    function addressToString(address addr) internal pure returns (string memory) {
-        return (uint256(uint160(addr))).toHexString(20);
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.description, "A test token");
+        assertEq(jsonToken.website, "https://example.com");
+        assertEq(jsonToken.image, "https://example.com/image.png");
     }
 }

@@ -28,7 +28,7 @@ library TokenMetadataLibrary {
                             '", "Image":"',
                             metadata.image,
                             '", "Creator":"',
-                            metadata.creator.toHexString(),
+                            metadata.creator.toChecksumHexString(),
                             '"}'
                         )
                     )
