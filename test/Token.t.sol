@@ -25,11 +25,48 @@ contract TokenTest is Test {
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
 
-    struct JsonToken {
+    struct JsonTokenAllFields {
         address creator;
         string description;
         string image;
         string website;
+    }
+
+    struct JsonTokenDescriptionWebsite {
+        address creator;
+        string description;
+        string website;
+    }
+
+    struct JsonTokenDescriptionImage {
+        address creator;
+        string description;
+        string image;
+    }
+
+    struct JsonTokenWebsiteImage {
+        address creator;
+        string image;
+        string website;
+    }
+
+    struct JsonTokenDescription {
+        address creator;
+        string description;
+    }
+
+    struct JsonTokenWebsite {
+        address creator;
+        string website;
+    }
+
+    struct JsonTokenImage {
+        address creator;
+        string image;
+    }
+
+    struct JsonTokenCreator {
+        address creator;
     }
 
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
@@ -137,11 +174,129 @@ contract TokenTest is Test {
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
-    function test_tokenURI() public view {
+    function test_tokenURI_allFields() public view {
+        bytes memory data = decode(token);
+        JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.description, "A test token");
+        assertEq(jsonToken.website, "https://example.com");
+        assertEq(jsonToken.image, "https://example.com/image.png");
+    }
+
+    function test_tokenURI_descriptionWebsite() public {
+        tokenMetadata = TokenMetadata({
+            description: "A test token",
+            website: "https://example.com",
+            image: "",
+            creator: address(this)
+        });
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.description, "A test token");
+        assertEq(jsonToken.website, "https://example.com");
+    }
+
+    function test_tokenURI_descriptionImage() public {
+        tokenMetadata = TokenMetadata({
+            description: "A test token",
+            website: "",
+            image: "https://example.com/image.png",
+            creator: address(this)
+        });
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.description, "A test token");
+        assertEq(jsonToken.image, "https://example.com/image.png");
+    }
+
+    function test_tokenURI_websiteImage() public {
+        tokenMetadata = TokenMetadata({
+            description: "",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            creator: address(this)
+        });
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.website, "https://example.com");
+        assertEq(jsonToken.image, "https://example.com/image.png");
+    }
+
+    function test_tokenURI_description() public {
+        tokenMetadata = TokenMetadata({description: "A test token", website: "", image: "", creator: address(this)});
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.description, "A test token");
+    }
+
+    function test_tokenURI_website() public {
+        tokenMetadata =
+            TokenMetadata({description: "", website: "https://example.com", image: "", creator: address(this)});
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.website, "https://example.com");
+    }
+
+    function test_tokenURI_image() public {
+        tokenMetadata = TokenMetadata({
+            description: "",
+            website: "",
+            image: "https://example.com/image.png",
+            creator: address(this)
+        });
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.image, "https://example.com/image.png");
+    }
+
+    function test_tokenURI_onlyCreator() public {
+        tokenMetadata = TokenMetadata({description: "", website: "", image: "", creator: address(this)});
+        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+
+        bytes memory data = decode(token);
+        JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+    }
+
+    function decode(Token tkn) private view returns (bytes memory) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
-        string memory uri = token.tokenURI();
+        string memory uri = tkn.tokenURI();
         // Convert the uri to bytes
         bytes memory uriBytes = bytes(uri);
 
@@ -157,13 +312,6 @@ contract TokenTest is Test {
         string memory json = string(decoded);
 
         // decode json
-        bytes memory data = vm.parseJson(json);
-        JsonToken memory jsonToken = abi.decode(data, (JsonToken));
-
-        // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
-        assertEq(jsonToken.description, "A test token");
-        assertEq(jsonToken.website, "https://example.com");
-        assertEq(jsonToken.image, "https://example.com/image.png");
+        return vm.parseJson(json);
     }
 }
