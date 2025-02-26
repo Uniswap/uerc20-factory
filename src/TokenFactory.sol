@@ -2,6 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {Token} from "./Token.sol";
+import {TokenMetadata} from "./libraries/TokenMetadata.sol";
 
 /// @title TokenFactory
 /// @notice Deploys new Token contracts
@@ -19,6 +20,9 @@ contract TokenFactory {
         uint256 homeChainId
     );
 
+    /// @notice Thrown when the caller is not the creator
+    error NotCreator(address sender, address creator);
+
     /// @notice Deploys a new Token contract
     /// @param name The name of the token
     /// @param symbol The symbol of the token
@@ -30,12 +34,17 @@ contract TokenFactory {
     function create(
         string memory name,
         string memory symbol,
-        uint8 decimals,
-        uint256 totalSupply,
         address recipient,
-        uint256 homeChainId
+        uint256 totalSupply,
+        uint256 homeChainId,
+        uint8 decimals,
+        TokenMetadata memory tokenMetadata
     ) external returns (Token newToken) {
-        newToken = new Token{salt: SALT}(name, symbol, decimals, totalSupply, recipient, homeChainId);
+        /// Only the creator can deploy a token on the home chain
+        if (block.chainid == homeChainId && msg.sender != tokenMetadata.creator) {
+            revert NotCreator(msg.sender, tokenMetadata.creator);
+        }
+        newToken = new Token{salt: SALT}(name, symbol, recipient, totalSupply, homeChainId, decimals, tokenMetadata);
         emit TokenCreated(address(newToken), block.chainid, name, symbol, decimals, homeChainId);
     }
 }
