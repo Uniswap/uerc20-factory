@@ -71,6 +71,7 @@ contract TokenTest is Test {
 
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
     event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
+    event Transfer(address indexed from, address indexed to, uint256 value);
 
     function setUp() public {
         tokenMetadata = TokenMetadata({
@@ -95,6 +96,27 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT * 2);
     }
 
+    function test_fuzz_crosschainMint_succeeds(address to, uint256 amount) public {
+        vm.assume(to != address(0));
+        // Prevent overflow
+        vm.assume(amount <= type(uint256).max - token.totalSupply());
+
+        uint256 totalSupplyBefore = token.totalSupply();
+        uint256 toBalanceBefore = token.balanceOf(to);
+
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), to, amount);
+
+        vm.expectEmit(true, false, true, true);
+        emit CrosschainMint(to, amount, SUPERCHAIN_ERC20_BRIDGE);
+
+        vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
+        token.crosschainMint(to, amount);
+
+        assertEq(token.totalSupply(), totalSupplyBefore + amount);
+        assertEq(token.balanceOf(to), toBalanceBefore + amount);
+    }
+
     function test_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
         vm.prank(bob);
         vm.expectRevert(
@@ -103,6 +125,17 @@ contract TokenTest is Test {
         token.crosschainMint(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), 0);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
+    }
+
+    function test_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(address caller, address to, uint256 amount) public {
+        vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+        );
+
+        vm.prank(caller);
+        token.crosschainMint(to, amount);
     }
 
     function test_crosschainBurn_succeeds() public {
@@ -116,6 +149,25 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(bob), 0);
     }
 
+    function test_fuzz_crosschainBurn_succeeds(uint256 amount) public {
+        vm.assume(amount <= token.totalSupply());
+
+        uint256 totalSupplyBefore = token.totalSupply();
+        uint256 recipientBalanceBefore = token.balanceOf(recipient);
+
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(recipient, address(0), amount);
+
+        vm.expectEmit(true, false, true, true);
+        emit CrosschainBurn(recipient, amount, SUPERCHAIN_ERC20_BRIDGE);
+
+        vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
+        token.crosschainBurn(recipient, amount);
+
+        assertEq(token.totalSupply(), totalSupplyBefore - amount);
+        assertEq(token.balanceOf(recipient), recipientBalanceBefore - amount);
+    }
+
     function test_crosschainBurn_revertsWithNotSuperchainERC20Bridge() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -127,6 +179,17 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
     }
 
+    function test_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(address caller, address from, uint256 amount) public {
+        vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+        );
+
+        vm.prank(caller);
+        token.crosschainBurn(from, amount);
+    }
+
     function test_supportsInterface() public view {
         assertTrue(bytes4(0x01ffc9a7) == type(IERC165).interfaceId);
         assertTrue(token.supportsInterface(0x01ffc9a7)); // IERC165
@@ -134,6 +197,13 @@ contract TokenTest is Test {
         assertTrue(token.supportsInterface(0x33331994)); // IERC7802
         assertTrue(bytes4(0x36372b07) == type(IERC20).interfaceId);
         assertTrue(token.supportsInterface(0x36372b07)); // IERC20
+    }
+
+    function test_fuzz_supportsInterface(bytes4 interfaceId) public view {
+        vm.assume(interfaceId != type(IERC165).interfaceId);
+        vm.assume(interfaceId != type(IERC7802).interfaceId);
+        vm.assume(interfaceId != type(IERC20).interfaceId);
+        assertFalse(token.supportsInterface(interfaceId));
     }
 
     function test_permit2CanTransferWithoutAllowance() public {
