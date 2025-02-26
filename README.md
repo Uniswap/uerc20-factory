@@ -1,66 +1,64 @@
-## Foundry
+# Token Factory
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Overview
 
-Foundry consists of:
+Two main contracts:
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- **TokenFactory**: A contract for deploying new ERC-20 tokens with additional metadata.
+- **Token**: An ERC-20 token that implements the IERC7802 standard, making it compatible with Superchain and includes additional metadata: creator, description, website, and image.
 
-## Documentation
+## Token Features
 
-https://book.getfoundry.sh/
+- Implements `IERC7802` for Superchain compatibility.
+- Stores additional metadata:
+  - **Creator** (required)
+  - **Description** (optional)
+  - **Website** (optional)
+  - **Image** (optional)
+- Supports cross-chain transfers via the `SuperchainTokenBridge`, ensuring the total supply remains constant across all chains.
+
+## Token Creation
+
+When deploying a new token, the following parameters must be provided:
+
+- **Name**
+- **Symbol**
+- **Recipient** (address where `totalSupply` will be minted)
+- **Total Supply**
+- **Home Chain ID**
+- **Decimals**
+- **Creator**
+- **Description** (optional)
+- **Website** (optional)
+- **Image** (optional)
+
+### Deployment Rules
+
+- If deploying on the **home chain**, the caller must be the creator.
+- Once deployed on the home chain, anyone can deploy the same token on a different chain at the same address in a permissionless way.
+- The total supply is always minted on the home chain.
+
+## Cross-Chain Transfers
+
+- The `SuperchainTokenBridge` facilitates cross-chain transfers.
+- **Mechanism:**
+  - `crossChainBurn` is called on the source chain.
+  - `crossChainMint` is called on the destination chain.
+  - The total supply across all chains remains unchanged.
 
 ## Usage
 
-### Build
+### Compile and Run Tests
 
-```shell
-$ forge build
+```sh
+forge install
+forge build
+forge test --isolate
 ```
 
-### Test
+### Formatting
 
-```shell
-$ forge test
+```sh
+forge fmt
 ```
 
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
