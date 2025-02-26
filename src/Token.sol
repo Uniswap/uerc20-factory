@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol";
+import {ERC20} from "@solady/src/tokens/ERC20.sol";
 
 /// @title Token
 /// @notice ERC20 token contract that is Superchain compatible
