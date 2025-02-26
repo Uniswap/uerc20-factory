@@ -23,7 +23,7 @@ library TokenMetadataLibrary {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(displayMetadata(metadata))));
     }
 
-    /// @notice Generates a abi encoded JSON string of the token metadata
+    /// @notice Generates an abi encoded JSON string of the token metadata
     /// @param metadata The token metadata
     /// @return The abi encoded JSON string
     function displayMetadata(TokenMetadata memory metadata) private pure returns (bytes memory) {

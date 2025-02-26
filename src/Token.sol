@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol";
-import {ERC20} from "@solady/src/tokens/ERC20.sol";
 
 /// @title Token
 /// @notice ERC20 token contract that is Superchain compatible
@@ -35,21 +34,22 @@ contract Token is SuperchainERC20 {
         }
     }
 
-    /// @inheritdoc ERC20
+    /// @dev Returns the name of the token.
     function name() public view override returns (string memory) {
         return _name;
     }
 
-    /// @inheritdoc ERC20
+    /// @dev Returns the symbol of the token.
     function symbol() public view override returns (string memory) {
         return _symbol;
     }
 
-    /// @inheritdoc ERC20
+    /// @dev Returns the decimals places of the token.
     function decimals() public view override returns (uint8) {
         return _decimals;
     }
 
+    /// @dev Returns the URI of the token metadata.
     function tokenURI() public view returns (string memory) {
         return _metadata.toJSON();
     }

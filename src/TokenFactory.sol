@@ -20,7 +20,7 @@ contract TokenFactory {
         uint256 homeChainId
     );
 
-    /// @notice Thrown when the caller is not the creator
+    /// @notice Thrown when the caller is not the creator in the initial deployment of a token
     error NotCreator(address sender, address creator);
 
     /// @notice Deploys a new Token contract
