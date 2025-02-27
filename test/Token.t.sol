@@ -83,6 +83,7 @@ contract TokenTest is Test {
         token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
     }
 
+    /// forge-config: default.isolate = true
     function test_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
         emit CrosschainMint(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
@@ -99,7 +100,7 @@ contract TokenTest is Test {
     function test_fuzz_crosschainMint_succeeds(address to, uint256 amount) public {
         vm.assume(to != address(0));
         // Prevent overflow
-        vm.assume(amount <= type(uint256).max - token.totalSupply());
+        amount = bound(amount, 0, type(uint256).max - token.totalSupply());
 
         uint256 totalSupplyBefore = token.totalSupply();
         uint256 toBalanceBefore = token.balanceOf(to);
@@ -127,7 +128,9 @@ contract TokenTest is Test {
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
-    function test_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(address caller, address to, uint256 amount) public {
+    function test_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(address caller, address to, uint256 amount)
+        public
+    {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
@@ -138,6 +141,7 @@ contract TokenTest is Test {
         token.crosschainMint(to, amount);
     }
 
+    /// forge-config: default.isolate = true
     function test_crosschainBurn_succeeds() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -150,7 +154,7 @@ contract TokenTest is Test {
     }
 
     function test_fuzz_crosschainBurn_succeeds(uint256 amount) public {
-        vm.assume(amount <= token.totalSupply());
+        amount = bound(amount, 0, token.totalSupply());
 
         uint256 totalSupplyBefore = token.totalSupply();
         uint256 recipientBalanceBefore = token.balanceOf(recipient);
@@ -179,7 +183,9 @@ contract TokenTest is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
     }
 
-    function test_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(address caller, address from, uint256 amount) public {
+    function test_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(address caller, address from, uint256 amount)
+        public
+    {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
