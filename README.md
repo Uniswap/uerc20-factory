@@ -1,13 +1,13 @@
-# Token Factory
+# UniswapERC20 Factory
 
 ## Overview
 
 Two main contracts:
 
-- **TokenFactory**: A contract for deploying new ERC-20 tokens with additional metadata.
-- **Token**: An ERC-20 token implementing IERC7802, allowing seamless movement across chains within the Superchain interop cluster via the Superchain Token Bridge. It also includes additional metadata: creator, description, website, and image.
+- **UniswapERC20Factory**: A contract for deploying new ERC-20 tokens with additional metadata.
+- **UniswapERC20**: An ERC-20 token implementing IERC7802, allowing seamless movement across chains within the Superchain interop cluster via the Superchain Token Bridge. It also includes additional metadata: creator, description, website, and image.
 
-## Token Features
+## UniswapERC20 Features
 
 - Implements `IERC7802` for Superchain compatibility.
 - Stores additional metadata:
@@ -17,9 +17,9 @@ Two main contracts:
   - **Image** (optional)
 - Supports cross-chain transfers via the `SuperchainTokenBridge`, ensuring the total supply remains constant across all chains.
 
-## Token Creation
+## UniswapERC20 Creation
 
-When deploying a new token, the following parameters must be provided:
+When deploying a new UniswapERC20, the following parameters must be provided:
 
 - **Name**
 - **Symbol**
@@ -36,7 +36,7 @@ When deploying a new token, the following parameters must be provided:
 
 - If deploying on the **home chain**, the caller must be the creator.
 - The total supply is always minted on the home chain.
-- A token can be deployed on any chain at the same address in a permissionless way. Tokens can move between chains via the Superchain Token Bridge, which adjusts totalSupply on each chain while ensuring the overall supply remains constant at the amount initially minted on the home chain.
+- A UniswapERC20 token can be deployed on any chain at the same address in a permissionless way. Tokens can move between chains via the Superchain Token Bridge, which adjusts totalSupply on each chain while ensuring the overall supply remains constant at the amount initially minted on the home chain.
 
 ## Cross-Chain Transfers
 
