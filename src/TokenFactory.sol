@@ -54,6 +54,12 @@ contract TokenFactory {
         return Create2.computeAddress(salt, initCodeHash, address(this));
     }
 
+    /// @notice Gets the parameters for token initialization
+    /// @return The parameters structure with all token initialization data
+    function getParameters() external view returns (Parameters memory) {
+        return parameters;
+    }
+
     /// @notice Deploys a new Token contract
     /// @param name The name of the token
     /// @param symbol The symbol of the token
