@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol";
+import {TokenFactory} from "./TokenFactory.sol";
 
 /// @title Token
 /// @notice ERC20 token contract that is Superchain compatible
@@ -10,27 +11,26 @@ import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol
 contract Token is SuperchainERC20 {
     using TokenMetadataLibrary for TokenMetadata;
 
-    TokenMetadata private _metadata;
+    // Core parameters that define token identity
     string private _name;
     string private _symbol;
-    uint8 private _decimals;
+    uint8 private immutable _decimals;
 
-    constructor(
-        string memory _tokenName,
-        string memory _tokenSymbol,
-        address _recipient,
-        uint256 _totalSupply,
-        uint256 _homeChainId,
-        uint8 _tokenDecimals,
-        TokenMetadata memory _tokenMetadata
-    ) {
-        _name = _tokenName;
-        _symbol = _tokenSymbol;
-        _decimals = _tokenDecimals;
-        _metadata = _tokenMetadata;
+    // Metadata that may have extended information
+    TokenMetadata private _metadata;
+
+    constructor() {
+        // Get parameters from the factory that deployed this token
+        TokenFactory.Parameters memory params = TokenFactory(msg.sender).getParameters();
+
+        _name = params.name;
+        _symbol = params.symbol;
+        _decimals = params.decimals;
+        _metadata = params.metadata;
+
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
-        if (block.chainid == _homeChainId) {
-            _mint(_recipient, _totalSupply);
+        if (block.chainid == params.homeChainId) {
+            _mint(params.recipient, params.totalSupply);
         }
     }
 

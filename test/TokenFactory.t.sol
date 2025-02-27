@@ -8,7 +8,6 @@ import {TokenMetadata} from "../src/libraries/TokenMetadata.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 contract TokenFactoryTest is Test {
-    bytes32 constant SALT = bytes32(uint256(1));
     TokenFactory public factory;
     TokenMetadata public tokenMetadata;
     address recipient = makeAddr("recipient");
@@ -62,15 +61,17 @@ contract TokenFactoryTest is Test {
         assertEq(token.balanceOf(recipient), 0);
     }
 
-    function test_create_succeeds_withEventEmitted() public {
-        bytes32 initCodeHash = keccak256(
-            abi.encodePacked(
-                type(Token).creationCode,
-                abi.encode(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata)
-            )
-        );
+    function test_getTokenAddress_succeeds() public {
+        // Calculate expected address using getTokenAddress and verify against actual deployment
+        address expectedAddress = factory.getTokenAddress(name, symbol, block.chainid, decimals, tokenMetadata.creator);
 
-        address tokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
+        Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
+
+        assertEq(address(token), expectedAddress);
+    }
+
+    function test_create_succeeds_withEventEmitted() public {
+        address tokenAddress = factory.getTokenAddress(name, symbol, block.chainid, decimals, tokenMetadata.creator);
 
         vm.expectEmit(true, true, true, true);
         emit TokenCreated(tokenAddress, block.chainid, name, symbol, decimals, block.chainid);
@@ -78,29 +79,16 @@ contract TokenFactoryTest is Test {
     }
 
     function test_create_succeeds_withDifferentAddresses() public {
-        bytes32 initCodeHash = keccak256(
-            abi.encodePacked(
-                type(Token).creationCode,
-                abi.encode(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata)
-            )
-        );
-
-        address expectedTokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
-
+        // Deploy first token
         Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
 
-        assertEq(address(token), expectedTokenAddress);
+        // Deploy second token with different symbol
+        string memory differentSymbol = "TOKEN2";
+        address expectedNewAddress =
+            factory.getTokenAddress(name, differentSymbol, block.chainid, decimals, tokenMetadata.creator);
+        Token newToken = factory.create(name, differentSymbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
 
-        // symbol changes which causes a different initCodeHash and thus a different address
-        initCodeHash = keccak256(
-            abi.encodePacked(
-                type(Token).creationCode,
-                abi.encode(name, "TOKEN2", recipient, 1e18, block.chainid, decimals, tokenMetadata)
-            )
-        );
-        address newExpectedTokenAddress = Create2.computeAddress(SALT, initCodeHash, address(factory));
-        Token newToken = factory.create(name, "TOKEN2", recipient, 1e18, block.chainid, decimals, tokenMetadata);
-        assertEq(address(newToken), newExpectedTokenAddress);
+        assertEq(address(newToken), expectedNewAddress);
         assertNotEq(address(newToken), address(token));
     }
 
@@ -109,6 +97,26 @@ contract TokenFactoryTest is Test {
 
         vm.expectRevert();
         factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
+    }
+
+    function test_differentMetadata_sameAddress() public {
+        // Create a token with certain metadata
+        address originalAddr = factory.getTokenAddress(name, symbol, block.chainid, decimals, tokenMetadata.creator);
+        Token originalToken = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
+
+        // Create tokenMetadata with different description but same creator
+        TokenMetadata memory differentMetadata = TokenMetadata({
+            description: "A different description",
+            website: "https://different.com",
+            image: "https://different.com/image.png",
+            creator: tokenMetadata.creator
+        });
+
+        // Calculate address with different metadata
+        address newAddr = factory.getTokenAddress(name, symbol, block.chainid, decimals, differentMetadata.creator);
+
+        // Addresses should be the same since only the core parameters affect the address
+        assertEq(newAddr, originalAddr);
     }
 
     function test_bytecodeSize_factory() public {

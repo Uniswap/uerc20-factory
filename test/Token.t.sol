@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {Token} from "../src/Token.sol";
+import {TokenFactory} from "../src/TokenFactory.sol";
 import {TokenMetadata} from "../src/libraries/TokenMetadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
@@ -20,6 +21,7 @@ contract TokenTest is Test {
     uint256 constant TRANSFER_AMOUNT = 1e18;
 
     Token token;
+    TokenFactory factory;
     TokenMetadata tokenMetadata;
 
     address recipient = makeAddr("recipient");
@@ -79,7 +81,8 @@ contract TokenTest is Test {
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
     }
 
     function test_crosschainMint_succeeds() public {
@@ -192,7 +195,8 @@ contract TokenTest is Test {
             image: "",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
@@ -210,7 +214,8 @@ contract TokenTest is Test {
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
@@ -228,7 +233,8 @@ contract TokenTest is Test {
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
@@ -241,7 +247,8 @@ contract TokenTest is Test {
 
     function test_tokenURI_description() public {
         tokenMetadata = TokenMetadata({description: "A test token", website: "", image: "", creator: address(this)});
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
@@ -254,7 +261,8 @@ contract TokenTest is Test {
     function test_tokenURI_website() public {
         tokenMetadata =
             TokenMetadata({description: "", website: "https://example.com", image: "", creator: address(this)});
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
@@ -271,7 +279,8 @@ contract TokenTest is Test {
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
@@ -283,7 +292,8 @@ contract TokenTest is Test {
 
     function test_tokenURI_onlyCreator() public {
         tokenMetadata = TokenMetadata({description: "", website: "", image: "", creator: address(this)});
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        factory = new TokenFactory();
+        token = factory.create("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));
