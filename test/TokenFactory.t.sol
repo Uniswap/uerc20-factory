@@ -34,6 +34,7 @@ contract TokenFactoryTest is Test {
         });
     }
 
+    /// forge-config: default.isolate = true
     function test_create_succeeds_withMint() public {
         Token token = factory.create(name, symbol, recipient, 1e18, block.chainid, decimals, tokenMetadata);
         vm.snapshotGasLastCall("deploy new token");
