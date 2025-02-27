@@ -2,14 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
-import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol";
-import {TokenFactory} from "./TokenFactory.sol";
+import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
+import {UniswapERC20Factory} from "./UniswapERC20Factory.sol";
 
-/// @title Token
-/// @notice ERC20 token contract that is Superchain compatible
+/// @title UniswapERC20
+/// @notice ERC20 token contract that is Superchain interop compatible
 /// @dev Uses solady for default permit2 approval
-contract Token is SuperchainERC20 {
-    using TokenMetadataLibrary for TokenMetadata;
+contract UniswapERC20 is SuperchainERC20 {
+    using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
     string private _name;
@@ -17,11 +17,11 @@ contract Token is SuperchainERC20 {
     uint8 private immutable _decimals;
 
     // Metadata that may have extended information
-    TokenMetadata private _metadata;
+    UniswapERC20Metadata private _metadata;
 
     constructor() {
         // Get parameters from the factory that deployed this token
-        TokenFactory.Parameters memory params = TokenFactory(msg.sender).getParameters();
+        UniswapERC20Factory.Parameters memory params = UniswapERC20Factory(msg.sender).getParameters();
 
         _name = params.name;
         _symbol = params.symbol;
