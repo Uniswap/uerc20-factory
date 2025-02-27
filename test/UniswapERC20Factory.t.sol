@@ -35,6 +35,7 @@ contract UniswapERC20FactoryTest is Test {
         });
     }
 
+    /// forge-config: default.isolate = true
     function test_create_succeeds_withMint() public {
         UniswapERC20 token = factory.create(name, symbol, decimals, recipient, 1e18, block.chainid, tokenMetadata);
         vm.snapshotGasLastCall("deploy new token");

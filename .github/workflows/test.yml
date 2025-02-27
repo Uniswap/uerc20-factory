@@ -22,12 +22,12 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: nightly
 
       - name: Build
         run: forge build
 
       - name: Run tests
-        run: forge test --isolate -vvv
+        run: forge test
         env:
           FORGE_SNAPSHOT_CHECK: true
