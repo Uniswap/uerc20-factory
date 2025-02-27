@@ -2,15 +2,15 @@
 pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
-import {TokenMetadata, TokenMetadataLibrary} from "./libraries/TokenMetadata.sol";
+import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
 
-/// @title Token
-/// @notice ERC20 token contract that is Superchain compatible
+/// @title UniswapERC20
+/// @notice ERC20 token contract that is Superchain interop compatible
 /// @dev Uses solady for default permit2 approval
-contract Token is SuperchainERC20 {
-    using TokenMetadataLibrary for TokenMetadata;
+contract UniswapERC20 is SuperchainERC20 {
+    using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
-    TokenMetadata private _metadata;
+    UniswapERC20Metadata private _metadata;
     string private _name;
     string private _symbol;
     uint8 private _decimals;
@@ -18,11 +18,11 @@ contract Token is SuperchainERC20 {
     constructor(
         string memory _tokenName,
         string memory _tokenSymbol,
+        uint8 _tokenDecimals,
         address _recipient,
         uint256 _totalSupply,
         uint256 _homeChainId,
-        uint8 _tokenDecimals,
-        TokenMetadata memory _tokenMetadata
+        UniswapERC20Metadata memory _tokenMetadata
     ) {
         _name = _tokenName;
         _symbol = _tokenSymbol;

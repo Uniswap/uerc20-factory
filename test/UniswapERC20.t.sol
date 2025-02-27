@@ -2,15 +2,15 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {Token} from "../src/Token.sol";
-import {TokenMetadata} from "../src/libraries/TokenMetadata.sol";
+import {UniswapERC20} from "../src/UniswapERC20.sol";
+import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {SuperchainERC20} from "../src/base/SuperchainERC20.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
-contract TokenTest is Test {
+contract UniswapERC20Test is Test {
     using Base64 for string;
     using Strings for address;
 
@@ -18,9 +18,10 @@ contract TokenTest is Test {
     address constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
     uint256 constant INITIAL_BALANCE = 5e18;
     uint256 constant TRANSFER_AMOUNT = 1e18;
+    uint8 constant DECIMALS = 18;
 
-    Token token;
-    TokenMetadata tokenMetadata;
+    UniswapERC20 token;
+    UniswapERC20Metadata tokenMetadata;
 
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
@@ -73,13 +74,13 @@ contract TokenTest is Test {
     event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
 
     function setUp() public {
-        tokenMetadata = TokenMetadata({
+        tokenMetadata = UniswapERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
     }
 
     function test_crosschainMint_succeeds() public {
@@ -170,7 +171,7 @@ contract TokenTest is Test {
     function test_nameSymbolDecimalsTotalSupply() public view {
         assertEq(token.name(), "Test");
         assertEq(token.symbol(), "TEST");
-        assertEq(token.decimals(), 18);
+        assertEq(token.decimals(), DECIMALS);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
@@ -186,13 +187,13 @@ contract TokenTest is Test {
     }
 
     function test_tokenURI_descriptionWebsite() public {
-        tokenMetadata = TokenMetadata({
+        tokenMetadata = UniswapERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
@@ -204,13 +205,13 @@ contract TokenTest is Test {
     }
 
     function test_tokenURI_descriptionImage() public {
-        tokenMetadata = TokenMetadata({
+        tokenMetadata = UniswapERC20Metadata({
             description: "A test token",
             website: "",
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
@@ -222,13 +223,13 @@ contract TokenTest is Test {
     }
 
     function test_tokenURI_websiteImage() public {
-        tokenMetadata = TokenMetadata({
+        tokenMetadata = UniswapERC20Metadata({
             description: "",
             website: "https://example.com",
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
@@ -240,8 +241,9 @@ contract TokenTest is Test {
     }
 
     function test_tokenURI_description() public {
-        tokenMetadata = TokenMetadata({description: "A test token", website: "", image: "", creator: address(this)});
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        tokenMetadata =
+            UniswapERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
@@ -253,8 +255,8 @@ contract TokenTest is Test {
 
     function test_tokenURI_website() public {
         tokenMetadata =
-            TokenMetadata({description: "", website: "https://example.com", image: "", creator: address(this)});
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+            UniswapERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
@@ -265,13 +267,13 @@ contract TokenTest is Test {
     }
 
     function test_tokenURI_image() public {
-        tokenMetadata = TokenMetadata({
+        tokenMetadata = UniswapERC20Metadata({
             description: "",
             website: "",
             image: "https://example.com/image.png",
             creator: address(this)
         });
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
@@ -282,8 +284,8 @@ contract TokenTest is Test {
     }
 
     function test_tokenURI_onlyCreator() public {
-        tokenMetadata = TokenMetadata({description: "", website: "", image: "", creator: address(this)});
-        token = new Token("Test", "TEST", recipient, INITIAL_BALANCE, block.chainid, 18, tokenMetadata);
+        tokenMetadata = UniswapERC20Metadata({description: "", website: "", image: "", creator: address(this)});
+        token = new UniswapERC20("Test", "TEST", DECIMALS, recipient, INITIAL_BALANCE, block.chainid, tokenMetadata);
 
         bytes memory data = decode(token);
         JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));
@@ -292,11 +294,11 @@ contract TokenTest is Test {
         assertEq(jsonToken.creator, address(this));
     }
 
-    function decode(Token tkn) private view returns (bytes memory) {
+    function decode(UniswapERC20 uniswapERC20) private view returns (bytes memory) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
-        string memory uri = tkn.tokenURI();
+        string memory uri = uniswapERC20.tokenURI();
         // Convert the uri to bytes
         bytes memory uriBytes = bytes(uri);
 
