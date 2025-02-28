@@ -22,6 +22,7 @@ interface IUniswapERC20Factory {
     event UniswapERC20Created(
         address indexed tokenAddress,
         uint256 indexed chainId,
+        address indexed creator,
         string name,
         string symbol,
         uint8 decimals,
@@ -55,17 +56,17 @@ interface IUniswapERC20Factory {
     /// @param symbol The symbol of the token
     /// @param decimals The number of decimals the token uses
     /// @param homeChainId The hub chain ID of the token where the total supply is originally minted
+    /// @param metadata The token metadata
     /// @param totalSupply The total supply of the token
     /// @param recipient The address to mint the total supply to
-    /// @param metadata The token metadata
     /// @return The newly deployed Token contract
     function create(
         string memory name,
         string memory symbol,
         uint8 decimals,
         uint256 homeChainId,
+        UniswapERC20Metadata memory metadata,
         address recipient,
-        uint256 totalSupply,
-        UniswapERC20Metadata memory metadata
+        uint256 totalSupply
     ) external returns (UniswapERC20);
 }

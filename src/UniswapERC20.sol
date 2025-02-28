@@ -18,7 +18,7 @@ contract UniswapERC20 is SuperchainERC20 {
     uint8 private immutable _decimals;
 
     // Metadata that may have extended information
-    UniswapERC20Metadata private _metadata;
+    UniswapERC20Metadata public metadata;
 
     constructor() {
         // Get parameters from the factory that deployed this token
@@ -28,12 +28,17 @@ contract UniswapERC20 is SuperchainERC20 {
         _name = params.name;
         _symbol = params.symbol;
         _decimals = params.decimals;
-        _metadata = params.metadata;
+        metadata = params.metadata;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {
             _mint(params.recipient, params.totalSupply);
         }
+    }
+
+    /// @dev Returns the URI of the token metadata.
+    function tokenURI() external view returns (string memory) {
+        return metadata.toJSON();
     }
 
     /// @dev Returns the name of the token.
@@ -49,10 +54,5 @@ contract UniswapERC20 is SuperchainERC20 {
     /// @dev Returns the decimals places of the token.
     function decimals() public view override returns (uint8) {
         return _decimals;
-    }
-
-    /// @dev Returns the URI of the token metadata.
-    function tokenURI() public view returns (string memory) {
-        return _metadata.toJSON();
     }
 }

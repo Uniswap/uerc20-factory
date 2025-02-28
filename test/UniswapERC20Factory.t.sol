@@ -18,6 +18,7 @@ contract UniswapERC20FactoryTest is Test {
     event UniswapERC20Created(
         address indexed tokenAddress,
         uint256 indexed chainId,
+        address indexed creator,
         string name,
         string symbol,
         uint8 decimals,
@@ -36,7 +37,7 @@ contract UniswapERC20FactoryTest is Test {
 
     /// forge-config: default.isolate = true
     function test_create_succeeds_withMint() public {
-        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
         vm.snapshotGasLastCall("deploy new token");
 
         assert(address(token) != address(0));
@@ -49,7 +50,7 @@ contract UniswapERC20FactoryTest is Test {
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {
-        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid + 1, recipient, 1e18, tokenMetadata); // the home chain of this token is different than the current chain
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid + 1, tokenMetadata, recipient, 1e18); // the home chain of this token is different than the current chain
 
         assert(address(token) != address(0));
 
@@ -67,7 +68,7 @@ contract UniswapERC20FactoryTest is Test {
         address expectedAddress =
             factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
-        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
 
         assertEq(address(token), expectedAddress);
     }
@@ -77,30 +78,32 @@ contract UniswapERC20FactoryTest is Test {
             factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
         vm.expectEmit(true, true, true, true);
-        emit UniswapERC20Created(tokenAddress, block.chainid, name, symbol, decimals, block.chainid);
-        factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        emit UniswapERC20Created(
+            tokenAddress, block.chainid, tokenMetadata.creator, name, symbol, decimals, block.chainid
+        );
+        factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
     }
 
     function test_create_succeeds_withDifferentAddresses() public {
         // Deploy first token
-        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
 
         // Deploy second token with different symbol
         string memory differentSymbol = "TOKEN2";
         address expectedNewAddress =
             factory.getUniswapERC20Address(name, differentSymbol, decimals, block.chainid, tokenMetadata.creator);
         UniswapERC20 newToken =
-            factory.create(name, differentSymbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+            factory.create(name, differentSymbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
 
         assertEq(address(newToken), expectedNewAddress);
         assertNotEq(address(newToken), address(token));
     }
 
     function test_create_revertsWithCreateCollision() public {
-        factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
 
         vm.expectRevert();
-        factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
     }
 
     function test_differentMetadata_sameAddress() public view {
@@ -129,7 +132,7 @@ contract UniswapERC20FactoryTest is Test {
     }
 
     function test_bytecodeSize_token() public {
-        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, recipient, 1e18, tokenMetadata);
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
         vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
 }

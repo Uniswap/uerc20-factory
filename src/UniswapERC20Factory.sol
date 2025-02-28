@@ -36,9 +36,9 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         string memory symbol,
         uint8 decimals,
         uint256 homeChainId,
+        UniswapERC20Metadata memory metadata,
         address recipient,
-        uint256 totalSupply,
-        UniswapERC20Metadata memory metadata
+        uint256 totalSupply
     ) external returns (UniswapERC20 newUniswapERC20) {
         /// Only the creator can deploy a token on the home chain
         if (block.chainid == homeChainId && msg.sender != metadata.creator) {
@@ -65,6 +65,8 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit UniswapERC20Created(address(newUniswapERC20), block.chainid, name, symbol, decimals, homeChainId);
+        emit UniswapERC20Created(
+            address(newUniswapERC20), block.chainid, metadata.creator, name, symbol, decimals, homeChainId
+        );
     }
 }

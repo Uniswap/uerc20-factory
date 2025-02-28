@@ -84,7 +84,7 @@ contract UniswapERC20Test is Test {
             creator: address(this)
         });
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
     }
 
     /// forge-config: default.isolate = true
@@ -273,7 +273,7 @@ contract UniswapERC20Test is Test {
             creator: address(this)
         });
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
@@ -292,7 +292,7 @@ contract UniswapERC20Test is Test {
             creator: address(this)
         });
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
@@ -311,7 +311,7 @@ contract UniswapERC20Test is Test {
             creator: address(this)
         });
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
@@ -326,7 +326,7 @@ contract UniswapERC20Test is Test {
         tokenMetadata =
             UniswapERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
@@ -340,7 +340,7 @@ contract UniswapERC20Test is Test {
         tokenMetadata =
             UniswapERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
@@ -358,7 +358,7 @@ contract UniswapERC20Test is Test {
             creator: address(this)
         });
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
@@ -371,7 +371,7 @@ contract UniswapERC20Test is Test {
     function test_tokenURI_onlyCreator() public {
         tokenMetadata = UniswapERC20Metadata({description: "", website: "", image: "", creator: address(this)});
         factory = new UniswapERC20Factory();
-        token = factory.create("Test", "TEST", DECIMALS, block.chainid, recipient, INITIAL_BALANCE, tokenMetadata);
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
 
         bytes memory data = decode(token);
         JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));
