@@ -11,13 +11,13 @@ import {UniswapERC20Factory} from "./UniswapERC20Factory.sol";
 contract UniswapERC20 is SuperchainERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
-    address public immutable factory;
-
     // Core parameters that define token identity
     uint256 public immutable homeChainId;
     string private _name;
     string private _symbol;
     uint8 private immutable _decimals;
+
+    address public immutable factory;
 
     // Metadata that may have extended information
     UniswapERC20Metadata private _metadata;
@@ -27,11 +27,11 @@ contract UniswapERC20 is SuperchainERC20 {
         UniswapERC20Factory.Parameters memory params = UniswapERC20Factory(msg.sender).getParameters();
 
         homeChainId = params.homeChainId;
-        factory = params.factory;
         _name = params.name;
         _symbol = params.symbol;
         _decimals = params.decimals;
         _metadata = params.metadata;
+        factory = params.factory;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {
