@@ -59,7 +59,7 @@ interface IUniswapERC20Factory {
     /// @param totalSupply The total supply of the token
     /// @param recipient The address to mint the total supply to
     /// @param metadata The token metadata
-    /// @return newUniswapERC20 The address of the newly deployed Token contract
+    /// @return The newly deployed Token contract
     function create(
         string memory name,
         string memory symbol,

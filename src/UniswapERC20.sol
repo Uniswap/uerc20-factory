@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
-import {UniswapERC20Factory} from "./UniswapERC20Factory.sol";
+import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
 
 /// @title UniswapERC20
 /// @notice ERC20 token contract that is Superchain interop compatible
@@ -24,7 +24,7 @@ contract UniswapERC20 is SuperchainERC20 {
 
     constructor() {
         // Get parameters from the factory that deployed this token
-        UniswapERC20Factory.Parameters memory params = UniswapERC20Factory(msg.sender).getParameters();
+        IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
 
         homeChainId = params.homeChainId;
         _name = params.name;
