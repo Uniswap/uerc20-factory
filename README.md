@@ -15,28 +15,21 @@ Two main contracts:
   - **Description** (optional)
   - **Website** (optional)
   - **Image** (optional)
+- Description, website, and image are stored on the home chain only, so off-chain indexing is required to access them on other chains.
 - Supports cross-chain transfers via the `SuperchainTokenBridge`, ensuring the total supply remains constant across all chains.
-
-## UniswapERC20 Creation
-
-When deploying a new UniswapERC20, the following parameters must be provided:
-
-- **Name**
-- **Symbol**
-- **Recipient** (address where `totalSupply` will be minted)
-- **Total Supply**
-- **Home Chain ID**
-- **Decimals**
-- **Creator**
-- **Description** (optional)
-- **Website** (optional)
-- **Image** (optional)
 
 ### Deployment Rules
 
 - If deploying on the **home chain**, the caller must be the creator.
 - The total supply is always minted on the home chain.
 - A UniswapERC20 token can be deployed on any chain at the same address in a permissionless way. Tokens can move between chains via the Superchain Token Bridge, which adjusts totalSupply on each chain while ensuring the overall supply remains constant at the amount initially minted on the home chain.
+- When deploying on a non-home chain, the following parameters can be empty for easier propagation.
+  - Total Supply
+  - Recipient
+  - Description
+  - Website
+  - Image
+- The token’s address is uniquely determined by its creator, name, symbol, decimals, and home chain ID.
 
 ## Cross-Chain Transfers
 
@@ -53,7 +46,7 @@ When deploying a new UniswapERC20, the following parameters must be provided:
 ```sh
 forge install
 forge build
-forge test --isolate
+forge test
 ```
 
 ### Formatting
