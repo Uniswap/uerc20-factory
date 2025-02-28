@@ -11,7 +11,10 @@ import {UniswapERC20Factory} from "./UniswapERC20Factory.sol";
 contract UniswapERC20 is SuperchainERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
+    address public immutable factory;
+
     // Core parameters that define token identity
+    uint256 public immutable homeChainId;
     string private _name;
     string private _symbol;
     uint8 private immutable _decimals;
@@ -23,6 +26,8 @@ contract UniswapERC20 is SuperchainERC20 {
         // Get parameters from the factory that deployed this token
         UniswapERC20Factory.Parameters memory params = UniswapERC20Factory(msg.sender).getParameters();
 
+        homeChainId = params.homeChainId;
+        factory = params.factory;
         _name = params.name;
         _symbol = params.symbol;
         _decimals = params.decimals;

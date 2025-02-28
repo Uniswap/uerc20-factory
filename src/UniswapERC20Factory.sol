@@ -13,6 +13,7 @@ contract UniswapERC20Factory {
         string name;
         string symbol;
         address recipient;
+        address factory;
         uint256 totalSupply;
         uint256 homeChainId;
         uint8 decimals;
@@ -40,16 +41,16 @@ contract UniswapERC20Factory {
     /// @param symbol The symbol of the token
     /// @param decimals The number of decimals the token uses
     /// @param homeChainId The hub chain ID of the token
-    /// @param metadata The token metadata
+    /// @param creator The creator of the token
     /// @return The deterministic address of the token
     function getTokenAddress(
         string memory name,
         string memory symbol,
         uint8 decimals,
         uint256 homeChainId,
-        UniswapERC20Metadata memory metadata
+        address creator
     ) public view returns (address) {
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, creator));
         bytes32 initCodeHash = keccak256(abi.encodePacked(type(UniswapERC20).creationCode));
         return Create2.computeAddress(salt, initCodeHash, address(this));
     }
@@ -88,6 +89,7 @@ contract UniswapERC20Factory {
             name: name,
             symbol: symbol,
             recipient: recipient,
+            factory: address(this),
             totalSupply: totalSupply,
             homeChainId: homeChainId,
             decimals: decimals,
@@ -95,7 +97,7 @@ contract UniswapERC20Factory {
         });
 
         // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, tokenMetadata));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, tokenMetadata.creator));
 
         // Deploy the token with the computed salt
         newUniswapERC20 = new UniswapERC20{salt: salt}();

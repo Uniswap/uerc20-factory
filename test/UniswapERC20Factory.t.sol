@@ -64,7 +64,7 @@ contract UniswapERC20FactoryTest is Test {
 
     function test_getTokenAddress_succeeds() public {
         // Calculate expected address using getTokenAddress and verify against actual deployment
-        address expectedAddress = factory.getTokenAddress(name, symbol, decimals, block.chainid, tokenMetadata);
+        address expectedAddress = factory.getTokenAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
         UniswapERC20 token = factory.create(name, symbol, decimals, recipient, 1e18, block.chainid, tokenMetadata);
 
@@ -72,7 +72,7 @@ contract UniswapERC20FactoryTest is Test {
     }
 
     function test_create_succeeds_withEventEmitted() public {
-        address tokenAddress = factory.getTokenAddress(name, symbol, decimals, block.chainid, tokenMetadata);
+        address tokenAddress = factory.getTokenAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
         vm.expectEmit(true, true, true, true);
         emit UniswapERC20Created(tokenAddress, block.chainid, name, symbol, decimals, block.chainid);
@@ -86,8 +86,9 @@ contract UniswapERC20FactoryTest is Test {
         // Deploy second token with different symbol
         string memory differentSymbol = "TOKEN2";
         address expectedNewAddress =
-            factory.getTokenAddress(name, differentSymbol, decimals, block.chainid, tokenMetadata);
-        UniswapERC20 newToken = factory.create(name, differentSymbol, decimals, recipient, 1e18, block.chainid, tokenMetadata);
+            factory.getTokenAddress(name, differentSymbol, decimals, block.chainid, tokenMetadata.creator);
+        UniswapERC20 newToken =
+            factory.create(name, differentSymbol, decimals, recipient, 1e18, block.chainid, tokenMetadata);
 
         assertEq(address(newToken), expectedNewAddress);
         assertNotEq(address(newToken), address(token));
