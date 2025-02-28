@@ -53,7 +53,6 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
             homeChainId: homeChainId,
             recipient: recipient,
             decimals: decimals,
-            factory: address(this),
             metadata: metadata
         });
 

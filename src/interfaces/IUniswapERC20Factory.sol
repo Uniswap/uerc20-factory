@@ -15,7 +15,6 @@ interface IUniswapERC20Factory {
         uint256 homeChainId;
         address recipient;
         uint8 decimals;
-        address factory;
         UniswapERC20Metadata metadata;
     }
 

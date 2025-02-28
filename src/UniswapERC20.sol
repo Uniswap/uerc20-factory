@@ -17,8 +17,6 @@ contract UniswapERC20 is SuperchainERC20 {
     string private _symbol;
     uint8 private immutable _decimals;
 
-    address public immutable factory;
-
     // Metadata that may have extended information
     UniswapERC20Metadata private _metadata;
 
@@ -31,7 +29,6 @@ contract UniswapERC20 is SuperchainERC20 {
         _symbol = params.symbol;
         _decimals = params.decimals;
         _metadata = params.metadata;
-        factory = params.factory;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {
