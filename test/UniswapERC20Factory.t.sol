@@ -106,7 +106,16 @@ contract UniswapERC20FactoryTest is Test {
         factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
     }
 
-    function test_differentMetadata_sameAddress() public view {
+    function test_create_metadataClearedOnDifferentChain() public {
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid + 1, tokenMetadata, recipient, 1e18);
+
+        UniswapERC20Metadata memory metadata = token.getMetadata();
+        assertEq(metadata.description, "");
+        assertEq(metadata.image, "");
+        assertEq(metadata.website, "");
+    }
+
+    function test_getUniswapERC20Address_differentMetadata_sameAddress() public view {
         // Create a token with certain metadata
         address originalAddr =
             factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);

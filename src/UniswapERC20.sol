@@ -4,14 +4,16 @@ pragma solidity ^0.8.28;
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
 import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
+import {IUniswapERC20} from "./interfaces/IUniswapERC20.sol";
 
 /// @title UniswapERC20
 /// @notice ERC20 token contract that is Superchain interop compatible
 /// @dev Uses solady for default permit2 approval
-contract UniswapERC20 is SuperchainERC20 {
+contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
+    /// @inheritdoc IUniswapERC20
     uint256 public immutable homeChainId;
     string private _name;
     string private _symbol;
@@ -36,9 +38,14 @@ contract UniswapERC20 is SuperchainERC20 {
         }
     }
 
-    /// @dev Returns the URI of the token metadata.
-    function tokenURI() external view returns (string memory) {
+    /// @inheritdoc IUniswapERC20
+    function tokenURI() external view override returns (string memory) {
         return metadata.toJSON();
+    }
+
+    /// @inheritdoc IUniswapERC20
+    function getMetadata() external view returns (UniswapERC20Metadata memory) {
+        return metadata;
     }
 
     /// @dev Returns the name of the token.

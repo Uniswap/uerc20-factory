@@ -45,6 +45,14 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
             revert NotCreator(msg.sender, metadata.creator);
         }
 
+        // Clear metadata if the token is not on the home chain
+        // Metadata is only stored on the home chain
+        if (block.chainid != homeChainId) {
+            metadata.description = "";
+            metadata.website = "";
+            metadata.image = "";
+        }
+
         // Store parameters transiently for token to access during construction
         parameters = Parameters({
             name: name,
