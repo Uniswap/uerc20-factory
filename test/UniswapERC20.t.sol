@@ -10,6 +10,7 @@ import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {SuperchainERC20} from "../src/base/SuperchainERC20.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import "forge-std/console2.sol";
 
 contract UniswapERC20Test is Test {
     using Base64 for string;
@@ -265,6 +266,26 @@ contract UniswapERC20Test is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
+    function test_tokenURI_maliciousInjectionDetected() public {
+        tokenMetadata = UniswapERC20Metadata({
+            description: "A test token",
+            website: "https://example.com",
+            image: "Normal description\" , \"Website\": \"https://malicious.com",
+            creator: address(this)
+        });
+        factory = new UniswapERC20Factory();
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
+
+        bytes memory data = decode(token);
+        JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.description, "A test token");
+        assertEq(jsonToken.website, "https://example.com");
+        assertEq(jsonToken.image, "Normal description\" , \"Website\": \"https://malicious.com");
+    }
+
     function test_tokenURI_descriptionWebsite() public {
         tokenMetadata = UniswapERC20Metadata({
             description: "A test token",
@@ -385,6 +406,7 @@ contract UniswapERC20Test is Test {
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
         string memory uri = uniswapERC20.tokenURI();
+        console2.log("uri", uri);
         // Convert the uri to bytes
         bytes memory uriBytes = bytes(uri);
 

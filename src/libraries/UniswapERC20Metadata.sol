@@ -15,6 +15,7 @@ struct UniswapERC20Metadata {
 /// @notice Library for generating base64 encoded JSON token metadata
 library UniswapERC20MetadataLibrary {
     using Strings for address;
+    using Strings for string;
 
     /// @notice Generates a base64 encoded JSON string of the token metadata
     /// @param metadata The token metadata
@@ -30,13 +31,13 @@ library UniswapERC20MetadataLibrary {
         bytes memory json = abi.encodePacked('{"Creator":"', metadata.creator.toChecksumHexString(), '"');
 
         if (bytes(metadata.description).length > 0) {
-            json = abi.encodePacked(json, ', "Description":"', metadata.description, '"');
+            json = abi.encodePacked(json, ', "Description":"', metadata.description.escapeJSON(), '"');
         }
         if (bytes(metadata.website).length > 0) {
-            json = abi.encodePacked(json, ', "Website":"', metadata.website, '"');
+            json = abi.encodePacked(json, ', "Website":"', metadata.website.escapeJSON(), '"');
         }
         if (bytes(metadata.image).length > 0) {
-            json = abi.encodePacked(json, ', "Image":"', metadata.image, '"');
+            json = abi.encodePacked(json, ', "Image":"', metadata.image.escapeJSON(), '"');
         }
 
         return abi.encodePacked(json, "}");
