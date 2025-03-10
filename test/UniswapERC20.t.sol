@@ -10,7 +10,6 @@ import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {SuperchainERC20} from "../src/base/SuperchainERC20.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
-import "forge-std/console2.sol";
 
 contract UniswapERC20Test is Test {
     using Base64 for string;
@@ -406,7 +405,6 @@ contract UniswapERC20Test is Test {
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
         string memory uri = uniswapERC20.tokenURI();
-        console2.log("uri", uri);
         // Convert the uri to bytes
         bytes memory uriBytes = bytes(uri);
 
