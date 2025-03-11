@@ -14,8 +14,7 @@ struct UniswapERC20Metadata {
 /// @title UniswapERC20MetadataLibrary
 /// @notice Library for generating base64 encoded JSON token metadata
 library UniswapERC20MetadataLibrary {
-    using Strings for address;
-    using Strings for string;
+    using Strings for *;
 
     /// @notice Generates a base64 encoded JSON string of the token metadata
     /// @param metadata The token metadata
