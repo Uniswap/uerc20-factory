@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.28;
 
 import {UniswapERC20} from "./UniswapERC20.sol";
 import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";

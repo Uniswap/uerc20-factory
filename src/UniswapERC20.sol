@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
@@ -41,11 +41,6 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
     /// @inheritdoc IUniswapERC20
     function tokenURI() external view override returns (string memory) {
         return metadata.toJSON();
-    }
-
-    /// @inheritdoc IUniswapERC20
-    function getMetadata() external view returns (UniswapERC20Metadata memory) {
-        return metadata;
     }
 
     /// @dev Returns the name of the token.
