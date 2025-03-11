@@ -43,11 +43,6 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
         return metadata.toJSON();
     }
 
-    /// @inheritdoc IUniswapERC20
-    function getMetadata() external view returns (UniswapERC20Metadata memory) {
-        return metadata;
-    }
-
     /// @dev Returns the name of the token.
     function name() public view override returns (string memory) {
         return _name;
