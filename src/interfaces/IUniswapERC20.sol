@@ -9,9 +9,6 @@ interface IUniswapERC20 {
     /// @notice Returns the home chain ID of the token
     function homeChainId() external view returns (uint256);
 
-    /// @notice Returns the metadata of the token which includes creator, description, website, and image
-    function getMetadata() external view returns (UniswapERC20Metadata memory);
-
     /// @notice Returns the URI of the token metadata.
     function tokenURI() external view returns (string memory);
 }
