@@ -57,8 +57,8 @@ interface IUniswapERC20Factory {
     /// @param decimals The number of decimals the token uses
     /// @param homeChainId The hub chain ID of the token where the total supply is originally minted
     /// @param metadata The token metadata
-    /// @param totalSupply The total supply of the token
     /// @param recipient The address to mint the total supply to
+    /// @param totalSupply The total supply of the token
     /// @return The newly deployed Token contract
     function create(
         string memory name,
