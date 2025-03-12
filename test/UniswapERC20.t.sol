@@ -269,7 +269,7 @@ contract UniswapERC20Test is Test {
         tokenMetadata = UniswapERC20Metadata({
             description: "A test token",
             website: "https://example.com",
-            image: "Normal description\" , \"Website\": \"https://malicious.com",
+            image: "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890",
             creator: address(this)
         });
         factory = new UniswapERC20Factory();
@@ -279,10 +279,10 @@ contract UniswapERC20Test is Test {
         JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
+        assertEq(jsonToken.creator, address(this)); // detects correct creator, not the malicious one
         assertEq(jsonToken.description, "A test token");
         assertEq(jsonToken.website, "https://example.com");
-        assertEq(jsonToken.image, "Normal description\" , \"Website\": \"https://malicious.com");
+        assertEq(jsonToken.image, "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890");
     }
 
     function test_tokenURI_descriptionWebsite() public {
