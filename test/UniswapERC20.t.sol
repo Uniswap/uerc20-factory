@@ -265,6 +265,26 @@ contract UniswapERC20Test is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
+    function test_tokenURI_maliciousInjectionDetected() public {
+        tokenMetadata = UniswapERC20Metadata({
+            description: "A test token",
+            website: "https://example.com",
+            image: "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890",
+            creator: address(this)
+        });
+        factory = new UniswapERC20Factory();
+        token = factory.create("Test", "TEST", DECIMALS, block.chainid, tokenMetadata, recipient, INITIAL_BALANCE);
+
+        bytes memory data = decode(token);
+        JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
+
+        // Parse JSON to extract individual fields
+        assertEq(jsonToken.creator, address(this)); // detects correct creator, not the malicious one
+        assertEq(jsonToken.description, "A test token");
+        assertEq(jsonToken.website, "https://example.com");
+        assertEq(jsonToken.image, "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890");
+    }
+
     function test_tokenURI_descriptionWebsite() public {
         tokenMetadata = UniswapERC20Metadata({
             description: "A test token",

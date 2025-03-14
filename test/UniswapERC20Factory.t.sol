@@ -6,6 +6,7 @@ import {UniswapERC20Factory} from "../src/UniswapERC20Factory.sol";
 import {UniswapERC20} from "../src/UniswapERC20.sol";
 import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
+import {IUniswapERC20Factory} from "../src/interfaces/IUniswapERC20Factory.sol";
 
 contract UniswapERC20FactoryTest is Test {
     UniswapERC20Factory public factory;
@@ -14,6 +15,7 @@ contract UniswapERC20FactoryTest is Test {
     string name = "Test Token";
     string symbol = "TOKEN";
     uint8 decimals = 18;
+    address bob = makeAddr("bob");
 
     event UniswapERC20Created(
         address indexed tokenAddress,
@@ -49,7 +51,28 @@ contract UniswapERC20FactoryTest is Test {
         assertEq(token.balanceOf(recipient), 1e18);
     }
 
+    function test_create_revertsWithNotCreator() public {
+        vm.prank(bob);
+        vm.expectRevert(abi.encodeWithSelector(IUniswapERC20Factory.NotCreator.selector, bob, tokenMetadata.creator));
+        factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
+    }
+
     function test_create_succeeds_withoutMintOnDifferentChain() public {
+        UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid + 1, tokenMetadata, recipient, 1e18); // the home chain of this token is different than the current chain
+
+        assert(address(token) != address(0));
+
+        assertEq(token.name(), name);
+        assertEq(token.symbol(), symbol);
+        assertEq(token.decimals(), decimals);
+
+        // no tokens have been minted because the current chain is not the token's home chain
+        assertEq(token.totalSupply(), 0);
+        assertEq(token.balanceOf(recipient), 0);
+    }
+
+    function test_create_succeeds_withoutMintOnDifferentChainAndNotCreator() public {
+        vm.prank(bob);
         UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid + 1, tokenMetadata, recipient, 1e18); // the home chain of this token is different than the current chain
 
         assert(address(token) != address(0));
