@@ -15,12 +15,12 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
     // Core parameters that define token identity
     /// @inheritdoc IUniswapERC20
     uint256 public immutable homeChainId;
+    uint8 private immutable _decimals;
     string private _name;
     string private _symbol;
-    uint8 private immutable _decimals;
 
     // Metadata that may have extended information
-    UniswapERC20Metadata public metadata;
+    UniswapERC20Metadata private _metadata;
 
     constructor() {
         // Get parameters from the factory that deployed this token
@@ -30,7 +30,7 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
         _name = params.name;
         _symbol = params.symbol;
         _decimals = params.decimals;
-        metadata = params.metadata;
+        _metadata = params.metadata;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {
@@ -40,7 +40,12 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
 
     /// @inheritdoc IUniswapERC20
     function tokenURI() external view override returns (string memory) {
-        return metadata.toJSON();
+        return _metadata.toJSON();
+    }
+
+    /// @inheritdoc IUniswapERC20
+    function metadata() external view override returns (UniswapERC20Metadata memory) {
+        return _metadata;
     }
 
     /// @dev Returns the name of the token.
