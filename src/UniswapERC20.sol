@@ -5,6 +5,7 @@ import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
 import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
 import {IUniswapERC20} from "./interfaces/IUniswapERC20.sol";
+import {ERC20} from "solady/tokens/ERC20.sol";
 
 /// @title UniswapERC20
 /// @notice ERC20 token contract that is Superchain interop compatible
@@ -48,18 +49,18 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
         return _metadata;
     }
 
-    /// @dev Returns the name of the token.
-    function name() public view override returns (string memory) {
+    /// @inheritdoc IUniswapERC20
+    function name() public view override(ERC20, IUniswapERC20) returns (string memory) {
         return _name;
     }
 
-    /// @dev Returns the symbol of the token.
-    function symbol() public view override returns (string memory) {
+    /// @inheritdoc IUniswapERC20
+    function symbol() public view override(ERC20, IUniswapERC20) returns (string memory) {
         return _symbol;
     }
 
-    /// @dev Returns the decimals places of the token.
-    function decimals() public view override returns (uint8) {
+    /// @inheritdoc IUniswapERC20
+    function decimals() public view override(ERC20, IUniswapERC20) returns (uint8) {
         return _decimals;
     }
 }
