@@ -167,4 +167,9 @@ contract UniswapERC20FactoryTest is Test {
         UniswapERC20 token = factory.create(name, symbol, decimals, block.chainid, tokenMetadata, recipient, 1e18);
         vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
+
+    function test_initcodeHash_token() public {
+        bytes32 initCodeHash = keccak256(abi.encodePacked(type(UniswapERC20).creationCode));
+        vm.snapshotValue("Token initcode hash", uint256(initCodeHash));
+    }
 }
