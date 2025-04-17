@@ -3,6 +3,7 @@ pragma solidity 0.8.28;
 
 import {UniswapERC20} from "./UniswapERC20.sol";
 import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
+import {ITokenFactory} from "./interfaces/ITokenFactory.sol";
 import {UniswapERC20Metadata} from "./libraries/UniswapERC20Metadata.sol";
 import {Create2} from "openzeppelin-contracts/contracts/utils/Create2.sol";
 
@@ -30,16 +31,17 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         return parameters;
     }
 
-    /// @inheritdoc IUniswapERC20Factory
-    function create(
+    /// @inheritdoc ITokenFactory
+    function createToken(
         string memory name,
         string memory symbol,
         uint8 decimals,
-        uint256 homeChainId,
-        UniswapERC20Metadata memory metadata,
-        address recipient,
-        uint256 totalSupply
-    ) external returns (UniswapERC20 newUniswapERC20) {
+        uint256 totalSupply,
+        bytes calldata data
+    ) external returns (address tokenAddress) {
+        (uint256 homeChainId, UniswapERC20Metadata memory metadata, address recipient) =
+            abi.decode(data, (uint256, UniswapERC20Metadata, address));
+
         /// Only the creator can deploy a token on the home chain
         if (block.chainid == homeChainId && msg.sender != metadata.creator) {
             revert NotCreator(msg.sender, metadata.creator);
@@ -68,13 +70,11 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator));
 
         // Deploy the token with the computed salt
-        newUniswapERC20 = new UniswapERC20{salt: salt}();
+        tokenAddress = address(new UniswapERC20{salt: salt}());
 
         // Clear parameters after deployment
         delete parameters;
 
-        emit UniswapERC20Created(
-            address(newUniswapERC20), block.chainid, metadata.creator, name, symbol, decimals, homeChainId
-        );
+        emit UniswapERC20Created(tokenAddress, block.chainid, metadata.creator, name, symbol, decimals, homeChainId);
     }
 }

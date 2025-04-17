@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import {UniswapERC20Metadata} from "../libraries/UniswapERC20Metadata.sol";
 import {UniswapERC20} from "../UniswapERC20.sol";
+import {ITokenFactory} from "./ITokenFactory.sol";
 
 /// @title IUniswapERC20Factory
 /// @notice Interface for the UniswapERC20Factory contract
-interface IUniswapERC20Factory {
+interface IUniswapERC20Factory is ITokenFactory {
     /// @notice Parameters struct to be used by the UniswapERC20 during construction
     struct Parameters {
         string name;
@@ -50,23 +51,4 @@ interface IUniswapERC20Factory {
     /// @notice Gets the parameters for token initialization
     /// @return The parameters structure with all token initialization data
     function getParameters() external view returns (Parameters memory);
-
-    /// @notice Deploys a new UniswapERC20 contract
-    /// @param name The name of the token
-    /// @param symbol The symbol of the token
-    /// @param decimals The number of decimals the token uses
-    /// @param homeChainId The hub chain ID of the token where the total supply is originally minted
-    /// @param metadata The token metadata
-    /// @param recipient The address to mint the total supply to
-    /// @param totalSupply The total supply of the token
-    /// @return The newly deployed Token contract
-    function create(
-        string memory name,
-        string memory symbol,
-        uint8 decimals,
-        uint256 homeChainId,
-        UniswapERC20Metadata memory metadata,
-        address recipient,
-        uint256 totalSupply
-    ) external returns (UniswapERC20);
 }
