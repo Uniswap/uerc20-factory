@@ -19,17 +19,6 @@ interface IUniswapERC20Factory is ITokenFactory {
         UniswapERC20Metadata metadata;
     }
 
-    /// @notice Emitted when a new UniswapERC20 token is created
-    event UniswapERC20Created(
-        address indexed tokenAddress,
-        uint256 indexed chainId,
-        address indexed creator,
-        string name,
-        string symbol,
-        uint8 decimals,
-        uint256 homeChainId
-    );
-
     /// @notice Thrown when the caller is not the creator in the initial deployment of a token
     error NotCreator(address sender, address creator);
 

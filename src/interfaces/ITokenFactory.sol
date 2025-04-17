@@ -6,6 +6,9 @@ pragma solidity ^0.8.0;
  * @dev Generic interface for a token factory.
  */
 interface ITokenFactory {
+    /// @notice Emitted when a new token is created
+    event TokenCreated(address tokenAddress, string name, string symbol, uint8 decimals, bytes additionalInfo);
+
     /**
      * @notice Creates a new token contract
      * @dev The token must be minted so that `totalSupply` is owned by the caller
