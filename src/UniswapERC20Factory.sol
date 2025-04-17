@@ -37,10 +37,10 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         string memory symbol,
         uint8 decimals,
         uint256 totalSupply,
+        address recipient,
         bytes calldata data
     ) external returns (address tokenAddress) {
-        (uint256 homeChainId, UniswapERC20Metadata memory metadata, address recipient) =
-            abi.decode(data, (uint256, UniswapERC20Metadata, address));
+        (uint256 homeChainId, UniswapERC20Metadata memory metadata) = abi.decode(data, (uint256, UniswapERC20Metadata));
 
         /// Only the creator can deploy a token on the home chain
         if (block.chainid == homeChainId && msg.sender != metadata.creator) {

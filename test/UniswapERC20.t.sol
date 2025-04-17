@@ -86,7 +86,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
     }
@@ -279,7 +279,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -303,7 +303,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -326,7 +326,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -349,7 +349,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -368,7 +368,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -386,7 +386,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -408,7 +408,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
@@ -425,7 +425,7 @@ contract UniswapERC20Test is Test {
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, abi.encode(block.chainid, tokenMetadata, recipient)
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
             )
         );
 
