@@ -11,7 +11,6 @@ interface ITokenFactory {
 
     /**
      * @notice Creates a new token contract
-     * @dev The token must be minted so that `totalSupply` is owned by the caller
      * @param name          The ERC20-style name of the token.
      * @param symbol        The ERC20-style symbol of the token.
      * @param decimals      The number of decimal places for the token.
