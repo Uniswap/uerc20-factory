@@ -18,17 +18,17 @@ contract UniswapERC20 is SuperchainERC20 {
     string private _symbol;
 
     // Metadata that may have extended information
-    UniswapERC20Metadata private _metadata;
+    UniswapERC20Metadata public metadata;
 
     constructor() {
         // Get parameters from the factory that deployed this token
         IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
 
-        homeChainId = params.homeChainId;
         _name = params.name;
         _symbol = params.symbol;
         _decimals = params.decimals;
-        _metadata = params.metadata;
+        homeChainId = params.homeChainId;
+        metadata = params.metadata;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {
@@ -38,12 +38,7 @@ contract UniswapERC20 is SuperchainERC20 {
 
     /// @notice Returns the URI of the token metadata.
     function tokenURI() external view returns (string memory) {
-        return _metadata.toJSON();
-    }
-
-    /// @notice Returns the metadata of the token.
-    function metadata() external view returns (UniswapERC20Metadata memory) {
-        return _metadata;
+        return metadata.toJSON();
     }
 
     /// @notice Returns the name of the token.
