@@ -17,7 +17,7 @@ contract UniswapERC20FactoryTest is Test {
     uint8 decimals = 18;
     address bob = makeAddr("bob");
 
-    event TokenCreated(address tokenAddress, string name, string symbol, uint8 decimals);
+    event TokenCreated(address tokenAddress);
 
     function setUp() public {
         factory = new UniswapERC20Factory();
@@ -101,7 +101,7 @@ contract UniswapERC20FactoryTest is Test {
             factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
         vm.expectEmit(true, true, true, true);
-        emit TokenCreated(tokenAddress, name, symbol, decimals);
+        emit TokenCreated(tokenAddress);
         factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
     }
 

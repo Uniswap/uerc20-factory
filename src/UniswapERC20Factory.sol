@@ -75,6 +75,6 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress, name, symbol, decimals);
+        emit TokenCreated(tokenAddress);
     }
 }
