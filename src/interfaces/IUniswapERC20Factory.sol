@@ -13,7 +13,6 @@ interface IUniswapERC20Factory is ITokenFactory {
         string name;
         string symbol;
         uint256 totalSupply;
-        uint256 homeChainId;
         address recipient;
         uint8 decimals;
         UniswapERC20Metadata metadata;

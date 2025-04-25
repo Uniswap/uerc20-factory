@@ -40,16 +40,16 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         address recipient,
         bytes calldata data
     ) external returns (address tokenAddress) {
-        (uint256 homeChainId, UniswapERC20Metadata memory metadata) = abi.decode(data, (uint256, UniswapERC20Metadata));
+        UniswapERC20Metadata memory metadata = abi.decode(data, (UniswapERC20Metadata));
 
         /// Only the creator can deploy a token on the home chain
-        if (block.chainid == homeChainId && msg.sender != metadata.creator) {
+        if (block.chainid == metadata.homeChainId && msg.sender != metadata.creator) {
             revert NotCreator(msg.sender, metadata.creator);
         }
 
         // Clear metadata if the token is not on the home chain
         // Metadata is only stored on the home chain
-        if (block.chainid != homeChainId) {
+        if (block.chainid != metadata.homeChainId) {
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
@@ -60,14 +60,13 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
             name: name,
             symbol: symbol,
             totalSupply: totalSupply,
-            homeChainId: homeChainId,
             recipient: recipient,
             decimals: decimals,
             metadata: metadata
         });
 
         // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, metadata.homeChainId, metadata.creator));
 
         // Deploy the token with the computed salt
         tokenAddress = address(new UniswapERC20{salt: salt}());

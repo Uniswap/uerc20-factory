@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {Test} from "forge-std/Test.sol";
+import {Test, console2} from "forge-std/Test.sol";
 import {UniswapERC20} from "../src/UniswapERC20.sol";
 import {UniswapERC20Factory} from "../src/UniswapERC20Factory.sol";
 import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
@@ -28,50 +28,6 @@ contract UniswapERC20Test is Test {
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
 
-    struct JsonTokenAllFields {
-        address creator;
-        string description;
-        string image;
-        string website;
-    }
-
-    struct JsonTokenDescriptionWebsite {
-        address creator;
-        string description;
-        string website;
-    }
-
-    struct JsonTokenDescriptionImage {
-        address creator;
-        string description;
-        string image;
-    }
-
-    struct JsonTokenWebsiteImage {
-        address creator;
-        string image;
-        string website;
-    }
-
-    struct JsonTokenDescription {
-        address creator;
-        string description;
-    }
-
-    struct JsonTokenWebsite {
-        address creator;
-        string website;
-    }
-
-    struct JsonTokenImage {
-        address creator;
-        string image;
-    }
-
-    struct JsonTokenCreator {
-        address creator;
-    }
-
     event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
     event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -81,13 +37,12 @@ contract UniswapERC20Test is Test {
             description: "A test token",
             website: "https://example.com",
             image: "https://example.com/image.png",
-            creator: address(this)
+            creator: address(this),
+            homeChainId: block.chainid
         });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
     }
 
@@ -259,8 +214,7 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_allFields() public view {
-        bytes memory data = decode(token);
-        JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -274,17 +228,15 @@ contract UniswapERC20Test is Test {
             description: "A test token",
             website: "https://example.com",
             image: "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890",
-            creator: address(this)
+            creator: address(this),
+            homeChainId: block.chainid
         });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this)); // detects correct creator, not the malicious one
@@ -298,17 +250,15 @@ contract UniswapERC20Test is Test {
             description: "A test token",
             website: "https://example.com",
             image: "",
-            creator: address(this)
+            creator: address(this),
+            homeChainId: block.chainid
         });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -321,17 +271,15 @@ contract UniswapERC20Test is Test {
             description: "A test token",
             website: "",
             image: "https://example.com/image.png",
-            creator: address(this)
+            creator: address(this),
+            homeChainId: block.chainid
         });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -344,17 +292,15 @@ contract UniswapERC20Test is Test {
             description: "",
             website: "https://example.com",
             image: "https://example.com/image.png",
-            creator: address(this)
+            creator: address(this),
+            homeChainId: block.chainid
         });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -363,17 +309,19 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_description() public {
-        tokenMetadata =
-            UniswapERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
+        tokenMetadata = UniswapERC20Metadata({
+            description: "A test token",
+            website: "",
+            image: "",
+            creator: address(this),
+            homeChainId: block.chainid
+        });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -381,17 +329,19 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_website() public {
-        tokenMetadata =
-            UniswapERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
+        tokenMetadata = UniswapERC20Metadata({
+            description: "",
+            website: "https://example.com",
+            image: "",
+            creator: address(this),
+            homeChainId: block.chainid
+        });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -403,17 +353,15 @@ contract UniswapERC20Test is Test {
             description: "",
             website: "",
             image: "https://example.com/image.png",
-            creator: address(this)
+            creator: address(this),
+            homeChainId: block.chainid
         });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
@@ -421,22 +369,25 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_onlyCreator() public {
-        tokenMetadata = UniswapERC20Metadata({description: "", website: "", image: "", creator: address(this)});
+        tokenMetadata = UniswapERC20Metadata({
+            description: "",
+            website: "",
+            image: "",
+            creator: address(this),
+            homeChainId: block.chainid
+        });
         factory = new UniswapERC20Factory();
         token = UniswapERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
-            )
+            factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata))
         );
 
-        bytes memory data = decode(token);
-        JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));
+        UniswapERC20Metadata memory jsonToken = decode(token);
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
     }
 
-    function decode(UniswapERC20 uniswapERC20) private view returns (bytes memory) {
+    function decode(UniswapERC20 uniswapERC20) private view returns (UniswapERC20Metadata memory metadata) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
@@ -456,6 +407,10 @@ contract UniswapERC20Test is Test {
         string memory json = string(decoded);
 
         // decode json
-        return vm.parseJson(json);
+        metadata.creator = vm.parseJsonAddress(json, ".Creator");
+        metadata.homeChainId = vm.parseJsonUint(json, ".HomeChainID");
+        metadata.description = (vm.keyExists(json, ".Description")) ? vm.parseJsonString(json, ".Description") : "EMPTY";
+        metadata.website = (vm.keyExists(json, ".Website")) ? vm.parseJsonString(json, ".Website") : "EMPTY";
+        metadata.image = (vm.keyExists(json, ".Image")) ? vm.parseJsonString(json, ".Image") : "EMPTY";
     }
 }

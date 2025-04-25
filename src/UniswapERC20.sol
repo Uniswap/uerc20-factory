@@ -13,8 +13,6 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
-    /// @inheritdoc IUniswapERC20
-    uint256 public immutable homeChainId;
     uint8 private immutable _decimals;
     string private _name;
     string private _symbol;
@@ -26,14 +24,13 @@ contract UniswapERC20 is SuperchainERC20, IUniswapERC20 {
         // Get parameters from the factory that deployed this token
         IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
 
-        homeChainId = params.homeChainId;
         _name = params.name;
         _symbol = params.symbol;
         _decimals = params.decimals;
         _metadata = params.metadata;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
-        if (block.chainid == params.homeChainId) {
+        if (block.chainid == params.metadata.homeChainId) {
             _mint(params.recipient, params.totalSupply);
         }
     }
