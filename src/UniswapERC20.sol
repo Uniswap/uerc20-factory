@@ -12,7 +12,7 @@ contract UniswapERC20 is SuperchainERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
-    uint256 public immutable homeChainId;
+    uint256 public immutable homeChainId; // The chain where totalSupply is minted and metadata is stored
     uint8 private immutable _decimals;
     string private _name;
     string private _symbol;
