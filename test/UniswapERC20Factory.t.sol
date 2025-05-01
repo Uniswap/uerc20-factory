@@ -137,10 +137,11 @@ contract UniswapERC20FactoryTest is Test {
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
         );
 
-        UniswapERC20Metadata memory metadata = token.metadata();
-        assertEq(metadata.description, "");
-        assertEq(metadata.image, "");
-        assertEq(metadata.website, "");
+        (address creator, string memory description, string memory website, string memory image) = token.metadata();
+        assertEq(creator, tokenMetadata.creator);
+        assertEq(description, "");
+        assertEq(image, "");
+        assertEq(website, "");
     }
 
     function test_getUniswapERC20Address_differentMetadata_sameAddress() public view {
