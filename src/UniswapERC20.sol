@@ -43,7 +43,7 @@ contract UniswapERC20 {
         return _decimals;
     }
 
-    function _fetchAndProcessParameters() internal override {
+    function _fetchAndProcessParameters() internal virtual {
         IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
 
         _name = params.name;
