@@ -2,18 +2,18 @@
 pragma solidity 0.8.28;
 
 import {UniswapERC20} from "./UniswapERC20.sol";
-import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
+import {IUniswapSuperchainERC20Factory} from "./interfaces/IUniswapSuperchainERC20Factory.sol";
 import {ITokenFactory} from "./interfaces/ITokenFactory.sol";
 import {UniswapERC20Metadata} from "./libraries/UniswapERC20Metadata.sol";
 import {Create2} from "openzeppelin-contracts/contracts/utils/Create2.sol";
 
-/// @title UniswapERC20Factory
+/// @title UniswapSuperchainERC20Factory
 /// @notice Deploys new UniswapERC20 contracts
-contract UniswapERC20Factory is IUniswapERC20Factory {
+contract UniswapSuperchainERC20Factory is IUniswapSuperchainERC20Factory {
     /// @dev Parameters stored transiently for token initialization
     Parameters private parameters;
 
-    /// @inheritdoc IUniswapERC20Factory
+    /// @inheritdoc IUniswapSuperchainERC20Factory
     function getUniswapERC20Address(
         string memory name,
         string memory symbol,
@@ -26,7 +26,7 @@ contract UniswapERC20Factory is IUniswapERC20Factory {
         return Create2.computeAddress(salt, initCodeHash, address(this));
     }
 
-    /// @inheritdoc IUniswapERC20Factory
+    /// @inheritdoc IUniswapSuperchainERC20Factory
     function getParameters() external view returns (Parameters memory) {
         return parameters;
     }

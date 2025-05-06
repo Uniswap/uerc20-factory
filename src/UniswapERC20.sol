@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import {SuperchainERC20} from "./base/SuperchainERC20.sol";
 import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
 import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
 
 /// @title UniswapERC20
-/// @notice ERC20 token contract that is Superchain interop compatible
+/// @notice ERC20 token contract
 /// @dev Uses solady for default permit2 approval
-contract UniswapERC20 is SuperchainERC20 {
+contract UniswapERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
-    uint256 public immutable homeChainId; // The chain where totalSupply is minted and metadata is stored
     uint8 private immutable _decimals;
     string private _name;
     string private _symbol;
@@ -21,19 +19,8 @@ contract UniswapERC20 is SuperchainERC20 {
     UniswapERC20Metadata public metadata;
 
     constructor() {
-        // Get parameters from the factory that deployed this token
-        IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
-
-        _name = params.name;
-        _symbol = params.symbol;
-        _decimals = params.decimals;
-        homeChainId = params.homeChainId;
-        metadata = params.metadata;
-
-        // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
-        if (block.chainid == params.homeChainId) {
-            _mint(params.recipient, params.totalSupply);
-        }
+        // Get constructor parameters from factory, and process them
+        _fetchAndProcessParameters();
     }
 
     /// @notice Returns the URI of the token metadata.
@@ -54,5 +41,16 @@ contract UniswapERC20 is SuperchainERC20 {
     /// @notice Returns the decimals places of the token.
     function decimals() public view override returns (uint8) {
         return _decimals;
+    }
+
+    function _fetchAndProcessParameters() internal override {
+        IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
+
+        _name = params.name;
+        _symbol = params.symbol;
+        _decimals = params.decimals;
+        _metadata = params.metadata;
+
+        _mint(params.recipient, params.totalSupply);
     }
 }
