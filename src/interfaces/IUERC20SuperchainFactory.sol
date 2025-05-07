@@ -2,13 +2,13 @@
 pragma solidity ^0.8.0;
 
 import {UniswapERC20Metadata} from "../libraries/UniswapERC20Metadata.sol";
-import {UniswapERC20} from "../UniswapERC20.sol";
+import {UERC20} from "../UERC20.sol";
 import {ITokenFactory} from "./ITokenFactory.sol";
 
-/// @title IUniswapSuperchainERC20Factory
-/// @notice Interface for the UniswapSuperchainERC20Factory contract
-interface IUniswapSuperchainERC20Factory is ITokenFactory {
-    /// @notice Parameters struct to be used by the UniswapERC20 during construction
+/// @title IUERC20SuperchainFactory
+/// @notice Interface for the UERC20SuperchainFactory contract
+interface IUERC20SuperchainFactory is ITokenFactory {
+    /// @notice Parameters struct to be used by the UERC20 during construction
     struct Parameters {
         string name;
         string symbol;

@@ -2,12 +2,12 @@
 pragma solidity 0.8.28;
 
 import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
-import {IUniswapERC20Factory} from "./interfaces/IUniswapERC20Factory.sol";
+import {IUERC20Factory} from "./interfaces/IUERC20Factory.sol";
 
-/// @title UniswapERC20
+/// @title UERC20
 /// @notice ERC20 token contract
 /// @dev Uses solady for default permit2 approval
-contract UniswapERC20 {
+contract UERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
@@ -19,8 +19,9 @@ contract UniswapERC20 {
     UniswapERC20Metadata public metadata;
 
     constructor() {
-        // Get constructor parameters from factory, and process them
-        _fetchAndProcessParameters();
+        // Fetch constructor parameters from factory, set global vars,
+        // and mint the total supply
+        _initialize();
     }
 
     /// @notice Returns the URI of the token metadata.
@@ -43,8 +44,8 @@ contract UniswapERC20 {
         return _decimals;
     }
 
-    function _fetchAndProcessParameters() internal virtual {
-        IUniswapERC20Factory.Parameters memory params = IUniswapERC20Factory(msg.sender).getParameters();
+    function _initialize() internal virtual {
+        IUERC20Factory.Parameters memory params = IUERC20Factory(msg.sender).getParameters();
 
         _name = params.name;
         _symbol = params.symbol;

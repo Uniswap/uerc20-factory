@@ -2,16 +2,17 @@
 pragma solidity 0.8.28;
 
 import {SuperchainERC20} from "./base/SuperchainERC20.sol";
-import {IUniswapSuperchainERC20Factory} from "./interfaces/IUniswapSuperchainERC20Factory.sol";
+import {IUERC20SuperchainFactory} from "./interfaces/IUERC20SuperchainFactory.sol";
 
-/// @title UniswapSuperchainERC20
+/// @title UERC20Superchain
 /// @notice ERC20 token contract that is Superchain interop compatible
-contract UniswapSuperchainERC20 is UniswapERC20, SuperchainERC20 {
+contract UERC20Superchain is UERC20, SuperchainERC20 {
     uint256 public immutable homeChainId; // The chain where totalSupply is minted and metadata is stored
 
-    function _fetchAndProcessParameters() internal override {
-        IUniswapSuperchainERC20Factory.Parameters memory params =
-            IUniswapSuperchainERC20Factory(msg.sender).getParameters();
+    // Override _initialize function in UERC20 to additionally fetch homeChainId
+    // Mint total supply conditionally if the current chain is the home chain
+    function _initialize() internal override {
+        IUERC20SuperchainFactory.Parameters memory params = IUERC20SuperchainFactory(msg.sender).getParameters();
 
         homeChainId = params.homeChainId;
         _name = params.name;
