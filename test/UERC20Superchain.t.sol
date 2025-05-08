@@ -2,12 +2,11 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UERC20Superchain} from "../src/UERC20Superchain.sol";
-import {UERC20SuperchainFactory} from "../src/UERC20SuperchainFactory.sol";
+import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
+import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
 import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
-import {SuperchainERC20} from "../src/base/SuperchainERC20.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
@@ -129,7 +128,7 @@ contract UERC20SuperchainTest is Test {
     function test_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
         vm.prank(bob);
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
         token.crosschainMint(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), 0);
@@ -142,7 +141,7 @@ contract UERC20SuperchainTest is Test {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
         );
 
         vm.prank(caller);
@@ -185,7 +184,7 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         vm.prank(bob);
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -197,7 +196,7 @@ contract UERC20SuperchainTest is Test {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
         );
 
         vm.prank(caller);
@@ -436,11 +435,11 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.creator, address(this));
     }
 
-    function decode(UERC20Superchain UERC20Superchain) private view returns (bytes memory) {
+    function decode(UERC20Superchain _token) private view returns (bytes memory) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
-        string memory uri = UERC20Superchain.tokenURI();
+        string memory uri = _token.tokenURI();
         // Convert the uri to bytes
         bytes memory uriBytes = bytes(uri);
 

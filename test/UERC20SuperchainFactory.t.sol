@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UERC20SuperchainFactory} from "../src/UERC20SuperchainFactory.sol";
-import {UERC20Superchain} from "../src/UERC20Superchain.sol";
+import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
+import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
 import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 import {IUERC20SuperchainFactory} from "../src/interfaces/IUERC20SuperchainFactory.sol";

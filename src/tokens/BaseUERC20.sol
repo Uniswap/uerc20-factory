@@ -1,28 +1,24 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.28;
+pragma solidity ^0.8.0;
 
-import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "./libraries/UniswapERC20Metadata.sol";
-import {IUERC20Factory} from "./interfaces/IUERC20Factory.sol";
+import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "../libraries/UniswapERC20Metadata.sol";
+import {IUERC20Factory} from "../interfaces/IUERC20Factory.sol";
+import {ERC20} from "@solady/src/tokens/ERC20.sol";
 
-/// @title UERC20
+/// @title BaseUERC20
 /// @notice ERC20 token contract
 /// @dev Uses solady for default permit2 approval
-contract UERC20 {
+/// @dev Implementing contract should initialise global variables and mint any initial supply
+abstract contract BaseUERC20 is ERC20 {
     using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
 
     // Core parameters that define token identity
-    uint8 private immutable _decimals;
-    string private _name;
-    string private _symbol;
+    uint8 internal immutable _decimals;
+    string internal _name;
+    string internal _symbol;
 
     // Metadata that may have extended information
     UniswapERC20Metadata public metadata;
-
-    constructor() {
-        // Fetch constructor parameters from factory, set global vars,
-        // and mint the total supply
-        _initialize();
-    }
 
     /// @notice Returns the URI of the token metadata.
     function tokenURI() external view returns (string memory) {
@@ -42,16 +38,5 @@ contract UERC20 {
     /// @notice Returns the decimals places of the token.
     function decimals() public view override returns (uint8) {
         return _decimals;
-    }
-
-    function _initialize() internal virtual {
-        IUERC20Factory.Parameters memory params = IUERC20Factory(msg.sender).getParameters();
-
-        _name = params.name;
-        _symbol = params.symbol;
-        _decimals = params.decimals;
-        _metadata = params.metadata;
-
-        _mint(params.recipient, params.totalSupply);
     }
 }
