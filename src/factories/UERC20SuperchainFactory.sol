@@ -14,7 +14,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
     Parameters private parameters;
 
     /// @inheritdoc IUERC20SuperchainFactory
-    function getUniswapERC20Address(
+    function getUERC20SuperchainAddress(
         string memory name,
         string memory symbol,
         uint8 decimals,

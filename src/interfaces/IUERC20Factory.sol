@@ -26,7 +26,7 @@ interface IUERC20Factory is ITokenFactory {
     /// @param decimals The number of decimals the token uses
     /// @param creator The creator of the token
     /// @return The deterministic address of the token
-    function getUniswapERC20Address(string memory name, string memory symbol, uint8 decimals, address creator)
+    function getUERC20Address(string memory name, string memory symbol, uint8 decimals, address creator)
         external
         view
         returns (address);
