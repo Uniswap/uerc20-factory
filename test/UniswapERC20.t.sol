@@ -92,6 +92,7 @@ contract UniswapERC20Test is Test {
     }
 
     /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
     function test_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
         emit CrosschainMint(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
@@ -150,6 +151,7 @@ contract UniswapERC20Test is Test {
     }
 
     /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
     function test_crosschainBurn_succeeds() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);

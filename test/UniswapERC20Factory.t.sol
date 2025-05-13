@@ -30,6 +30,7 @@ contract UniswapERC20FactoryTest is Test {
     }
 
     /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
     function test_create_succeeds_withMint() public {
         UniswapERC20 token = UniswapERC20(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))

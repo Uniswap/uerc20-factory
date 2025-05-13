@@ -31,6 +31,6 @@ jobs:
         run: forge build
 
       - name: Run tests
-        run: forge test
+        run: forge test -vvv
         env:
           FORGE_SNAPSHOT_CHECK: true
