@@ -5,7 +5,6 @@ import {Base64} from "openzeppelin-contracts/contracts/utils/Base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 struct UniswapERC20Metadata {
-    address creator;
     string description;
     string website;
     string image;
@@ -27,16 +26,22 @@ library UniswapERC20MetadataLibrary {
     /// @param metadata The token metadata
     /// @return The abi encoded JSON string
     function displayMetadata(UniswapERC20Metadata memory metadata) private pure returns (bytes memory) {
-        bytes memory json = abi.encodePacked('{"Creator":"', metadata.creator.toChecksumHexString(), '"');
+        bytes memory json = abi.encodePacked("{");
 
         if (bytes(metadata.description).length > 0) {
-            json = abi.encodePacked(json, ', "Description":"', metadata.description.escapeJSON(), '"');
+            json = abi.encodePacked(json, '"Description":"', metadata.description.escapeJSON(), '"');
         }
         if (bytes(metadata.website).length > 0) {
-            json = abi.encodePacked(json, ', "Website":"', metadata.website.escapeJSON(), '"');
+            if (bytes(metadata.description).length > 0) {
+                json = abi.encodePacked(json, ", ");
+            }
+            json = abi.encodePacked(json, '"Website":"', metadata.website.escapeJSON(), '"');
         }
         if (bytes(metadata.image).length > 0) {
-            json = abi.encodePacked(json, ', "Image":"', metadata.image.escapeJSON(), '"');
+            if (bytes(metadata.description).length > 0 || bytes(metadata.website).length > 0) {
+                json = abi.encodePacked(json, ", ");
+            }
+            json = abi.encodePacked(json, '"Image":"', metadata.image.escapeJSON(), '"');
         }
 
         return abi.encodePacked(json, "}");

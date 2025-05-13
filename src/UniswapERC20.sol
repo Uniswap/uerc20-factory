@@ -13,6 +13,7 @@ contract UniswapERC20 is SuperchainERC20 {
 
     // Core parameters that define token identity
     uint256 public immutable homeChainId; // The chain where totalSupply is minted and metadata is stored
+    address public immutable creator; // The address that created the token
     uint8 private immutable _decimals;
     string private _name;
     string private _symbol;
@@ -28,6 +29,7 @@ contract UniswapERC20 is SuperchainERC20 {
         _symbol = params.symbol;
         _decimals = params.decimals;
         homeChainId = params.homeChainId;
+        creator = params.creator;
         metadata = params.metadata;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
