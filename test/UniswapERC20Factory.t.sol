@@ -29,13 +29,10 @@ contract UniswapERC20FactoryTest is Test {
         });
     }
 
-    /// forge-config: default.isolate = true
-    /// forge-config: ci.isolate = true
     function test_create_succeeds_withMint() public {
         UniswapERC20 token = UniswapERC20(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
         );
-        vm.snapshotGasLastCall("deploy new token");
 
         assert(address(token) != address(0));
 
@@ -180,5 +177,14 @@ contract UniswapERC20FactoryTest is Test {
     function test_initcodeHash_token() public {
         bytes32 initCodeHash = keccak256(abi.encodePacked(type(UniswapERC20).creationCode));
         vm.snapshotValue("Token initcode hash", uint256(initCodeHash));
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_create_succeeds_withMint_gas() public {
+        UniswapERC20(
+            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
+        );
+        vm.snapshotGasLastCall("deploy new token");
     }
 }

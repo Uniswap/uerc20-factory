@@ -91,18 +91,14 @@ contract UniswapERC20Test is Test {
         );
     }
 
-    /// forge-config: default.isolate = true
-    /// forge-config: ci.isolate = true
     function test_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
         emit CrosschainMint(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
         vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
         token.crosschainMint(bob, TRANSFER_AMOUNT);
-        vm.snapshotGasLastCall("crosschainMint: first mint");
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         assertEq(token.totalSupply(), INITIAL_BALANCE + TRANSFER_AMOUNT);
         token.crosschainMint(bob, TRANSFER_AMOUNT);
-        vm.snapshotGasLastCall("crosschainMint: second mint");
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT * 2);
     }
 
@@ -150,8 +146,6 @@ contract UniswapERC20Test is Test {
         token.crosschainMint(to, amount);
     }
 
-    /// forge-config: default.isolate = true
-    /// forge-config: ci.isolate = true
     function test_crosschainBurn_succeeds() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -159,7 +153,6 @@ contract UniswapERC20Test is Test {
         emit CrosschainBurn(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
         vm.prank(SUPERCHAIN_ERC20_BRIDGE);
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
-        vm.snapshotGasLastCall("crosschainBurn");
         assertEq(token.balanceOf(bob), 0);
     }
 
@@ -459,5 +452,24 @@ contract UniswapERC20Test is Test {
 
         // decode json
         return vm.parseJson(json);
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_crosschainMint_succeeds_gas() public {
+        vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
+        token.crosschainMint(bob, TRANSFER_AMOUNT);
+        vm.snapshotGasLastCall("crosschainMint: first mint");
+        token.crosschainMint(bob, TRANSFER_AMOUNT);
+        vm.snapshotGasLastCall("crosschainMint: second mint");
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_crosschainBurn_succeeds_gas() public {
+        deal(address(token), bob, TRANSFER_AMOUNT);
+        vm.prank(SUPERCHAIN_ERC20_BRIDGE);
+        token.crosschainBurn(bob, TRANSFER_AMOUNT);
+        vm.snapshotGasLastCall("crosschainBurn");
     }
 }
