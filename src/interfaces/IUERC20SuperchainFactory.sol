@@ -2,13 +2,12 @@
 pragma solidity ^0.8.0;
 
 import {UniswapERC20Metadata} from "../libraries/UniswapERC20Metadata.sol";
-import {UniswapERC20} from "../UniswapERC20.sol";
 import {ITokenFactory} from "./ITokenFactory.sol";
 
-/// @title IUniswapERC20Factory
-/// @notice Interface for the UniswapERC20Factory contract
-interface IUniswapERC20Factory is ITokenFactory {
-    /// @notice Parameters struct to be used by the UniswapERC20 during construction
+/// @title IUERC20SuperchainFactory
+/// @notice Interface for the UERC20SuperchainFactory contract
+interface IUERC20SuperchainFactory is ITokenFactory {
+    /// @notice Parameters struct to be used by the UERC20Superchain during construction
     struct Parameters {
         string name;
         string symbol;
@@ -29,7 +28,7 @@ interface IUniswapERC20Factory is ITokenFactory {
     /// @param homeChainId The hub chain ID of the token
     /// @param creator The creator of the token
     /// @return The deterministic address of the token
-    function getUniswapERC20Address(
+    function getUERC20SuperchainAddress(
         string memory name,
         string memory symbol,
         uint8 decimals,

@@ -2,14 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UniswapERC20Factory} from "../src/UniswapERC20Factory.sol";
-import {UniswapERC20} from "../src/UniswapERC20.sol";
+import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
+import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
 import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
-import {IUniswapERC20Factory} from "../src/interfaces/IUniswapERC20Factory.sol";
+import {IUERC20SuperchainFactory} from "../src/interfaces/IUERC20SuperchainFactory.sol";
 
-contract UniswapERC20FactoryTest is Test {
-    UniswapERC20Factory public factory;
+contract UERC20SuperchainFactoryTest is Test {
+    UERC20SuperchainFactory public factory;
     UniswapERC20Metadata public tokenMetadata;
     address recipient = makeAddr("recipient");
     string name = "Test Token";
@@ -20,7 +20,7 @@ contract UniswapERC20FactoryTest is Test {
     event TokenCreated(address tokenAddress);
 
     function setUp() public {
-        factory = new UniswapERC20Factory();
+        factory = new UERC20SuperchainFactory();
         tokenMetadata = UniswapERC20Metadata({
             description: "A test token",
             website: "https://example.com",
@@ -31,7 +31,7 @@ contract UniswapERC20FactoryTest is Test {
 
     /// forge-config: default.isolate = true
     function test_create_succeeds_withMint() public {
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
         );
         vm.snapshotGasLastCall("deploy new token");
@@ -47,12 +47,14 @@ contract UniswapERC20FactoryTest is Test {
 
     function test_create_revertsWithNotCreator() public {
         vm.prank(bob);
-        vm.expectRevert(abi.encodeWithSelector(IUniswapERC20Factory.NotCreator.selector, bob, tokenMetadata.creator));
+        vm.expectRevert(
+            abi.encodeWithSelector(IUERC20SuperchainFactory.NotCreator.selector, bob, tokenMetadata.creator)
+        );
         factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
         ); // the home chain of this token is different than the current chain
 
@@ -69,7 +71,7 @@ contract UniswapERC20FactoryTest is Test {
 
     function test_create_succeeds_withoutMintOnDifferentChainAndNotCreator() public {
         vm.prank(bob);
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
         ); // the home chain of this token is different than the current chain
 
@@ -84,12 +86,12 @@ contract UniswapERC20FactoryTest is Test {
         assertEq(token.balanceOf(recipient), 0);
     }
 
-    function test_getUniswapERC20Address_succeeds() public {
-        // Calculate expected address using getUniswapERC20Address and verify against actual deployment
+    function test_getUERC20SuperchainAddress_succeeds() public {
+        // Calculate expected address using getUERC20SuperchainAddress and verify against actual deployment
         address expectedAddress =
-            factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);
+            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
         );
 
@@ -98,7 +100,7 @@ contract UniswapERC20FactoryTest is Test {
 
     function test_create_succeeds_withEventEmitted() public {
         address tokenAddress =
-            factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);
+            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
         vm.expectEmit(true, true, true, true);
         emit TokenCreated(tokenAddress);
@@ -107,15 +109,15 @@ contract UniswapERC20FactoryTest is Test {
 
     function test_create_succeeds_withDifferentAddresses() public {
         // Deploy first token
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
         );
 
         // Deploy second token with different symbol
         string memory differentSymbol = "TOKEN2";
         address expectedNewAddress =
-            factory.getUniswapERC20Address(name, differentSymbol, decimals, block.chainid, tokenMetadata.creator);
-        UniswapERC20 newToken = UniswapERC20(
+            factory.getUERC20SuperchainAddress(name, differentSymbol, decimals, block.chainid, tokenMetadata.creator);
+        UERC20Superchain newToken = UERC20Superchain(
             factory.createToken(
                 name, differentSymbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata)
             )
@@ -133,7 +135,7 @@ contract UniswapERC20FactoryTest is Test {
     }
 
     function test_create_metadataClearedOnDifferentChain() public {
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
         );
 
@@ -144,10 +146,10 @@ contract UniswapERC20FactoryTest is Test {
         assertEq(website, "");
     }
 
-    function test_getUniswapERC20Address_differentMetadata_sameAddress() public view {
+    function test_getUERC20SuperchainAddress_differentMetadata_sameAddress() public view {
         // Create a token with certain metadata
         address originalAddr =
-            factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, tokenMetadata.creator);
+            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
 
         // Create tokenMetadata with different description but same creator
         UniswapERC20Metadata memory differentMetadata = UniswapERC20Metadata({
@@ -159,7 +161,7 @@ contract UniswapERC20FactoryTest is Test {
 
         // Calculate address with different metadata
         address newAddr =
-            factory.getUniswapERC20Address(name, symbol, decimals, block.chainid, differentMetadata.creator);
+            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, differentMetadata.creator);
 
         // Addresses should be the same since only the core parameters affect the address
         assertEq(newAddr, originalAddr);
@@ -170,14 +172,14 @@ contract UniswapERC20FactoryTest is Test {
     }
 
     function test_bytecodeSize_token() public {
-        UniswapERC20 token = UniswapERC20(
+        UERC20Superchain token = UERC20Superchain(
             factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
         );
         vm.snapshotValue("Token bytecode size", address(token).code.length);
     }
 
     function test_initcodeHash_token() public {
-        bytes32 initCodeHash = keccak256(abi.encodePacked(type(UniswapERC20).creationCode));
+        bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20Superchain).creationCode));
         vm.snapshotValue("Token initcode hash", uint256(initCodeHash));
     }
 }
