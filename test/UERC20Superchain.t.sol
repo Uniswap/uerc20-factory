@@ -8,7 +8,7 @@ import {UERC20Metadata} from "../src/libraries/UERC20Metadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Base64} from "./libraries/base64.sol";
-import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 contract UERC20SuperchainTest is Test {
     using Base64 for string;
