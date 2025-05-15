@@ -4,8 +4,8 @@ pragma solidity 0.8.28;
 import {UERC20Superchain} from "../tokens/UERC20Superchain.sol";
 import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.sol";
 import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
-import {UniswapERC20Metadata} from "../libraries/UniswapERC20Metadata.sol";
-import {Create2} from "openzeppelin-contracts/contracts/utils/Create2.sol";
+import {UERC20Metadata} from "../libraries/UERC20Metadata.sol";
+import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 /// @title UERC20SuperchainFactory
 /// @notice Deploys new UERC20Superchain contracts
@@ -40,7 +40,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         address recipient,
         bytes calldata data
     ) external returns (address tokenAddress) {
-        (uint256 homeChainId, UniswapERC20Metadata memory metadata) = abi.decode(data, (uint256, UniswapERC20Metadata));
+        (uint256 homeChainId, UERC20Metadata memory metadata) = abi.decode(data, (uint256, UERC20Metadata));
 
         // Only the creator can deploy a token on the home chain
         if (block.chainid == homeChainId && msg.sender != metadata.creator) {
