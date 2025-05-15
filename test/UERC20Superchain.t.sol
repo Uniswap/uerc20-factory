@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {Test} from "forge-std/Test.sol";
 import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
 import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
-import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
+import {UERC20Metadata} from "../src/libraries/UERC20Metadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Base64} from "./libraries/base64.sol";
@@ -22,7 +22,7 @@ contract UERC20SuperchainTest is Test {
 
     UERC20Superchain token;
     UERC20SuperchainFactory factory;
-    UniswapERC20Metadata tokenMetadata;
+    UERC20Metadata tokenMetadata;
 
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
@@ -76,7 +76,7 @@ contract UERC20SuperchainTest is Test {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     function setUp() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "https://example.com/image.png",
@@ -264,7 +264,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_maliciousInjectionDetected() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890",
@@ -288,7 +288,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_descriptionWebsite() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "",
@@ -311,7 +311,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_descriptionImage() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "",
             image: "https://example.com/image.png",
@@ -334,7 +334,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_websiteImage() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "",
             website: "https://example.com",
             image: "https://example.com/image.png",
@@ -357,8 +357,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_description() public {
-        tokenMetadata =
-            UniswapERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
+        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
@@ -376,7 +375,7 @@ contract UERC20SuperchainTest is Test {
 
     function test_tokenURI_website() public {
         tokenMetadata =
-            UniswapERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
+            UERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
@@ -393,7 +392,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_image() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "",
             website: "",
             image: "https://example.com/image.png",
@@ -415,7 +414,7 @@ contract UERC20SuperchainTest is Test {
     }
 
     function test_tokenURI_onlyCreator() public {
-        tokenMetadata = UniswapERC20Metadata({description: "", website: "", image: "", creator: address(this)});
+        tokenMetadata = UERC20Metadata({description: "", website: "", image: "", creator: address(this)});
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(

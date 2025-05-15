@@ -4,7 +4,7 @@ pragma solidity 0.8.28;
 import {UERC20} from "../tokens/UERC20.sol";
 import {IUERC20Factory} from "../interfaces/IUERC20Factory.sol";
 import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
-import {UniswapERC20Metadata} from "../libraries/UniswapERC20Metadata.sol";
+import {UERC20Metadata} from "../libraries/UERC20Metadata.sol";
 import {Create2} from "openzeppelin-contracts/contracts/utils/Create2.sol";
 
 /// @title UERC20Factory
@@ -38,7 +38,7 @@ contract UERC20Factory is IUERC20Factory {
         address recipient,
         bytes calldata data
     ) external returns (address tokenAddress) {
-        UniswapERC20Metadata memory metadata = abi.decode(data, (UniswapERC20Metadata));
+        UERC20Metadata memory metadata = abi.decode(data, (UERC20Metadata));
 
         // Only the creator can deploy a token
         if (msg.sender != metadata.creator) {

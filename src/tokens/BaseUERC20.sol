@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UniswapERC20Metadata, UniswapERC20MetadataLibrary} from "../libraries/UniswapERC20Metadata.sol";
+import {UERC20Metadata, UERC20MetadataLibrary} from "../libraries/UERC20Metadata.sol";
 import {IUERC20Factory} from "../interfaces/IUERC20Factory.sol";
 import {ERC20} from "@solady/src/tokens/ERC20.sol";
 
@@ -10,7 +10,7 @@ import {ERC20} from "@solady/src/tokens/ERC20.sol";
 /// @dev Uses solady for default permit2 approval
 /// @dev Implementing contract should initialise global variables and mint any initial supply
 abstract contract BaseUERC20 is ERC20 {
-    using UniswapERC20MetadataLibrary for UniswapERC20Metadata;
+    using UERC20MetadataLibrary for UERC20Metadata;
 
     // Core parameters that define token identity
     uint8 internal immutable _decimals;
@@ -18,7 +18,7 @@ abstract contract BaseUERC20 is ERC20 {
     string internal _symbol;
 
     // Metadata that may have extended information
-    UniswapERC20Metadata public metadata;
+    UERC20Metadata public metadata;
 
     /// @notice Returns the URI of the token metadata.
     function tokenURI() external view returns (string memory) {

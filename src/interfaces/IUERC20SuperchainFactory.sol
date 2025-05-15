@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UniswapERC20Metadata} from "../libraries/UniswapERC20Metadata.sol";
+import {UERC20Metadata} from "../libraries/UERC20Metadata.sol";
 import {ITokenFactory} from "./ITokenFactory.sol";
 
 /// @title IUERC20SuperchainFactory
@@ -15,7 +15,7 @@ interface IUERC20SuperchainFactory is ITokenFactory {
         uint256 homeChainId;
         address recipient;
         uint8 decimals;
-        UniswapERC20Metadata metadata;
+        UERC20Metadata metadata;
     }
 
     /// @notice Thrown when the caller is not the creator in the initial deployment of a token
