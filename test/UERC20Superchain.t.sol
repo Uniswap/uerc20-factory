@@ -2,16 +2,15 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UniswapERC20} from "../src/UniswapERC20.sol";
-import {UniswapERC20Factory} from "../src/UniswapERC20Factory.sol";
-import {UniswapERC20Metadata} from "../src/libraries/UniswapERC20Metadata.sol";
+import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
+import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
+import {UERC20Metadata} from "../src/libraries/UERC20Metadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
-import {SuperchainERC20} from "../src/base/SuperchainERC20.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 
-contract UniswapERC20Test is Test {
+contract UERC20SuperchainTest is Test {
     using Base64 for string;
     using Strings for address;
 
@@ -21,9 +20,9 @@ contract UniswapERC20Test is Test {
     uint256 constant TRANSFER_AMOUNT = 1e18;
     uint8 constant DECIMALS = 18;
 
-    UniswapERC20 token;
-    UniswapERC20Factory factory;
-    UniswapERC20Metadata tokenMetadata;
+    UERC20Superchain token;
+    UERC20SuperchainFactory factory;
+    UERC20Metadata tokenMetadata;
 
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
@@ -66,13 +65,13 @@ contract UniswapERC20Test is Test {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     function setUp() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "https://example.com/image.png"
         });
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -122,7 +121,7 @@ contract UniswapERC20Test is Test {
     function test_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
         vm.prank(bob);
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
         token.crosschainMint(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), 0);
@@ -135,7 +134,7 @@ contract UniswapERC20Test is Test {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
         );
 
         vm.prank(caller);
@@ -178,7 +177,7 @@ contract UniswapERC20Test is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         vm.prank(bob);
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -190,7 +189,7 @@ contract UniswapERC20Test is Test {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
-            abi.encodeWithSelector(SuperchainERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
         );
 
         vm.prank(caller);
@@ -267,13 +266,13 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_maliciousInjectionDetected() public {
-        tokenMetadata = UniswapERC20Metadata({
+        tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "Normal description\" , \"Website\": \"https://malicious.com"
         });
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -294,9 +293,9 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_descriptionWebsite() public {
-        tokenMetadata = UniswapERC20Metadata({description: "A test token", website: "https://example.com", image: ""});
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        tokenMetadata = UERC20Metadata({description: "A test token", website: "https://example.com", image: ""});
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -317,9 +316,9 @@ contract UniswapERC20Test is Test {
 
     function test_tokenURI_descriptionImage() public {
         tokenMetadata =
-            UniswapERC20Metadata({description: "A test token", website: "", image: "https://example.com/image.png"});
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+            UERC20Metadata({description: "A test token", website: "", image: "https://example.com/image.png"});
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -339,13 +338,10 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_websiteImage() public {
-        tokenMetadata = UniswapERC20Metadata({
-            description: "",
-            website: "https://example.com",
-            image: "https://example.com/image.png"
-        });
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        tokenMetadata =
+            UERC20Metadata({description: "", website: "https://example.com", image: "https://example.com/image.png"});
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -365,9 +361,9 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_description() public {
-        tokenMetadata = UniswapERC20Metadata({description: "A test token", website: "", image: ""});
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: ""});
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -386,9 +382,9 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_website() public {
-        tokenMetadata = UniswapERC20Metadata({description: "", website: "https://example.com", image: ""});
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        tokenMetadata = UERC20Metadata({description: "", website: "https://example.com", image: ""});
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -407,9 +403,9 @@ contract UniswapERC20Test is Test {
     }
 
     function test_tokenURI_image() public {
-        tokenMetadata = UniswapERC20Metadata({description: "", website: "", image: "https://example.com/image.png"});
-        factory = new UniswapERC20Factory();
-        token = UniswapERC20(
+        tokenMetadata = UERC20Metadata({description: "", website: "", image: "https://example.com/image.png"});
+        factory = new UERC20SuperchainFactory();
+        token = UERC20Superchain(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -427,11 +423,11 @@ contract UniswapERC20Test is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
-    function decode(UniswapERC20 uniswapERC20) private view returns (bytes memory) {
+    function decode(UERC20Superchain _uerc20) private view returns (bytes memory) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
-        string memory uri = uniswapERC20.tokenURI();
+        string memory uri = _uerc20.tokenURI();
         // Convert the uri to bytes
         bytes memory uriBytes = bytes(uri);
 
