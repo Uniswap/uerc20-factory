@@ -1,6 +1,6 @@
 {
-  "Token bytecode size": "5275",
-  "Token initcode hash": "25805007731130544222259746003903979634212483766930325748790663482363598707231",
-  "TokenFactory bytecode size": "11146",
-  "deploy new token": "1336743"
+  "UERC20 Superchain Factory bytecode size": "11146",
+  "UERC20 Superchain bytecode size": "5275",
+  "UERC20 Superchain initcode hash": "113777800294398927198512473902503158226513251238599948171973389964704838512330",
+  "deploy new UERC20 Superchain": "1336743"
 }

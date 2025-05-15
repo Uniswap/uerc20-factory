@@ -24,10 +24,13 @@ jobs:
         with:
           version: nightly
 
+      - name: Show Forge version
+        run: forge --version
+
       - name: Build
         run: forge build
 
       - name: Run tests
-        run: forge test
+        run: forge test -vvv
         env:
           FORGE_SNAPSHOT_CHECK: true

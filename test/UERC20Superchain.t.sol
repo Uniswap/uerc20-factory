@@ -8,7 +8,7 @@ import {UERC20Metadata} from "../src/libraries/UERC20Metadata.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Base64} from "./libraries/base64.sol";
-import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 contract UERC20SuperchainTest is Test {
     using Base64 for string;
@@ -83,17 +83,14 @@ contract UERC20SuperchainTest is Test {
         );
     }
 
-    /// forge-config: default.isolate = true
     function test_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
         emit CrosschainMint(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
         vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
         token.crosschainMint(bob, TRANSFER_AMOUNT);
-        vm.snapshotGasLastCall("crosschainMint: first mint");
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         assertEq(token.totalSupply(), INITIAL_BALANCE + TRANSFER_AMOUNT);
         token.crosschainMint(bob, TRANSFER_AMOUNT);
-        vm.snapshotGasLastCall("crosschainMint: second mint");
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT * 2);
     }
 
@@ -141,7 +138,6 @@ contract UERC20SuperchainTest is Test {
         token.crosschainMint(to, amount);
     }
 
-    /// forge-config: default.isolate = true
     function test_crosschainBurn_succeeds() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -149,7 +145,6 @@ contract UERC20SuperchainTest is Test {
         emit CrosschainBurn(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
         vm.prank(SUPERCHAIN_ERC20_BRIDGE);
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
-        vm.snapshotGasLastCall("crosschainBurn");
         assertEq(token.balanceOf(bob), 0);
     }
 
@@ -444,5 +439,24 @@ contract UERC20SuperchainTest is Test {
 
         // decode json
         return vm.parseJson(json);
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_crosschainMint_succeeds_gas() public {
+        vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
+        token.crosschainMint(bob, TRANSFER_AMOUNT);
+        vm.snapshotGasLastCall("crosschainMint: first mint");
+        token.crosschainMint(bob, TRANSFER_AMOUNT);
+        vm.snapshotGasLastCall("crosschainMint: second mint");
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_crosschainBurn_succeeds_gas() public {
+        deal(address(token), bob, TRANSFER_AMOUNT);
+        vm.prank(SUPERCHAIN_ERC20_BRIDGE);
+        token.crosschainBurn(bob, TRANSFER_AMOUNT);
+        vm.snapshotGasLastCall("crosschainBurn");
     }
 }

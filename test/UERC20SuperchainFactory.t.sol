@@ -28,14 +28,12 @@ contract UERC20SuperchainFactoryTest is Test {
         });
     }
 
-    /// forge-config: default.isolate = true
     function test_create_succeeds_withMint() public {
         UERC20Superchain token = UERC20Superchain(
             factory.createToken(
                 name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, address(this), tokenMetadata)
             )
         );
-        vm.snapshotGasLastCall("deploy new token");
 
         assert(address(token) != address(0));
 
@@ -166,21 +164,32 @@ contract UERC20SuperchainFactoryTest is Test {
         assertEq(website, "");
     }
 
-    function test_bytecodeSize_factory() public {
-        vm.snapshotValue("TokenFactory bytecode size", address(factory).code.length);
+    function test_bytecodeSize_uerc20superchainfactory() public {
+        vm.snapshotValue("UERC20 Superchain Factory bytecode size", address(factory).code.length);
     }
 
-    function test_bytecodeSize_token() public {
+    function test_bytecodeSize_uerc20superchain() public {
         UERC20Superchain token = UERC20Superchain(
             factory.createToken(
                 name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, address(this), tokenMetadata)
             )
         );
-        vm.snapshotValue("Token bytecode size", address(token).code.length);
+        vm.snapshotValue("UERC20 Superchain bytecode size", address(token).code.length);
     }
 
-    function test_initcodeHash_token() public {
+    function test_initcodeHash_uerc20superchain() public {
         bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20Superchain).creationCode));
-        vm.snapshotValue("Token initcode hash", uint256(initCodeHash));
+        vm.snapshotValue("UERC20 Superchain initcode hash", uint256(initCodeHash));
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_create_uerc20superchain_succeeds_withMint_gas() public {
+        UERC20Superchain(
+            factory.createToken(
+                name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, address(this), tokenMetadata)
+            )
+        );
+        vm.snapshotGasLastCall("deploy new UERC20 Superchain");
     }
 }

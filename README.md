@@ -1,13 +1,13 @@
-# UniswapERC20 Factory
+# UERC20 Factory
 
 ## Overview
 
 Two main contracts:
 
-- **UniswapERC20Factory**: A contract for deploying new ERC-20 tokens with additional metadata.
-- **UniswapERC20**: An ERC-20 token implementing IERC7802, allowing seamless movement across chains within the Superchain interop cluster via the Superchain Token Bridge. It also includes additional metadata: creator, description, website, and image.
+- **UERC20Factory**: A contract for deploying new ERC-20 tokens with additional metadata.
+- **UERC20**: An ERC-20 token implementing IERC7802, allowing seamless movement across chains within the Superchain interop cluster via the Superchain Token Bridge. It also includes additional metadata: creator, description, website, and image.
 
-## UniswapERC20 Features
+## UERC20 Features
 
 - Implements `IERC7802` for Superchain compatibility.
 - Stores additional metadata:
@@ -22,7 +22,7 @@ Two main contracts:
 
 - If deploying on the **home chain**, the caller must be the creator.
 - The total supply is always minted on the home chain.
-- A UniswapERC20 token can be deployed on any chain at the same address in a permissionless way. Tokens can move between chains via the Superchain Token Bridge, which adjusts totalSupply on each chain while ensuring the overall supply remains constant at the amount initially minted on the home chain.
+- A UERC20 token can be deployed on any chain at the same address in a permissionless way. Tokens can move between chains via the Superchain Token Bridge, which adjusts totalSupply on each chain while ensuring the overall supply remains constant at the amount initially minted on the home chain.
 - When deploying on a non-home chain, the following parameters can be empty for easier propagation.
   - Total Supply
   - Recipient

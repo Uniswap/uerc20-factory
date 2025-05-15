@@ -5,7 +5,7 @@ import {UERC20Superchain} from "../tokens/UERC20Superchain.sol";
 import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.sol";
 import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
 import {UERC20Metadata} from "../libraries/UERC20Metadata.sol";
-import {Create2} from "openzeppelin-contracts/contracts/utils/Create2.sol";
+import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 /// @title UERC20SuperchainFactory
 /// @notice Deploys new UERC20Superchain contracts
