@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UERC20Metadata} from "../libraries/UERC20Metadata.sol";
+import {UERC20Metadata} from "../libraries/UERC20MetadataLibrary.sol";
 import {ITokenFactory} from "./ITokenFactory.sol";
 
 /// @title IUERC20Factory
