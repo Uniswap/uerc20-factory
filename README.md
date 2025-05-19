@@ -8,8 +8,8 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
 
 - **ITokenFactory**: Base interface for token factories
 - **Factories**:
-  - **UERC20Factory**: For deploying standard ERC-20 tokens for mainnet usage
-  - **UERC20SuperchainFactory**: For deploying ERC-20 tokens that work across the Superchain ecosystem
+  - **UERC20Factory**: For deploying UERC20 tokens for mainnet usage
+  - **UERC20SuperchainFactory**: For deploying UERC20Superchain tokens that work across the Superchain ecosystem
 
 - **BaseUERC20**: Abstract base token implementation with common functionality
 - **Token Implementations**:
