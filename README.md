@@ -1,43 +1,65 @@
-# UERC20 Factory
+# Token Factory
 
 ## Overview
 
-Two main contracts:
+The project provides a flexible architecture for deploying ERC20 tokens with different functionality:
 
-- **UERC20Factory**: A contract for deploying new ERC-20 tokens with additional metadata.
-- **UERC20**: An ERC-20 token implementing IERC7802, allowing seamless movement across chains within the Superchain interop cluster via the Superchain Token Bridge. It also includes additional metadata: creator, description, website, and image.
+### Key Components
 
-## UERC20 Features
+- **ITokenFactory**: Base interface for token factories
+- **Factories**:
+  - **UERC20Factory**: For deploying standard ERC-20 tokens for mainnet usage
+  - **UERC20SuperchainFactory**: For deploying ERC-20 tokens that work across the Superchain ecosystem
 
-- Implements `IERC7802` for Superchain compatibility.
+- **BaseUERC20**: Abstract base token implementation with common functionality
+- **Token Implementations**:
+  - **UERC20**: Standard ERC-20 tokens for mainnet usage
+  - **UERC20Superchain**: ERC-20 tokens implementing IERC7802 for Superchain compatibility
+
+## Token Features
+
+### Common Features (BaseUERC20)
 - Stores additional metadata:
   - **Creator** (required)
   - **Description** (optional)
   - **Website** (optional)
   - **Image** (optional)
-- Description, website, and image are stored on the home chain only, so off-chain indexing is required to access them on other chains.
-- Supports cross-chain transfers via the `SuperchainTokenBridge`, ensuring the total supply remains constant across all chains.
 
-### Deployment Rules
+### UERC20 (Mainnet)
+- Standard ERC-20 implementation for mainnet usage
+- Includes all BaseUERC20 metadata features
 
-- If deploying on the **home chain**, the caller must be the creator.
-- The total supply is always minted on the home chain.
-- A UERC20 token can be deployed on any chain at the same address in a permissionless way. Tokens can move between chains via the Superchain Token Bridge, which adjusts totalSupply on each chain while ensuring the overall supply remains constant at the amount initially minted on the home chain.
-- When deploying on a non-home chain, the following parameters can be empty for easier propagation.
-  - Total Supply
-  - Recipient
-  - Description
-  - Website
-  - Image
-- The token’s address is uniquely determined by its creator, name, symbol, decimals, and home chain ID.
+### UERC20Superchain (Superchain)
+- Implements `IERC7802` for Superchain compatibility
+- Supports cross-chain transfers via the `SuperchainTokenBridge`
+- Ensures the total supply remains constant across all chains
+- Description, website, and image are stored on the home chain only, so off-chain indexing is required to access them on other chains
 
-## Cross-Chain Transfers
+## Deployment Rules
 
-- The `SuperchainTokenBridge` facilitates cross-chain transfers.
+### UERC20 (Mainnet)
+- The caller must be the creator
+- The total supply is minted at deployment time
+- The token's address is uniquely determined by its creator, name, symbol, and decimals
+
+### UERC20Superchain (Superchain)
+- If deploying on the **home chain**, the caller must be the creator
+- The total supply is always minted on the home chain at deployment time
+- A UERC20Superchain token can be deployed on any chain at the same address in a permissionless way
+- Tokens can move between chains via the Superchain Token Bridge
+- The token's address is uniquely determined by its creator, name, symbol, decimals, and home chain ID
+
+## Cross-Chain Transfers (UERC20Superchain)
+
+- The `SuperchainTokenBridge` facilitates cross-chain transfers
 - **Mechanism:**
-  - `crossChainBurn` is called on the source chain.
-  - `crossChainMint` is called on the destination chain.
-  - The total supply across all chains remains unchanged.
+  - `crossChainBurn` is called on the source chain, decreasing its local `totalSupply`
+  - `crossChainMint` is called on the destination chain, increasing its local `totalSupply`
+  - While the `totalSupply` variable changes on individual chains, the aggregate total supply across all chains remains unchanged at the amount initially minted on the home chain
+
+## Extensibility
+
+The architecture is designed to be extensible by allowing new token factories to inherit from the base ITokenFactory interface. This enables developers to create specialized implementations with custom functionality while maintaining a consistent interface for token creation.
 
 ## Usage
 
