@@ -8,12 +8,12 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
 
 - **ITokenFactory**: Base interface for token factories
 - **Factories**:
-  - **UERC20Factory**: For deploying UERC20 tokens for mainnet usage
+  - **UERC20Factory**: For deploying UERC20 tokens for Ethereum Mainnet usage
   - **UERC20SuperchainFactory**: For deploying UERC20Superchain tokens that work across the Superchain ecosystem
 
 - **BaseUERC20**: Abstract base token implementation with common functionality
 - **Token Implementations**:
-  - **UERC20**: Standard ERC-20 tokens for mainnet usage
+  - **UERC20**: Standard ERC-20 tokens for Ethereum Mainnet usage
   - **UERC20Superchain**: ERC-20 tokens implementing IERC7802 for Superchain compatibility
 
 ## Token Features
@@ -25,8 +25,8 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
   - **Website** (optional)
   - **Image** (optional)
 
-### UERC20 (Mainnet)
-- Standard ERC-20 implementation for mainnet usage
+### UERC20 (Ethereum Mainnet)
+- Standard ERC-20 implementation for Ethereum Mainnet usage
 - Includes all BaseUERC20 metadata features
 
 ### UERC20Superchain (Superchain)
@@ -37,7 +37,7 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
 
 ## Deployment Rules
 
-### UERC20 (Mainnet)
+### UERC20 (Ethereum Mainnet)
 - The caller must be the creator
 - The total supply is minted at deployment time
 - The token's address is uniquely determined by its creator, name, symbol, and decimals

@@ -5,16 +5,13 @@ import {Test} from "forge-std/Test.sol";
 import {UERC20} from "../src/tokens/UERC20.sol";
 import {UERC20Factory} from "../src/factories/UERC20Factory.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-contract UERC20SuperchainTest is Test {
+contract UERC20Test is Test {
     using Base64 for string;
     using Strings for address;
 
-    address constant SUPERCHAIN_ERC20_BRIDGE = 0x4200000000000000000000000000000000000028;
     address constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
     uint256 constant INITIAL_BALANCE = 5e18;
     uint256 constant TRANSFER_AMOUNT = 1e18;
@@ -70,10 +67,6 @@ contract UERC20SuperchainTest is Test {
     struct JsonTokenCreator {
         address creator;
     }
-
-    event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
-    event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
-    event Transfer(address indexed from, address indexed to, uint256 value);
 
     function setUp() public {
         tokenMetadata = UERC20Metadata({
