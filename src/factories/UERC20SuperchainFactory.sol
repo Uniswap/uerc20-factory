@@ -4,7 +4,7 @@ pragma solidity 0.8.28;
 import {UERC20Superchain} from "../tokens/UERC20Superchain.sol";
 import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.sol";
 import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
-import {UERC20Metadata} from "../libraries/UERC20Metadata.sol";
+import {UERC20Metadata} from "../libraries/UERC20MetadataLibrary.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 /// @title UERC20SuperchainFactory
