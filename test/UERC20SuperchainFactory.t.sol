@@ -138,7 +138,7 @@ contract UERC20SuperchainFactoryTest is Test {
         );
 
         (address creator, string memory description, string memory website, string memory image) = token.metadata();
-        assertEq(creator, tokenMetadata.creator);
+        assertEq(creator, address(0));
         assertEq(description, "");
         assertEq(image, "");
         assertEq(website, "");

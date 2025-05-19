@@ -47,9 +47,13 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
             revert NotCreator(msg.sender, metadata.creator);
         }
 
+        // Compute salt based on the core parameters that define a token's identity
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator));
+
         // Clear metadata if the token is not on the home chain
         // Metadata is only stored on the home chain
         if (block.chainid != homeChainId) {
+            metadata.creator = address(0);
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
@@ -65,9 +69,6 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
             decimals: decimals,
             metadata: metadata
         });
-
-        // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator));
 
         // Deploy the token with the computed salt
         tokenAddress = address(new UERC20Superchain{salt: salt}());
