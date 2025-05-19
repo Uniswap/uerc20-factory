@@ -33,7 +33,7 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
 - Implements `IERC7802` for Superchain compatibility
 - Supports cross-chain transfers via the `SuperchainTokenBridge`
 - Ensures the total supply remains constant across all chains
-- Description, website, and image are stored on the home chain only, so off-chain indexing is required to access them on other chains
+- Metadata (creator, description, website, and image) is stored on the home chain only, so off-chain indexing is required to access them on other chains
 
 ## Deployment Rules
 
