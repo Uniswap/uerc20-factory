@@ -132,9 +132,11 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
-    function test_uerc20superchain_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(address caller, address to, uint256 amount)
-        public
-    {
+    function test_uerc20superchain_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(
+        address caller,
+        address to,
+        uint256 amount
+    ) public {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
@@ -185,9 +187,11 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
     }
 
-    function test_uerc20superchain_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(address caller, address from, uint256 amount)
-        public
-    {
+    function test_uerc20superchain_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(
+        address caller,
+        address from,
+        uint256 amount
+    ) public {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
