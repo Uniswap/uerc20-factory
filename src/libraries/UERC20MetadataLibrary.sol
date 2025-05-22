@@ -19,7 +19,7 @@ library UERC20MetadataLibrary {
     /// @notice Generates a base64 encoded JSON string of the token metadata
     /// @param metadata The token metadata
     /// @return The base64 encoded JSON string
-    function toJSON(UERC20Metadata memory metadata) public pure returns (string memory) {
+    function toJSON(UERC20Metadata memory metadata) internal pure returns (string memory) {
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(displayMetadata(metadata))));
     }
 
@@ -27,6 +27,11 @@ library UERC20MetadataLibrary {
     /// @param metadata The token metadata
     /// @return The abi encoded JSON string
     function displayMetadata(UERC20Metadata memory metadata) private pure returns (bytes memory) {
+        // If creator is address(0), return empty JSON object
+        if (metadata.creator == address(0)) {
+            return abi.encodePacked("{}");
+        }
+
         bytes memory json = abi.encodePacked('{"Creator":"', metadata.creator.toChecksumHexString(), '"');
 
         if (bytes(metadata.description).length > 0) {
