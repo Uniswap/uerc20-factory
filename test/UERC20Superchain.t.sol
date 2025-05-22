@@ -474,4 +474,41 @@ contract UERC20SuperchainTest is Test {
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
         vm.snapshotGasLastCall("crosschainBurn");
     }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_uerc20superchain_permit_gas() public {
+        uint256 privateKey = 1;
+        address owner = vm.addr(privateKey);
+
+        // Transfer tokens to owner for testing
+        deal(address(token), owner, TRANSFER_AMOUNT);
+
+        // Get the current nonce for the owner
+        uint256 nonce = token.nonces(owner);
+        uint256 deadline = type(uint256).max;
+
+        // Calculate the permit digest
+        bytes32 domainSeparator = token.DOMAIN_SEPARATOR();
+        bytes32 permitTypehash =
+            keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                keccak256(abi.encode(permitTypehash, owner, bob, TRANSFER_AMOUNT, nonce, deadline))
+            )
+        );
+
+        // Sign the digest
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
+
+        // Execute permit with valid signature
+        token.permit(owner, bob, TRANSFER_AMOUNT, deadline, v, r, s);
+        vm.snapshotGasLastCall("UERC20 Superchain permit");
+
+        // Verify that permit worked correctly
+        assertEq(token.allowance(owner, bob), TRANSFER_AMOUNT);
+    }
 }

@@ -12,11 +12,12 @@ import {ERC20} from "@solady/src/tokens/ERC20.sol";
 abstract contract BaseUERC20 is ERC20 {
     using UERC20MetadataLibrary for UERC20Metadata;
 
+    bytes32 internal immutable _nameHash;
+
     // Core parameters that define token identity
     uint8 internal immutable _decimals;
     string internal _name;
     string internal _symbol;
-
     // Metadata that may have extended information
     UERC20Metadata public metadata;
 
@@ -38,5 +39,9 @@ abstract contract BaseUERC20 is ERC20 {
     /// @notice Returns the decimals places of the token.
     function decimals() public view override returns (uint8) {
         return _decimals;
+    }
+
+    function _constantNameHash() internal view override returns (bytes32) {
+        return _nameHash;
     }
 }
