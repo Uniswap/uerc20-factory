@@ -41,10 +41,20 @@ contract UERC20FactoryTest is Test {
         assertEq(token.balanceOf(recipient), 1e18);
     }
 
-    function test_create_revertsWithNotCreator() public {
+    function test_create_uerc20_revertsWithNotCreator() public {
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(IUERC20Factory.NotCreator.selector, bob, tokenMetadata.creator));
         factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata));
+    }
+
+    function test_create_uerc20_revertsWithRecipientCannotBeZeroAddress() public {
+        vm.expectRevert(abi.encodeWithSelector(IUERC20Factory.RecipientCannotBeZeroAddress.selector, address(0)));
+        factory.createToken(name, symbol, decimals, 1e18, address(0), abi.encode(tokenMetadata));
+    }
+
+    function test_create_uerc20_revertsWithTotalSupplyCannotBeZero() public {
+        vm.expectRevert(abi.encodeWithSelector(IUERC20Factory.TotalSupplyCannotBeZero.selector, 0));
+        factory.createToken(name, symbol, decimals, 0, recipient, abi.encode(tokenMetadata));
     }
 
     function test_getUERC20Address_succeeds() public {

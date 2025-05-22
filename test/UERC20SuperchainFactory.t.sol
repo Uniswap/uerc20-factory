@@ -43,12 +43,24 @@ contract UERC20SuperchainFactoryTest is Test {
         assertEq(token.balanceOf(recipient), 1e18);
     }
 
-    function test_create_revertsWithNotCreator() public {
+    function test_create_uerc20superchain_revertsWithNotCreator() public {
         vm.prank(bob);
         vm.expectRevert(
             abi.encodeWithSelector(IUERC20SuperchainFactory.NotCreator.selector, bob, tokenMetadata.creator)
         );
         factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
+    }
+
+    function test_create_uerc20superchain_revertsWithRecipientCannotBeZeroAddress() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(IUERC20SuperchainFactory.RecipientCannotBeZeroAddress.selector, address(0))
+        );
+        factory.createToken(name, symbol, decimals, 1e18, address(0), abi.encode(block.chainid, tokenMetadata));
+    }
+
+    function test_create_uerc20superchain_revertsWithTotalSupplyCannotBeZero() public {
+        vm.expectRevert(abi.encodeWithSelector(IUERC20SuperchainFactory.TotalSupplyCannotBeZero.selector, 0));
+        factory.createToken(name, symbol, decimals, 0, recipient, abi.encode(block.chainid, tokenMetadata));
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {

@@ -21,6 +21,12 @@ interface IUERC20SuperchainFactory is ITokenFactory {
     /// @notice Thrown when the caller is not the creator in the initial deployment of a token
     error NotCreator(address sender, address creator);
 
+    /// @notice Thrown when the recipient is the zero address
+    error RecipientCannotBeZeroAddress(address recipient);
+
+    /// @notice Thrown when the total supply is zero
+    error TotalSupplyCannotBeZero(uint256 totalSupply);
+
     /// @notice Computes the deterministic address for a token based on its core parameters
     /// @param name The name of the token
     /// @param symbol The symbol of the token
