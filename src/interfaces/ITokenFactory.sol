@@ -10,10 +10,10 @@ interface ITokenFactory {
     event TokenCreated(address tokenAddress);
 
     /// @notice Thrown when the recipient is the zero address
-    error RecipientCannotBeZeroAddress(address recipient);
+    error RecipientCannotBeZeroAddress();
 
     /// @notice Thrown when the initial supply is zero
-    error TotalSupplyCannotBeZero(uint256 totalSupply);
+    error TotalSupplyCannotBeZero();
 
     /**
      * @notice Creates a new token contract

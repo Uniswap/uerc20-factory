@@ -49,10 +49,10 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
                 revert NotCreator(msg.sender, metadata.creator);
             }
             if (recipient == address(0)) {
-                revert RecipientCannotBeZeroAddress(recipient);
+                revert RecipientCannotBeZeroAddress();
             }
             if (totalSupply == 0) {
-                revert TotalSupplyCannotBeZero(totalSupply);
+                revert TotalSupplyCannotBeZero();
             }
         }
 

@@ -53,12 +53,12 @@ contract UERC20SuperchainFactoryTest is Test {
     }
 
     function test_create_uerc20superchain_revertsWithRecipientCannotBeZeroAddress() public {
-        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector, address(0)));
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector));
         factory.createToken(name, symbol, decimals, 1e18, address(0), abi.encode(block.chainid, tokenMetadata));
     }
 
     function test_create_uerc20superchain_revertsWithTotalSupplyCannotBeZero() public {
-        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.TotalSupplyCannotBeZero.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.TotalSupplyCannotBeZero.selector));
         factory.createToken(name, symbol, decimals, 0, recipient, abi.encode(block.chainid, tokenMetadata));
     }
 
