@@ -13,6 +13,9 @@ struct UERC20Metadata {
 
 /// @title UERC20MetadataLibrary
 /// @notice Library for generating base64 encoded JSON token metadata
+/// @dev The creator field must be set to a non-zero address for any metadata to be returned.
+///      If the creator is address(0), the function returns an empty JSON object "{}",
+///      even if other metadata fields (description, website, image) are populated.
 library UERC20MetadataLibrary {
     using Strings for *;
 
