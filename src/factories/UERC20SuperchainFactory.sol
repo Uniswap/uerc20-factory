@@ -44,16 +44,14 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
 
         // Check validity only on home chain
         if (block.chainid == homeChainId) {
-            /// @dev Check all conditions to save gas by avoiding multiple reverts
-            if (msg.sender != metadata.creator || recipient == address(0) || totalSupply == 0) {
-                // Only the creator can deploy a token on the home chain
-                if (msg.sender != metadata.creator) {
-                    revert NotCreator(msg.sender, metadata.creator);
-                }
-                if (recipient == address(0)) {
-                    revert RecipientCannotBeZeroAddress(recipient);
-                }
-                // This must be the totalSupply == 0 case
+            // Only the creator can deploy a token on the home chain
+            if (msg.sender != metadata.creator) {
+                revert NotCreator(msg.sender, metadata.creator);
+            }
+            if (recipient == address(0)) {
+                revert RecipientCannotBeZeroAddress(recipient);
+            }
+            if (totalSupply == 0) {
                 revert TotalSupplyCannotBeZero(totalSupply);
             }
         }
