@@ -9,6 +9,12 @@ interface ITokenFactory {
     /// @notice Emitted when a new token is created
     event TokenCreated(address tokenAddress);
 
+    /// @notice Thrown when the recipient is the zero address
+    error RecipientCannotBeZeroAddress(address recipient);
+
+    /// @notice Thrown when the initial supply is zero
+    error TotalSupplyCannotBeZero(uint256 totalSupply);
+
     /**
      * @notice Creates a new token contract
      * @param name          The ERC20-style name of the token.
