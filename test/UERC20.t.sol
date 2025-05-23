@@ -308,6 +308,20 @@ contract UERC20Test is Test {
         assertEq(token.allowance(owner, bob), TRANSFER_AMOUNT);
     }
 
+    function test_uerc20_domainSeparator() public view {
+        bytes32 domainSeparator =
+            keccak256(
+                abi.encode(
+                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                    keccak256(bytes(token.name())),
+                    keccak256("1"),
+                    block.chainid,
+                    address(token)
+                )
+            );
+        assertEq(domainSeparator, token.DOMAIN_SEPARATOR());
+    }
+
     function decode(UERC20 _token) private view returns (bytes memory) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
