@@ -13,7 +13,7 @@ struct UERC20Metadata {
 
 /// @title UERC20MetadataLibrary
 /// @notice Library for generating base64 encoded JSON token metadata
-/// @dev All metadata fields are optional. If no fields are provided, returns an empty JSON object.
+/// @dev If no fields are provided, returns an empty JSON object.
 library UERC20MetadataLibrary {
     using Strings for *;
 
