@@ -309,16 +309,15 @@ contract UERC20Test is Test {
     }
 
     function test_uerc20_domainSeparator() public view {
-        bytes32 domainSeparator =
-            keccak256(
-                abi.encode(
-                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                    keccak256(bytes(token.name())),
-                    keccak256("1"),
-                    block.chainid,
-                    address(token)
-                )
-            );
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                keccak256(bytes(token.name())),
+                keccak256("1"),
+                block.chainid,
+                address(token)
+            )
+        );
         assertEq(domainSeparator, token.DOMAIN_SEPARATOR());
     }
 
