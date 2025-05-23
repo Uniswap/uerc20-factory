@@ -53,9 +53,7 @@ contract UERC20SuperchainFactoryTest is Test {
     }
 
     function test_create_uerc20superchain_revertsWithRecipientCannotBeZeroAddress() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector, address(0))
-        );
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector, address(0)));
         factory.createToken(name, symbol, decimals, 1e18, address(0), abi.encode(block.chainid, tokenMetadata));
     }
 
