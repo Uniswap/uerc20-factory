@@ -5,7 +5,7 @@ import {UERC20Metadata, UERC20MetadataLibrary} from "../libraries/UERC20Metadata
 import {IUERC20Factory} from "../interfaces/IUERC20Factory.sol";
 import {ERC20} from "@solady/src/tokens/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
+import {IERC165} from "@openzeppelin/contracts/interfaces/IERC165.sol";
 import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 /// @title BaseUERC20
