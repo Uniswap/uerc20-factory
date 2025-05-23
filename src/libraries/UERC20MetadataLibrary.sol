@@ -13,9 +13,7 @@ struct UERC20Metadata {
 
 /// @title UERC20MetadataLibrary
 /// @notice Library for generating base64 encoded JSON token metadata
-/// @dev The creator field must be set to a non-zero address for any metadata to be returned.
-///      If the creator is address(0), the function returns an empty JSON object "{}",
-///      even if other metadata fields (description, website, image) are populated.
+/// @dev All metadata fields are optional. If no fields are provided, returns an empty JSON object.
 library UERC20MetadataLibrary {
     using Strings for *;
 
@@ -30,21 +28,27 @@ library UERC20MetadataLibrary {
     /// @param metadata The token metadata
     /// @return The abi encoded JSON string
     function displayMetadata(UERC20Metadata memory metadata) private pure returns (bytes memory) {
-        // If creator is address(0), return empty JSON object
-        if (metadata.creator == address(0)) {
-            return abi.encodePacked("{}");
+        bytes memory json = abi.encodePacked("{");
+        bool hasField = false;
+
+        if (metadata.creator != address(0)) {
+            json = abi.encodePacked(json, '"Creator":"', metadata.creator.toChecksumHexString(), '"');
+            hasField = true;
         }
-
-        bytes memory json = abi.encodePacked('{"Creator":"', metadata.creator.toChecksumHexString(), '"');
-
         if (bytes(metadata.description).length > 0) {
-            json = abi.encodePacked(json, ', "Description":"', metadata.description.escapeJSON(), '"');
+            if (hasField) json = abi.encodePacked(json, ", ");
+            json = abi.encodePacked(json, '"Description":"', metadata.description.escapeJSON(), '"');
+            hasField = true;
         }
         if (bytes(metadata.website).length > 0) {
-            json = abi.encodePacked(json, ', "Website":"', metadata.website.escapeJSON(), '"');
+            if (hasField) json = abi.encodePacked(json, ", ");
+            json = abi.encodePacked(json, '"Website":"', metadata.website.escapeJSON(), '"');
+            hasField = true;
         }
         if (bytes(metadata.image).length > 0) {
-            json = abi.encodePacked(json, ', "Image":"', metadata.image.escapeJSON(), '"');
+            if (hasField) json = abi.encodePacked(json, ", ");
+            json = abi.encodePacked(json, '"Image":"', metadata.image.escapeJSON(), '"');
+            hasField = true;
         }
 
         return abi.encodePacked(json, "}");
