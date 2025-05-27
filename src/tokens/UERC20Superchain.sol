@@ -60,7 +60,6 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 _interfaceId) public view virtual override(BaseUERC20, IERC165) returns (bool) {
-        return _interfaceId == type(IERC165).interfaceId || _interfaceId == type(IERC20).interfaceId
-            || _interfaceId == type(IERC20Permit).interfaceId || _interfaceId == type(IERC7802).interfaceId;
+        return super.supportsInterface(_interfaceId) || _interfaceId == type(IERC7802).interfaceId;
     }
 }
