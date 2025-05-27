@@ -14,12 +14,14 @@ contract UERC20Factory is IUERC20Factory {
     Parameters private parameters;
 
     /// @inheritdoc IUERC20Factory
-    function getUERC20Address(string memory name, string memory symbol, uint8 decimals, address creator)
-        external
-        view
-        returns (address)
-    {
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, creator));
+    function getUERC20Address(
+        string memory name,
+        string memory symbol,
+        uint8 decimals,
+        address creator,
+        bytes calldata graffiti
+    ) external view returns (address) {
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, creator, graffiti));
         bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20).creationCode));
         return Create2.computeAddress(salt, initCodeHash, address(this));
     }
@@ -36,7 +38,8 @@ contract UERC20Factory is IUERC20Factory {
         uint8 decimals,
         uint256 totalSupply,
         address recipient,
-        bytes calldata data
+        bytes calldata data,
+        bytes calldata graffiti
     ) external returns (address tokenAddress) {
         UERC20Metadata memory metadata = abi.decode(data, (UERC20Metadata));
 
@@ -56,7 +59,7 @@ contract UERC20Factory is IUERC20Factory {
         });
 
         // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, metadata.creator));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, metadata.creator, graffiti));
 
         // Deploy the token with the computed salt
         tokenAddress = address(new UERC20{salt: salt}());
