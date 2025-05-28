@@ -20,7 +20,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         uint8 decimals,
         uint256 homeChainId,
         address creator,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external view returns (address) {
         bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, creator, graffiti));
         bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20Superchain).creationCode));
@@ -40,7 +40,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         uint256 totalSupply,
         address recipient,
         bytes calldata data,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external returns (address tokenAddress) {
         (uint256 homeChainId, UERC20Metadata memory metadata) = abi.decode(data, (uint256, UERC20Metadata));
 

@@ -34,7 +34,7 @@ interface IUERC20SuperchainFactory is ITokenFactory {
         uint8 decimals,
         uint256 homeChainId,
         address creator,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external view returns (address);
 
     /// @notice Gets the parameters for token initialization

@@ -91,7 +91,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
     }
@@ -289,7 +289,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -319,7 +319,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -348,7 +348,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -377,7 +377,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -401,7 +401,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -425,7 +425,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -453,7 +453,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 
@@ -476,7 +476,7 @@ contract UERC20SuperchainTest is Test {
                 INITIAL_BALANCE,
                 recipient,
                 abi.encode(block.chainid, tokenMetadata),
-                bytes("")
+                bytes32("")
             )
         );
 

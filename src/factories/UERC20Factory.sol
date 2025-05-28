@@ -19,7 +19,7 @@ contract UERC20Factory is IUERC20Factory {
         string memory symbol,
         uint8 decimals,
         address creator,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external view returns (address) {
         bytes32 salt = keccak256(abi.encode(name, symbol, decimals, creator, graffiti));
         bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20).creationCode));
@@ -39,7 +39,7 @@ contract UERC20Factory is IUERC20Factory {
         uint256 totalSupply,
         address recipient,
         bytes calldata data,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external returns (address tokenAddress) {
         UERC20Metadata memory metadata = abi.decode(data, (UERC20Metadata));
 

@@ -32,7 +32,7 @@ interface IUERC20Factory is ITokenFactory {
         string memory symbol,
         uint8 decimals,
         address creator,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external view returns (address);
 
     /// @notice Gets the parameters for token initialization

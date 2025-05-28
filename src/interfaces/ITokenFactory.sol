@@ -23,6 +23,6 @@ interface ITokenFactory {
         uint256 initialSupply,
         address recipient,
         bytes calldata data,
-        bytes calldata graffiti
+        bytes32 graffiti
     ) external returns (address tokenAddress);
 }
