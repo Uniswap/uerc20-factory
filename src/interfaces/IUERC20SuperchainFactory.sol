@@ -9,16 +9,13 @@ import {ITokenFactory} from "./ITokenFactory.sol";
 interface IUERC20SuperchainFactory is ITokenFactory {
     /// @notice Parameters struct to be used by the UERC20Superchain during construction
     struct Parameters {
-        // Pack address (20 bytes) and uint8 (1 byte) together in one slot (21 bytes total)
         address recipient;
         uint8 decimals;
-        // 32-byte values each get their own slot
         string name;
         string symbol;
         uint256 totalSupply;
         uint256 homeChainId;
         bytes32 graffiti;
-        // UERC20Metadata struct (contains 1 address + 3 string pointers = 4 slots)
         UERC20Metadata metadata;
     }
 
