@@ -96,6 +96,14 @@ contract UERC20SuperchainTest is Test {
         );
     }
 
+    function test_uerc20superchain_homeChainId() public view {
+        assertEq(token.homeChainId(), block.chainid);
+    }
+
+    function test_uerc20superchain_graffiti() public view {
+        assertEq(token.graffiti(), bytes32(0));
+    }
+
     function test_uerc20superchain_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
         emit CrosschainMint(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);

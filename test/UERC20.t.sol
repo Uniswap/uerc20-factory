@@ -83,6 +83,10 @@ contract UERC20Test is Test {
         );
     }
 
+    function test_uerc20_graffiti() public view {
+        assertEq(token.graffiti(), bytes32("test"));
+    }
+
     function test_uerc20_permit2CanTransferWithoutAllowance() public {
         vm.startPrank(PERMIT2);
         token.transferFrom(recipient, bob, TRANSFER_AMOUNT);
