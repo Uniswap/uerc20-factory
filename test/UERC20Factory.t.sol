@@ -108,6 +108,93 @@ contract UERC20FactoryTest is Test {
         assertEq(newAddr, originalAddr);
     }
 
+    function test_getUERC20Address_differentCreator_differentAddress() public {
+        // Calculate address with original creator
+        address originalAddr = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator, bytes32(""));
+
+        // Calculate address with different creator
+        address differentCreator = makeAddr("differentCreator");
+        address newAddr = factory.getUERC20Address(name, symbol, decimals, differentCreator, bytes32(""));
+
+        // Addresses should be different since creator is part of the salt
+        assertNotEq(newAddr, originalAddr);
+    }
+
+    function test_getUERC20Address_differentGraffiti_differentAddress() public view {
+        // Calculate address with empty graffiti
+        address originalAddr = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator, bytes32(""));
+
+        // Calculate address with different graffiti
+        bytes32 differentGraffiti = keccak256("different graffiti");
+        address newAddr = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator, differentGraffiti);
+
+        // Addresses should be different since graffiti is part of the salt
+        assertNotEq(newAddr, originalAddr);
+    }
+
+    function test_create_differentCreators_differentAddresses() public {
+        // Create first token with original creator
+        UERC20 token1 =
+            UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32("")));
+
+        // Create metadata with different creator
+        address differentCreator = makeAddr("differentCreator");
+        UERC20Metadata memory differentCreatorMetadata = UERC20Metadata({
+            description: "A test token",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            creator: differentCreator
+        });
+
+        // Deploy second token with different creator
+        vm.prank(differentCreator);
+        UERC20 token2 = UERC20(
+            factory.createToken(
+                name, symbol, decimals, 1e18, recipient, abi.encode(differentCreatorMetadata), bytes32("")
+            )
+        );
+
+        // Verify tokens have different addresses
+        assertNotEq(address(token1), address(token2));
+
+        // Verify both tokens have the same name, symbol, decimals but different creators
+        assertEq(token1.name(), token2.name());
+        assertEq(token1.symbol(), token2.symbol());
+        assertEq(token1.decimals(), token2.decimals());
+
+        // Verify metadata creators are different
+        (address creator1,,,) = token1.metadata();
+        (address creator2,,,) = token2.metadata();
+        assertEq(creator1, tokenMetadata.creator);
+        assertEq(creator2, differentCreator);
+        assertNotEq(creator1, creator2);
+    }
+
+    function test_create_differentGraffiti_differentAddresses() public {
+        // Create first token with empty graffiti
+        UERC20 token1 =
+            UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32("")));
+
+        // Create second token with different graffiti
+        bytes32 differentGraffiti = keccak256("different graffiti");
+        UERC20 token2 = UERC20(
+            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), differentGraffiti)
+        );
+
+        // Verify tokens have different addresses
+        assertNotEq(address(token1), address(token2));
+
+        // Verify both tokens have the same properties
+        assertEq(token1.name(), token2.name());
+        assertEq(token1.symbol(), token2.symbol());
+        assertEq(token1.decimals(), token2.decimals());
+
+        // Verify metadata is the same (graffiti doesn't affect metadata)
+        (address creator1,,,) = token1.metadata();
+        (address creator2,,,) = token2.metadata();
+        assertEq(creator1, creator2);
+    }
+
     function test_bytecodeSize_uerc20factory() public {
         vm.snapshotValue("UERC20 Factory bytecode size", address(factory).code.length);
     }

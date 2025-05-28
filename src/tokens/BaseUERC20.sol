@@ -12,7 +12,7 @@ import {ERC20} from "@solady/src/tokens/ERC20.sol";
 abstract contract BaseUERC20 is ERC20 {
     using UERC20MetadataLibrary for UERC20Metadata;
 
-    // Core parameters that define token identity
+    // Basic ERC20 parameters (part of token identity along with creator and graffiti)
     uint8 internal immutable _decimals;
     string internal _name;
     string internal _symbol;
