@@ -12,6 +12,9 @@ import {ERC20} from "@solady/src/tokens/ERC20.sol";
 abstract contract BaseUERC20 is ERC20 {
     using UERC20MetadataLibrary for UERC20Metadata;
 
+    /// @dev Cached hash of the token name for gas-efficient EIP-712 operations.
+    /// This immutable value is computed once during construction and used by the
+    /// underlying ERC20 implementation for permit functionality.
     bytes32 internal immutable _nameHash;
 
     // Core parameters that define token identity
