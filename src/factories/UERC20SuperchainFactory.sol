@@ -39,8 +39,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         uint8 decimals,
         uint256 totalSupply,
         address recipient,
-        bytes calldata data,
-        bytes32 graffiti
+        bytes calldata data
     ) external returns (address tokenAddress) {
         (uint256 homeChainId, UERC20Metadata memory metadata) = abi.decode(data, (uint256, UERC20Metadata));
 
@@ -50,12 +49,11 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         }
 
         // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator, graffiti));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator, metadata.graffiti));
 
-        // Clear metadata if the token is not on the home chain
-        // Metadata is only stored on the home chain
+        // Clear description, website and image if the token is not on the home chain
+        // These are only stored on the home chain
         if (block.chainid != homeChainId) {
-            metadata.creator = address(0);
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";

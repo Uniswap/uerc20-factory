@@ -14,7 +14,6 @@ interface ITokenFactory {
     /// @param initialSupply The initial supply to mint upon creation.
     /// @param recipient     The recipient of the initial supply.
     /// @param data          Additional factory-specific data required for token creation.
-    /// @param graffiti      Additional data to be included in the token's salt.
     /// @return tokenAddress The address of the newly created token.
     function createToken(
         string calldata name,
@@ -22,7 +21,6 @@ interface ITokenFactory {
         uint8 decimals,
         uint256 initialSupply,
         address recipient,
-        bytes calldata data,
-        bytes32 graffiti
+        bytes calldata data
     ) external returns (address tokenAddress);
 }

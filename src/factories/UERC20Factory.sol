@@ -38,8 +38,7 @@ contract UERC20Factory is IUERC20Factory {
         uint8 decimals,
         uint256 totalSupply,
         address recipient,
-        bytes calldata data,
-        bytes32 graffiti
+        bytes calldata data
     ) external returns (address tokenAddress) {
         UERC20Metadata memory metadata = abi.decode(data, (UERC20Metadata));
 
@@ -59,7 +58,7 @@ contract UERC20Factory is IUERC20Factory {
         });
 
         // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, metadata.creator, graffiti));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, metadata.creator, metadata.graffiti));
 
         // Deploy the token with the computed salt
         tokenAddress = address(new UERC20{salt: salt}());

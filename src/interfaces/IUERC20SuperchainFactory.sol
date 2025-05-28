@@ -27,6 +27,7 @@ interface IUERC20SuperchainFactory is ITokenFactory {
     /// @param decimals The number of decimals the token uses
     /// @param homeChainId The hub chain ID of the token
     /// @param creator The creator of the token
+    /// @param graffiti Additional data to be included in the token's salt
     /// @return The deterministic address of the token
     function getUERC20SuperchainAddress(
         string memory name,

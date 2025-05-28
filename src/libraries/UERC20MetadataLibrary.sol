@@ -6,6 +6,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 struct UERC20Metadata {
     address creator;
+    bytes32 graffiti;
     string description;
     string website;
     string image;
@@ -27,7 +28,13 @@ library UERC20MetadataLibrary {
     /// @param metadata The token metadata
     /// @return The abi encoded JSON string
     function displayMetadata(UERC20Metadata memory metadata) private pure returns (bytes memory) {
-        bytes memory json = abi.encodePacked('{"Creator":"', metadata.creator.toChecksumHexString(), '"');
+        bytes memory json = abi.encodePacked(
+            '{"Creator":"',
+            metadata.creator.toChecksumHexString(),
+            '","Graffiti":"',
+            uint256(metadata.graffiti).toHexString(32),
+            '"'
+        );
 
         if (bytes(metadata.description).length > 0) {
             json = abi.encodePacked(json, ', "Description":"', metadata.description.escapeJSON(), '"');
