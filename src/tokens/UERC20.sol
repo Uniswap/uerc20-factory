@@ -14,6 +14,7 @@ contract UERC20 is BaseUERC20 {
         _symbol = params.symbol;
         _decimals = params.decimals;
         metadata = params.metadata;
+        graffiti = params.graffiti;
 
         _mint(params.recipient, params.totalSupply);
     }

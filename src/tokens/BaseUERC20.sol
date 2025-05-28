@@ -13,6 +13,7 @@ abstract contract BaseUERC20 is ERC20 {
     using UERC20MetadataLibrary for UERC20Metadata;
 
     // Core parameters that define token identity
+    bytes32 public immutable graffiti;
     uint8 internal immutable _decimals;
     string internal _name;
     string internal _symbol;

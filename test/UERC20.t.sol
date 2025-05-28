@@ -76,8 +76,11 @@ contract UERC20Test is Test {
             creator: address(this)
         });
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
     }
 
     function test_uerc20_permit2CanTransferWithoutAllowance() public {
@@ -137,8 +140,11 @@ contract UERC20Test is Test {
             creator: address(this)
         });
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
@@ -158,8 +164,11 @@ contract UERC20Test is Test {
             creator: address(this)
         });
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
@@ -178,8 +187,11 @@ contract UERC20Test is Test {
             creator: address(this)
         });
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
@@ -198,8 +210,11 @@ contract UERC20Test is Test {
             creator: address(this)
         });
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
@@ -213,8 +228,11 @@ contract UERC20Test is Test {
     function test_uerc20_tokenURI_description() public {
         tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
@@ -228,8 +246,11 @@ contract UERC20Test is Test {
         tokenMetadata =
             UERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
@@ -247,8 +268,11 @@ contract UERC20Test is Test {
             creator: address(this)
         });
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
@@ -261,8 +285,11 @@ contract UERC20Test is Test {
     function test_uerc20_tokenURI_onlyCreator() public {
         tokenMetadata = UERC20Metadata({description: "", website: "", image: "", creator: address(this)});
         factory = new UERC20Factory();
-        token =
-            UERC20(factory.createToken("Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata)));
+        token = UERC20(
+            factory.createToken(
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+            )
+        );
 
         bytes memory data = decode(token);
         JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));

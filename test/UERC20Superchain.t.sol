@@ -85,7 +85,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
     }
@@ -277,7 +283,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -301,7 +313,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -324,7 +342,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -347,7 +371,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -365,7 +395,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -383,7 +419,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -405,7 +447,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 
@@ -422,7 +470,13 @@ contract UERC20SuperchainTest is Test {
         factory = new UERC20SuperchainFactory();
         token = UERC20Superchain(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(block.chainid, tokenMetadata)
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(block.chainid, tokenMetadata),
+                bytes32(0)
             )
         );
 

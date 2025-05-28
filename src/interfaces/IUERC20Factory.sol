@@ -15,6 +15,7 @@ interface IUERC20Factory is ITokenFactory {
         address recipient;
         uint8 decimals;
         UERC20Metadata metadata;
+        bytes32 graffiti;
     }
 
     /// @notice Thrown when the caller is not the creator in the initial deployment of a token
@@ -25,11 +26,15 @@ interface IUERC20Factory is ITokenFactory {
     /// @param symbol The symbol of the token
     /// @param decimals The number of decimals the token uses
     /// @param creator The creator of the token
+    /// @param graffiti Additional data needed to compute the salt
     /// @return The deterministic address of the token
-    function getUERC20Address(string memory name, string memory symbol, uint8 decimals, address creator)
-        external
-        view
-        returns (address);
+    function getUERC20Address(
+        string memory name,
+        string memory symbol,
+        uint8 decimals,
+        address creator,
+        bytes32 graffiti
+    ) external view returns (address);
 
     /// @notice Gets the parameters for token initialization
     /// @return The parameters structure with all token initialization data

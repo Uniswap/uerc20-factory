@@ -28,6 +28,7 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
         _symbol = params.symbol;
         _decimals = params.decimals;
         metadata = params.metadata;
+        graffiti = params.graffiti;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {

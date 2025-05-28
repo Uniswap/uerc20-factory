@@ -30,7 +30,8 @@ contract UERC20FactoryTest is Test {
     }
 
     function test_create_succeeds_withMint() public {
-        UERC20 token = UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata)));
+        UERC20 token =
+            UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0)));
 
         assert(address(token) != address(0));
 
@@ -44,50 +45,54 @@ contract UERC20FactoryTest is Test {
     function test_create_revertsWithNotCreator() public {
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(IUERC20Factory.NotCreator.selector, bob, tokenMetadata.creator));
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata));
+        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0));
     }
 
     function test_getUERC20Address_succeeds() public {
         // Calculate expected address using getUERC20Address and verify against actual deployment
-        address expectedAddress = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator);
+        address expectedAddress = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator, bytes32(0));
 
-        UERC20 token = UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata)));
+        UERC20 token =
+            UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0)));
 
         assertEq(address(token), expectedAddress);
     }
 
     function test_create_succeeds_withEventEmitted() public {
-        address tokenAddress = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator);
+        address tokenAddress = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator, bytes32(0));
 
         vm.expectEmit(true, true, true, true);
         emit TokenCreated(tokenAddress);
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata));
+        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0));
     }
 
     function test_create_succeeds_withDifferentAddresses() public {
         // Deploy first token
-        UERC20 token = UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata)));
+        UERC20 token =
+            UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0)));
 
         // Deploy second token with different symbol
         string memory differentSymbol = "TOKEN2";
-        address expectedNewAddress = factory.getUERC20Address(name, differentSymbol, decimals, tokenMetadata.creator);
-        UERC20 newToken =
-            UERC20(factory.createToken(name, differentSymbol, decimals, 1e18, recipient, abi.encode(tokenMetadata)));
+        address expectedNewAddress =
+            factory.getUERC20Address(name, differentSymbol, decimals, tokenMetadata.creator, bytes32(0));
+        UERC20 newToken = UERC20(
+            factory.createToken(name, differentSymbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0))
+        );
 
         assertEq(address(newToken), expectedNewAddress);
         assertNotEq(address(newToken), address(token));
     }
 
     function test_create_revertsWithCreateCollision() public {
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata));
+        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0));
 
         vm.expectRevert();
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata));
+        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0));
     }
 
     function test_getUERC20Address_differentMetadata_sameAddress() public view {
         // Create a token with certain metadata
-        address originalAddr = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator);
+        address originalAddr = factory.getUERC20Address(name, symbol, decimals, tokenMetadata.creator, bytes32(0));
 
         // Create tokenMetadata with different description but same creator
         UERC20Metadata memory differentMetadata = UERC20Metadata({
@@ -98,7 +103,7 @@ contract UERC20FactoryTest is Test {
         });
 
         // Calculate address with different metadata
-        address newAddr = factory.getUERC20Address(name, symbol, decimals, differentMetadata.creator);
+        address newAddr = factory.getUERC20Address(name, symbol, decimals, differentMetadata.creator, bytes32(0));
 
         // Addresses should be the same since only the core parameters affect the address
         assertEq(newAddr, originalAddr);
@@ -109,7 +114,8 @@ contract UERC20FactoryTest is Test {
     }
 
     function test_bytecodeSize_uerc20() public {
-        UERC20 token = UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata)));
+        UERC20 token =
+            UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0)));
         vm.snapshotValue("UERC20 bytecode size", address(token).code.length);
     }
 
@@ -121,7 +127,7 @@ contract UERC20FactoryTest is Test {
     /// forge-config: default.isolate = true
     /// forge-config: ci.isolate = true
     function test_create_uerc20_succeeds_withMint_gas() public {
-        UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata)));
+        UERC20(factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0)));
         vm.snapshotGasLastCall("deploy new UERC20");
     }
 }
