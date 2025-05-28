@@ -159,6 +159,50 @@ contract UERC20SuperchainFactoryTest is Test {
         assertEq(website, "");
     }
 
+    function test_create_graffitiAsZeroOnNonHomeChain() public {
+        UERC20Metadata memory metadata = UERC20Metadata({
+            description: "description",
+            website: "website",
+            image: "image",
+            creator: address(this),
+            graffiti: bytes32(0)
+        });
+
+        UERC20Superchain tokenHome = UERC20Superchain(
+            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, metadata))
+        );
+
+        UERC20Superchain tokenNonHome = UERC20Superchain(
+            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, metadata))
+        );
+
+        (
+            address creatorHome,
+            bytes32 graffitiHome,
+            string memory descriptionHome,
+            string memory websiteHome,
+            string memory imageHome
+        ) = tokenHome.metadata();
+        assertEq(creatorHome, address(this));
+        assertEq(graffitiHome, bytes32(0));
+        assertEq(descriptionHome, "description");
+        assertEq(imageHome, "image");
+        assertEq(websiteHome, "website");
+
+        (
+            address creatorNonHome,
+            bytes32 graffitiNonHome,
+            string memory descriptionNonHome,
+            string memory websiteNonHome,
+            string memory imageNonHome
+        ) = tokenNonHome.metadata();
+        assertEq(creatorNonHome, address(this));
+        assertEq(graffitiNonHome, bytes32(0));
+        assertEq(descriptionNonHome, "");
+        assertEq(imageNonHome, "");
+        assertEq(websiteNonHome, "");
+    }
+
     function test_getUERC20SuperchainAddress_differentMetadata_sameAddress() public view {
         // Create a token with certain metadata
         address originalAddr = factory.getUERC20SuperchainAddress(
