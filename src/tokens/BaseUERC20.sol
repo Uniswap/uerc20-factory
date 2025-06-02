@@ -4,12 +4,15 @@ pragma solidity ^0.8.0;
 import {UERC20Metadata, UERC20MetadataLibrary} from "../libraries/UERC20MetadataLibrary.sol";
 import {IUERC20Factory} from "../interfaces/IUERC20Factory.sol";
 import {ERC20} from "@solady/src/tokens/ERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC165} from "@openzeppelin/contracts/interfaces/IERC165.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 /// @title BaseUERC20
 /// @notice ERC20 token contract
 /// @dev Uses solady for default permit2 approval
 /// @dev Implementing contract should initialise global variables and mint any initial supply
-abstract contract BaseUERC20 is ERC20 {
+abstract contract BaseUERC20 is ERC20, IERC165 {
     using UERC20MetadataLibrary for UERC20Metadata;
 
     // Core parameters that define token identity
@@ -38,5 +41,11 @@ abstract contract BaseUERC20 is ERC20 {
     /// @notice Returns the decimals places of the token.
     function decimals() public view override returns (uint8) {
         return _decimals;
+    }
+
+    /// @inheritdoc IERC165
+    function supportsInterface(bytes4 _interfaceId) public view virtual returns (bool) {
+        return _interfaceId == type(IERC165).interfaceId || _interfaceId == type(IERC20).interfaceId
+            || _interfaceId == type(IERC20Permit).interfaceId;
     }
 }
