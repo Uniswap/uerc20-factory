@@ -12,8 +12,8 @@ interface IUERC20Factory is ITokenFactory {
         uint256 totalSupply;
         bytes32 graffiti;
         address recipient;
-        uint8 decimals;
         address creator;
+        uint8 decimals;
         string name;
         string symbol;
         UERC20Metadata metadata;
