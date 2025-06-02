@@ -29,6 +29,7 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
 
         homeChainId = params.homeChainId;
         _name = params.name;
+        _nameHash = keccak256(bytes(_name));
         _symbol = params.symbol;
         _decimals = params.decimals;
         metadata = params.metadata;
