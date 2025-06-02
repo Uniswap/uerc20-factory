@@ -44,6 +44,12 @@ contract UERC20Factory is IUERC20Factory {
         if (msg.sender != metadata.creator) {
             revert NotCreator(msg.sender, metadata.creator);
         }
+        if (recipient == address(0)) {
+            revert RecipientCannotBeZeroAddress();
+        }
+        if (totalSupply == 0) {
+            revert TotalSupplyCannotBeZero();
+        }
 
         // Store parameters transiently for token to access during construction
         parameters = Parameters({

@@ -7,6 +7,9 @@ import {UERC20Factory} from "../src/factories/UERC20Factory.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 contract UERC20Test is Test {
     using Base64 for string;
@@ -116,6 +119,22 @@ contract UERC20Test is Test {
         assertEq(token.symbol(), "TEST");
         assertEq(token.decimals(), DECIMALS);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
+    }
+
+    function test_uerc20superchain_supportsInterface() public view {
+        assertTrue(bytes4(0x01ffc9a7) == type(IERC165).interfaceId);
+        assertTrue(token.supportsInterface(0x01ffc9a7)); // IERC165
+        assertTrue(bytes4(0x36372b07) == type(IERC20).interfaceId);
+        assertTrue(token.supportsInterface(0x36372b07)); // IERC20
+        assertTrue(bytes4(0x9d8ff7da) == type(IERC20Permit).interfaceId);
+        assertTrue(token.supportsInterface(0x9d8ff7da)); // IERC20Permit
+    }
+
+    function test_uerc20superchain_fuzz_supportsInterface(bytes4 interfaceId) public view {
+        vm.assume(interfaceId != type(IERC165).interfaceId);
+        vm.assume(interfaceId != type(IERC20).interfaceId);
+        vm.assume(interfaceId != type(IERC20Permit).interfaceId);
+        assertFalse(token.supportsInterface(interfaceId));
     }
 
     function test_uerc20_tokenURI_allFields() public view {

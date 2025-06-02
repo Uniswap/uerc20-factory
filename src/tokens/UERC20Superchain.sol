@@ -7,6 +7,7 @@ import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.s
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Predeploys} from "@optimism/src/libraries/Predeploys.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 /// @title UERC20Superchain
 /// @notice ERC20 token contract that is Superchain interop compatible
@@ -19,6 +20,9 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
 
     /// @notice Thrown when the caller is not the Superchain Token Bridge
     error NotSuperchainTokenBridge(address sender, address bridge);
+
+    /// @notice Thrown when the recipient is the zero address
+    error RecipientCannotBeZeroAddress();
 
     constructor() {
         IUERC20SuperchainFactory.Parameters memory params = IUERC20SuperchainFactory(msg.sender).getParameters();
@@ -46,6 +50,9 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
 
     /// @inheritdoc IERC7802
     function crosschainMint(address _to, uint256 _amount) external onlySuperchainTokenBridge {
+        if (_to == address(0)) {
+            revert RecipientCannotBeZeroAddress();
+        }
         _mint(_to, _amount);
 
         emit CrosschainMint(_to, _amount, msg.sender);
@@ -59,8 +66,7 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
     }
 
     /// @inheritdoc IERC165
-    function supportsInterface(bytes4 _interfaceId) public view virtual returns (bool) {
-        return _interfaceId == type(IERC7802).interfaceId || _interfaceId == type(IERC20).interfaceId
-            || _interfaceId == type(IERC165).interfaceId;
+    function supportsInterface(bytes4 _interfaceId) public view virtual override(BaseUERC20, IERC165) returns (bool) {
+        return super.supportsInterface(_interfaceId) || _interfaceId == type(IERC7802).interfaceId;
     }
 }
