@@ -69,13 +69,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
     }
@@ -157,13 +151,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 
@@ -181,13 +169,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 
@@ -205,13 +187,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 
@@ -229,13 +205,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 
@@ -252,13 +222,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 
@@ -274,13 +238,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 
@@ -296,13 +254,7 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test",
-                "TEST",
-                DECIMALS,
-                INITIAL_BALANCE,
-                recipient,
-                abi.encode(address(this), tokenMetadata),
-                bytes32("test")
+                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
             )
         );
 

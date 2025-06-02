@@ -19,9 +19,6 @@ interface IUERC20Factory is ITokenFactory {
         UERC20Metadata metadata;
     }
 
-    /// @notice Thrown when the caller is not the creator in the initial deployment of a token
-    error NotCreator(address sender, address creator);
-
     /// @notice Computes the deterministic address for a token based on its core parameters
     /// @param name The name of the token
     /// @param symbol The symbol of the token
