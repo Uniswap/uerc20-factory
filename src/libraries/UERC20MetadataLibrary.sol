@@ -5,7 +5,6 @@ import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 struct UERC20Metadata {
-    address creator;
     string description;
     string website;
     string image;
@@ -29,26 +28,20 @@ library UERC20MetadataLibrary {
     /// @return The abi encoded JSON string
     function displayMetadata(UERC20Metadata memory metadata) private pure returns (bytes memory) {
         bytes memory json = abi.encodePacked("{");
-        bool hasField = false;
+        bool hasField;
 
-        if (metadata.creator != address(0)) {
-            json = abi.encodePacked(json, '"Creator":"', metadata.creator.toChecksumHexString(), '"');
-            hasField = true;
-        }
         if (bytes(metadata.description).length > 0) {
-            if (hasField) json = abi.encodePacked(json, ", ");
-            json = abi.encodePacked(json, '"Description":"', metadata.description.escapeJSON(), '"');
+            json = abi.encodePacked(json, '"description":"', metadata.description.escapeJSON(), '"');
             hasField = true;
         }
         if (bytes(metadata.website).length > 0) {
             if (hasField) json = abi.encodePacked(json, ", ");
-            json = abi.encodePacked(json, '"Website":"', metadata.website.escapeJSON(), '"');
+            json = abi.encodePacked(json, '"website":"', metadata.website.escapeJSON(), '"');
             hasField = true;
         }
         if (bytes(metadata.image).length > 0) {
             if (hasField) json = abi.encodePacked(json, ", ");
-            json = abi.encodePacked(json, '"Image":"', metadata.image.escapeJSON(), '"');
-            hasField = true;
+            json = abi.encodePacked(json, '"image":"', metadata.image.escapeJSON(), '"');
         }
 
         return abi.encodePacked(json, "}");

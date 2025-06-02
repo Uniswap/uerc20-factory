@@ -9,13 +9,14 @@ import {ITokenFactory} from "./ITokenFactory.sol";
 interface IUERC20Factory is ITokenFactory {
     /// @notice Parameters struct to be used by the UERC20 during construction
     struct Parameters {
-        string name;
-        string symbol;
         uint256 totalSupply;
+        bytes32 graffiti;
         address recipient;
         uint8 decimals;
+        address creator;
+        string name;
+        string symbol;
         UERC20Metadata metadata;
-        bytes32 graffiti;
     }
 
     /// @notice Thrown when the caller is not the creator in the initial deployment of a token

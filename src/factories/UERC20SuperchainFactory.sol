@@ -42,13 +42,14 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         bytes calldata data,
         bytes32 graffiti
     ) external returns (address tokenAddress) {
-        (uint256 homeChainId, UERC20Metadata memory metadata) = abi.decode(data, (uint256, UERC20Metadata));
+        (uint256 homeChainId, address creator, UERC20Metadata memory metadata) =
+            abi.decode(data, (uint256, address, UERC20Metadata));
 
         // Check validity only on home chain
         if (block.chainid == homeChainId) {
             // Only the creator can deploy a token on the home chain
-            if (msg.sender != metadata.creator) {
-                revert NotCreator(msg.sender, metadata.creator);
+            if (msg.sender != creator) {
+                revert NotCreator(msg.sender, creator);
             }
             if (recipient == address(0)) {
                 revert RecipientCannotBeZeroAddress();
@@ -59,12 +60,12 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         }
 
         // Compute salt based on the core parameters that define a token's identity
-        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, metadata.creator, graffiti));
+        bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, creator, graffiti));
 
         // Clear metadata if the token is not on the home chain
         // Metadata is only stored on the home chain
         if (block.chainid != homeChainId) {
-            metadata.creator = address(0);
+            creator = address(0);
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
@@ -78,6 +79,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
             homeChainId: homeChainId,
             recipient: recipient,
             decimals: decimals,
+            creator: creator,
             metadata: metadata,
             graffiti: graffiti
         });

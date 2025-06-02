@@ -14,8 +14,9 @@ contract UERC20 is BaseUERC20 {
         _nameHash = keccak256(bytes(_name));
         _symbol = params.symbol;
         _decimals = params.decimals;
-        metadata = params.metadata;
+        creator = params.creator;
         graffiti = params.graffiti;
+        metadata = params.metadata;
 
         _mint(params.recipient, params.totalSupply);
     }

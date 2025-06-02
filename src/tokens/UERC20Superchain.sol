@@ -27,13 +27,14 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
     constructor() {
         IUERC20SuperchainFactory.Parameters memory params = IUERC20SuperchainFactory(msg.sender).getParameters();
 
-        homeChainId = params.homeChainId;
         _name = params.name;
         _nameHash = keccak256(bytes(_name));
         _symbol = params.symbol;
         _decimals = params.decimals;
-        metadata = params.metadata;
+        homeChainId = params.homeChainId;
+        creator = params.creator;
         graffiti = params.graffiti;
+        metadata = params.metadata;
 
         // Mint tokens only on the home chain to ensure the total supply remains consistent across all chains
         if (block.chainid == params.homeChainId) {

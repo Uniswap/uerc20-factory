@@ -10,7 +10,6 @@ contract UERC20MetadataLibraryTest is Test {
 
     function testToJSON_ValidMetadata() public pure {
         UERC20Metadata memory metadata = UERC20Metadata({
-            creator: address(0x1234),
             description: "Test Token",
             website: "https://example.com",
             image: "https://example.com/image.png"
@@ -20,7 +19,7 @@ contract UERC20MetadataLibraryTest is Test {
 
         // Expected JSON with all fields
         string memory expectedJson =
-            '{"Creator":"0x0000000000000000000000000000000000001234", "Description":"Test Token", "Website":"https://example.com", "Image":"https://example.com/image.png"}';
+            '{"description":"Test Token", "website":"https://example.com", "image":"https://example.com/image.png"}';
         string memory expectedBase64 = Base64.encode(bytes(expectedJson));
         string memory expected = string(abi.encodePacked("data:application/json;base64,", expectedBase64));
 
@@ -28,7 +27,7 @@ contract UERC20MetadataLibraryTest is Test {
     }
 
     function testToJSON_EmptyMetadata() public pure {
-        UERC20Metadata memory metadata = UERC20Metadata({creator: address(0), description: "", website: "", image: ""});
+        UERC20Metadata memory metadata = UERC20Metadata({description: "", website: "", image: ""});
 
         string memory result = metadata.toJSON();
 
@@ -41,14 +40,12 @@ contract UERC20MetadataLibraryTest is Test {
     }
 
     function testToJSON_PartialMetadata() public pure {
-        UERC20Metadata memory metadata =
-            UERC20Metadata({creator: address(0x1234), description: "Test Token", website: "", image: ""});
+        UERC20Metadata memory metadata = UERC20Metadata({description: "Test Token", website: "", image: ""});
 
         string memory result = metadata.toJSON();
 
         // Expected JSON with only creator and description fields
-        string memory expectedJson =
-            '{"Creator":"0x0000000000000000000000000000000000001234", "Description":"Test Token"}';
+        string memory expectedJson = '{"description":"Test Token"}';
         string memory expectedBase64 = Base64.encode(bytes(expectedJson));
         string memory expected = string(abi.encodePacked("data:application/json;base64,", expectedBase64));
 

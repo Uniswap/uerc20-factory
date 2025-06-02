@@ -28,60 +28,54 @@ contract UERC20Test is Test {
     address bob = makeAddr("bob");
 
     struct JsonTokenAllFields {
-        address creator;
         string description;
         string image;
         string website;
     }
 
     struct JsonTokenDescriptionWebsite {
-        address creator;
         string description;
         string website;
     }
 
     struct JsonTokenDescriptionImage {
-        address creator;
         string description;
         string image;
     }
 
     struct JsonTokenWebsiteImage {
-        address creator;
         string image;
         string website;
     }
 
     struct JsonTokenDescription {
-        address creator;
         string description;
     }
 
     struct JsonTokenWebsite {
-        address creator;
         string website;
     }
 
     struct JsonTokenImage {
-        address creator;
         string image;
-    }
-
-    struct JsonTokenCreator {
-        address creator;
     }
 
     function setUp() public {
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
-            image: "https://example.com/image.png",
-            creator: address(this)
+            image: "https://example.com/image.png"
         });
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
     }
@@ -149,7 +143,6 @@ contract UERC20Test is Test {
         JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.description, "A test token");
         assertEq(jsonToken.website, "https://example.com");
         assertEq(jsonToken.image, "https://example.com/image.png");
@@ -159,13 +152,18 @@ contract UERC20Test is Test {
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
-            image: "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890",
-            creator: address(this)
+            image: "Normal description\" , \"Website\": \"https://malicious.com"
         });
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -173,23 +171,23 @@ contract UERC20Test is Test {
         JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this)); // detects correct creator, not the malicious one
         assertEq(jsonToken.description, "A test token");
         assertEq(jsonToken.website, "https://example.com");
-        assertEq(jsonToken.image, "Normal description\" , \"Creator\": \"0x1234567890123456789012345678901234567890");
+        assertEq(jsonToken.image, "Normal description\" , \"Website\": \"https://malicious.com");
     }
 
     function test_uerc20_tokenURI_descriptionWebsite() public {
-        tokenMetadata = UERC20Metadata({
-            description: "A test token",
-            website: "https://example.com",
-            image: "",
-            creator: address(this)
-        });
+        tokenMetadata = UERC20Metadata({description: "A test token", website: "https://example.com", image: ""});
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -197,22 +195,23 @@ contract UERC20Test is Test {
         JsonTokenDescriptionWebsite memory jsonToken = abi.decode(data, (JsonTokenDescriptionWebsite));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.description, "A test token");
         assertEq(jsonToken.website, "https://example.com");
     }
 
     function test_uerc20_tokenURI_descriptionImage() public {
-        tokenMetadata = UERC20Metadata({
-            description: "A test token",
-            website: "",
-            image: "https://example.com/image.png",
-            creator: address(this)
-        });
+        tokenMetadata =
+            UERC20Metadata({description: "A test token", website: "", image: "https://example.com/image.png"});
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -220,22 +219,23 @@ contract UERC20Test is Test {
         JsonTokenDescriptionImage memory jsonToken = abi.decode(data, (JsonTokenDescriptionImage));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.description, "A test token");
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
     function test_uerc20_tokenURI_websiteImage() public {
-        tokenMetadata = UERC20Metadata({
-            description: "",
-            website: "https://example.com",
-            image: "https://example.com/image.png",
-            creator: address(this)
-        });
+        tokenMetadata =
+            UERC20Metadata({description: "", website: "https://example.com", image: "https://example.com/image.png"});
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -243,17 +243,22 @@ contract UERC20Test is Test {
         JsonTokenWebsiteImage memory jsonToken = abi.decode(data, (JsonTokenWebsiteImage));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.website, "https://example.com");
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
     function test_uerc20_tokenURI_description() public {
-        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: "", creator: address(this)});
+        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: ""});
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -261,17 +266,21 @@ contract UERC20Test is Test {
         JsonTokenDescription memory jsonToken = abi.decode(data, (JsonTokenDescription));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.description, "A test token");
     }
 
     function test_uerc20_tokenURI_website() public {
-        tokenMetadata =
-            UERC20Metadata({description: "", website: "https://example.com", image: "", creator: address(this)});
+        tokenMetadata = UERC20Metadata({description: "", website: "https://example.com", image: ""});
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -279,21 +288,21 @@ contract UERC20Test is Test {
         JsonTokenWebsite memory jsonToken = abi.decode(data, (JsonTokenWebsite));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.website, "https://example.com");
     }
 
     function test_uerc20_tokenURI_image() public {
-        tokenMetadata = UERC20Metadata({
-            description: "",
-            website: "",
-            image: "https://example.com/image.png",
-            creator: address(this)
-        });
+        tokenMetadata = UERC20Metadata({description: "", website: "", image: "https://example.com/image.png"});
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -301,24 +310,7 @@ contract UERC20Test is Test {
         JsonTokenImage memory jsonToken = abi.decode(data, (JsonTokenImage));
 
         // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
         assertEq(jsonToken.image, "https://example.com/image.png");
-    }
-
-    function test_uerc20_tokenURI_onlyCreator() public {
-        tokenMetadata = UERC20Metadata({description: "", website: "", image: "", creator: address(this)});
-        factory = new UERC20Factory();
-        token = UERC20(
-            factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
-            )
-        );
-
-        bytes memory data = decode(token);
-        JsonTokenCreator memory jsonToken = abi.decode(data, (JsonTokenCreator));
-
-        // Parse JSON to extract individual fields
-        assertEq(jsonToken.creator, address(this));
     }
 
     /// forge-config: default.isolate = true

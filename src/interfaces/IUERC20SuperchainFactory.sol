@@ -14,6 +14,7 @@ interface IUERC20SuperchainFactory is ITokenFactory {
         bytes32 graffiti;
         address recipient;
         uint8 decimals;
+        address creator;
         string name;
         string symbol;
         UERC20Metadata metadata;
