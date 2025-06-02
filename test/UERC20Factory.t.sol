@@ -7,6 +7,7 @@ import {UERC20} from "../src/tokens/UERC20.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 import {IUERC20Factory} from "../src/interfaces/IUERC20Factory.sol";
+import {ITokenFactory} from "../src/interfaces/ITokenFactory.sol";
 
 contract UERC20FactoryTest is Test {
     UERC20Factory public factory;
@@ -42,10 +43,20 @@ contract UERC20FactoryTest is Test {
         assertEq(token.balanceOf(recipient), 1e18);
     }
 
-    function test_create_revertsWithNotCreator() public {
+    function test_create_uerc20_revertsWithNotCreator() public {
         vm.prank(bob);
         vm.expectRevert(abi.encodeWithSelector(IUERC20Factory.NotCreator.selector, bob, tokenMetadata.creator));
         factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0));
+    }
+
+    function test_create_uerc20_revertsWithRecipientCannotBeZeroAddress() public {
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector));
+        factory.createToken(name, symbol, decimals, 1e18, address(0), abi.encode(tokenMetadata), bytes32(0));
+    }
+
+    function test_create_uerc20_revertsWithTotalSupplyCannotBeZero() public {
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.TotalSupplyCannotBeZero.selector));
+        factory.createToken(name, symbol, decimals, 0, recipient, abi.encode(tokenMetadata), bytes32(0));
     }
 
     function test_getUERC20Address_succeeds() public {

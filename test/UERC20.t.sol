@@ -7,6 +7,9 @@ import {UERC20Factory} from "../src/factories/UERC20Factory.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
 import {Base64} from "./libraries/base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 contract UERC20Test is Test {
     using Base64 for string;
@@ -123,6 +126,22 @@ contract UERC20Test is Test {
         assertEq(token.symbol(), "TEST");
         assertEq(token.decimals(), DECIMALS);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
+    }
+
+    function test_uerc20superchain_supportsInterface() public view {
+        assertTrue(bytes4(0x01ffc9a7) == type(IERC165).interfaceId);
+        assertTrue(token.supportsInterface(0x01ffc9a7)); // IERC165
+        assertTrue(bytes4(0x36372b07) == type(IERC20).interfaceId);
+        assertTrue(token.supportsInterface(0x36372b07)); // IERC20
+        assertTrue(bytes4(0x9d8ff7da) == type(IERC20Permit).interfaceId);
+        assertTrue(token.supportsInterface(0x9d8ff7da)); // IERC20Permit
+    }
+
+    function test_uerc20superchain_fuzz_supportsInterface(bytes4 interfaceId) public view {
+        vm.assume(interfaceId != type(IERC165).interfaceId);
+        vm.assume(interfaceId != type(IERC20).interfaceId);
+        vm.assume(interfaceId != type(IERC20Permit).interfaceId);
+        assertFalse(token.supportsInterface(interfaceId));
     }
 
     function test_uerc20_tokenURI_allFields() public view {
@@ -300,6 +319,56 @@ contract UERC20Test is Test {
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.creator, address(this));
+    }
+
+    /// forge-config: default.isolate = true
+    /// forge-config: ci.isolate = true
+    function test_uerc20_permit_gas() public {
+        uint256 privateKey = 1;
+        address owner = vm.addr(privateKey);
+
+        // Transfer tokens to owner for testing
+        deal(address(token), owner, TRANSFER_AMOUNT);
+
+        // Get the current nonce for the owner
+        uint256 nonce = token.nonces(owner);
+        uint256 deadline = type(uint256).max;
+
+        // Calculate the permit digest
+        bytes32 domainSeparator = token.DOMAIN_SEPARATOR();
+        bytes32 permitTypehash =
+            keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                keccak256(abi.encode(permitTypehash, owner, bob, TRANSFER_AMOUNT, nonce, deadline))
+            )
+        );
+
+        // Sign the digest
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
+
+        // Execute permit with valid signature
+        token.permit(owner, bob, TRANSFER_AMOUNT, deadline, v, r, s);
+        vm.snapshotGasLastCall("UERC20 permit");
+
+        // Verify that permit worked correctly
+        assertEq(token.allowance(owner, bob), TRANSFER_AMOUNT);
+    }
+
+    function test_uerc20_domainSeparator() public view {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                keccak256(bytes(token.name())),
+                keccak256("1"),
+                block.chainid,
+                address(token)
+            )
+        );
+        assertEq(domainSeparator, token.DOMAIN_SEPARATOR());
     }
 
     function decode(UERC20 _token) private view returns (bytes memory) {

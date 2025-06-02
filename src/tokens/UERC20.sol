@@ -11,6 +11,7 @@ contract UERC20 is BaseUERC20 {
         IUERC20Factory.Parameters memory params = IUERC20Factory(msg.sender).getParameters();
 
         _name = params.name;
+        _nameHash = keccak256(bytes(_name));
         _symbol = params.symbol;
         _decimals = params.decimals;
         metadata = params.metadata;

@@ -44,9 +44,18 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
     ) external returns (address tokenAddress) {
         (uint256 homeChainId, UERC20Metadata memory metadata) = abi.decode(data, (uint256, UERC20Metadata));
 
-        // Only the creator can deploy a token on the home chain
-        if (block.chainid == homeChainId && msg.sender != metadata.creator) {
-            revert NotCreator(msg.sender, metadata.creator);
+        // Check validity only on home chain
+        if (block.chainid == homeChainId) {
+            // Only the creator can deploy a token on the home chain
+            if (msg.sender != metadata.creator) {
+                revert NotCreator(msg.sender, metadata.creator);
+            }
+            if (recipient == address(0)) {
+                revert RecipientCannotBeZeroAddress();
+            }
+            if (totalSupply == 0) {
+                revert TotalSupplyCannotBeZero();
+            }
         }
 
         // Compute salt based on the core parameters that define a token's identity

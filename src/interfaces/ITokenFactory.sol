@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-/**
- * @title ITokenFactory
- * @dev Generic interface for a token factory.
- */
+/// @title ITokenFactory
+/// @notice Generic interface for a token factory.
 interface ITokenFactory {
     /// @notice Emitted when a new token is created
     event TokenCreated(address tokenAddress);
+
+    /// @notice Thrown when the recipient is the zero address
+    error RecipientCannotBeZeroAddress();
+
+    /// @notice Thrown when the initial supply is zero
+    error TotalSupplyCannotBeZero();
 
     /// @notice Creates a new token contract
     /// @param name          The ERC20-style name of the token.
