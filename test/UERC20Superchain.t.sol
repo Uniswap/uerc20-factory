@@ -85,11 +85,9 @@ contract UERC20SuperchainTest is Test {
         );
     }
 
-    function test_uerc20superchain_homeChainId() public view {
+    function test_uerc20superchain_data_succeeds() public view {
         assertEq(token.homeChainId(), block.chainid);
-    }
-
-    function test_uerc20superchain_graffiti() public view {
+        assertEq(token.creator(), address(this));
         assertEq(token.graffiti(), bytes32(0));
     }
 
@@ -268,11 +266,6 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.symbol(), "TEST");
         assertEq(token.decimals(), DECIMALS);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
-    }
-
-    function test_data_succeeds() public view {
-        assertEq(token.homeChainId(), block.chainid);
-        assertEq(token.creator(), address(this));
     }
 
     function test_uerc20superchain_tokenURI_allFields() public view {

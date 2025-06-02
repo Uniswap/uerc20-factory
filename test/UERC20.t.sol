@@ -74,8 +74,9 @@ contract UERC20Test is Test {
         );
     }
 
-    function test_uerc20_graffiti() public view {
+    function test_uerc20_data_succeeds() public view {
         assertEq(token.graffiti(), bytes32("test"));
+        assertEq(token.creator(), address(this));
     }
 
     function test_uerc20_permit2CanTransferWithoutAllowance() public {
