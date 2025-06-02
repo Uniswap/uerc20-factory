@@ -65,7 +65,6 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         // Clear metadata if the token is not on the home chain
         // Metadata is only stored on the home chain
         if (block.chainid != homeChainId) {
-            creator = address(0);
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
