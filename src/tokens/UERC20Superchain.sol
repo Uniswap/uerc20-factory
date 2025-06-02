@@ -20,6 +20,9 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
     /// @notice Thrown when the caller is not the Superchain Token Bridge
     error NotSuperchainTokenBridge(address sender, address bridge);
 
+    /// @notice Thrown when the recipient is the zero address
+    error RecipientCannotBeZeroAddress();
+
     constructor() {
         IUERC20SuperchainFactory.Parameters memory params = IUERC20SuperchainFactory(msg.sender).getParameters();
 
@@ -45,6 +48,9 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
 
     /// @inheritdoc IERC7802
     function crosschainMint(address _to, uint256 _amount) external onlySuperchainTokenBridge {
+        if (_to == address(0)) {
+            revert RecipientCannotBeZeroAddress();
+        }
         _mint(_to, _amount);
 
         emit CrosschainMint(_to, _amount, msg.sender);

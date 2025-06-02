@@ -132,6 +132,14 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
+    function test_uerc20superchain_crosschainMint_revertsWithRecipientCannotBeZeroAddress() public {
+        vm.prank(SUPERCHAIN_ERC20_BRIDGE);
+        vm.expectRevert(abi.encodeWithSelector(UERC20Superchain.RecipientCannotBeZeroAddress.selector));
+        token.crosschainMint(address(0), TRANSFER_AMOUNT);
+        assertEq(token.balanceOf(address(0)), 0);
+        assertEq(token.totalSupply(), INITIAL_BALANCE);
+    }
+
     function test_uerc20superchain_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(
         address caller,
         address to,
