@@ -21,6 +21,8 @@ abstract contract BaseUERC20 is ERC20, IERC165 {
     bytes32 internal immutable _nameHash;
 
     // Core parameters that define token identity
+    bytes32 public immutable graffiti;
+    address public immutable creator;
     uint8 internal immutable _decimals;
     string internal _name;
     string internal _symbol;

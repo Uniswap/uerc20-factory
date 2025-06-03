@@ -25,14 +25,21 @@ contract UERC20SuperchainFactoryTest is Test {
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
-            image: "https://example.com/image.png",
-            creator: address(this)
+            image: "https://example.com/image.png"
         });
     }
 
     function test_create_succeeds_withMint() public {
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid, address(this), tokenMetadata),
+                bytes32("test")
+            )
         );
 
         assert(address(token) != address(0));
@@ -46,25 +53,49 @@ contract UERC20SuperchainFactoryTest is Test {
 
     function test_create_uerc20superchain_revertsWithNotCreator() public {
         vm.prank(bob);
-        vm.expectRevert(
-            abi.encodeWithSelector(IUERC20SuperchainFactory.NotCreator.selector, bob, tokenMetadata.creator)
+        vm.expectRevert(abi.encodeWithSelector(IUERC20SuperchainFactory.NotCreator.selector, bob, address(this)));
+        factory.createToken(
+            name,
+            symbol,
+            decimals,
+            1e18,
+            recipient,
+            abi.encode(block.chainid, address(this), tokenMetadata),
+            bytes32("test")
         );
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
     }
 
     function test_create_uerc20superchain_revertsWithRecipientCannotBeZeroAddress() public {
         vm.expectRevert(abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector));
-        factory.createToken(name, symbol, decimals, 1e18, address(0), abi.encode(block.chainid, tokenMetadata));
+        factory.createToken(
+            name,
+            symbol,
+            decimals,
+            1e18,
+            address(0),
+            abi.encode(block.chainid, address(this), tokenMetadata),
+            bytes32(0)
+        );
     }
 
     function test_create_uerc20superchain_revertsWithTotalSupplyCannotBeZero() public {
         vm.expectRevert(abi.encodeWithSelector(ITokenFactory.TotalSupplyCannotBeZero.selector));
-        factory.createToken(name, symbol, decimals, 0, recipient, abi.encode(block.chainid, tokenMetadata));
+        factory.createToken(
+            name, symbol, decimals, 0, recipient, abi.encode(block.chainid, address(this), tokenMetadata), bytes32(0)
+        );
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid + 1, address(this), tokenMetadata),
+                bytes32("test")
+            )
         ); // the home chain of this token is different than the current chain
 
         assert(address(token) != address(0));
@@ -81,7 +112,15 @@ contract UERC20SuperchainFactoryTest is Test {
     function test_create_succeeds_withoutMintOnDifferentChainAndNotCreator() public {
         vm.prank(bob);
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid + 1, address(this), tokenMetadata),
+                bytes32("test")
+            )
         ); // the home chain of this token is different than the current chain
 
         assert(address(token) != address(0));
@@ -98,10 +137,18 @@ contract UERC20SuperchainFactoryTest is Test {
     function test_getUERC20SuperchainAddress_succeeds() public {
         // Calculate expected address using getUERC20SuperchainAddress and verify against actual deployment
         address expectedAddress =
-            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
+            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
 
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid, address(this), tokenMetadata),
+                bytes32("test")
+            )
         );
 
         assertEq(address(token), expectedAddress);
@@ -109,26 +156,49 @@ contract UERC20SuperchainFactoryTest is Test {
 
     function test_create_succeeds_withEventEmitted() public {
         address tokenAddress =
-            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
+            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
 
         vm.expectEmit(true, true, true, true);
         emit TokenCreated(tokenAddress);
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
+        factory.createToken(
+            name,
+            symbol,
+            decimals,
+            1e18,
+            recipient,
+            abi.encode(block.chainid, address(this), tokenMetadata),
+            bytes32("test")
+        );
     }
 
     function test_create_succeeds_withDifferentAddresses() public {
         // Deploy first token
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid, address(this), tokenMetadata),
+                bytes32("test")
+            )
         );
 
         // Deploy second token with different symbol
         string memory differentSymbol = "TOKEN2";
-        address expectedNewAddress =
-            factory.getUERC20SuperchainAddress(name, differentSymbol, decimals, block.chainid, tokenMetadata.creator);
+        address expectedNewAddress = factory.getUERC20SuperchainAddress(
+            name, differentSymbol, decimals, block.chainid, address(this), bytes32("test")
+        );
         UERC20Superchain newToken = UERC20Superchain(
             factory.createToken(
-                name, differentSymbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata)
+                name,
+                differentSymbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid, address(this), tokenMetadata),
+                bytes32("test")
             )
         );
 
@@ -137,43 +207,45 @@ contract UERC20SuperchainFactoryTest is Test {
     }
 
     function test_create_revertsWithCreateCollision() public {
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
+        factory.createToken(
+            name,
+            symbol,
+            decimals,
+            1e18,
+            recipient,
+            abi.encode(block.chainid, address(this), tokenMetadata),
+            bytes32("test")
+        );
 
         vm.expectRevert();
-        factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata));
+        factory.createToken(
+            name,
+            symbol,
+            decimals,
+            1e18,
+            recipient,
+            abi.encode(block.chainid, address(this), tokenMetadata),
+            bytes32("test")
+        );
     }
 
     function test_create_metadataClearedOnDifferentChain() public {
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid + 1, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid + 1, address(this), tokenMetadata),
+                bytes32("test")
+            )
         );
 
-        (address creator, string memory description, string memory website, string memory image) = token.metadata();
-        assertEq(creator, address(0));
+        (string memory description, string memory website, string memory image) = token.metadata();
         assertEq(description, "");
         assertEq(image, "");
         assertEq(website, "");
-    }
-
-    function test_getUERC20SuperchainAddress_differentMetadata_sameAddress() public view {
-        // Create a token with certain metadata
-        address originalAddr =
-            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, tokenMetadata.creator);
-
-        // Create tokenMetadata with different description but same creator
-        UERC20Metadata memory differentMetadata = UERC20Metadata({
-            description: "A different description",
-            website: "https://different.com",
-            image: "https://different.com/image.png",
-            creator: tokenMetadata.creator
-        });
-
-        // Calculate address with different metadata
-        address newAddr =
-            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, differentMetadata.creator);
-
-        // Addresses should be the same since only the core parameters affect the address
-        assertEq(newAddr, originalAddr);
     }
 
     function test_bytecodeSize_uerc20superchainfactory() public {
@@ -182,7 +254,15 @@ contract UERC20SuperchainFactoryTest is Test {
 
     function test_bytecodeSize_uerc20superchain() public {
         UERC20Superchain token = UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid, address(this), tokenMetadata),
+                bytes32("test")
+            )
         );
         vm.snapshotValue("UERC20 Superchain bytecode size", address(token).code.length);
     }
@@ -196,7 +276,15 @@ contract UERC20SuperchainFactoryTest is Test {
     /// forge-config: ci.isolate = true
     function test_create_uerc20superchain_succeeds_withMint_gas() public {
         UERC20Superchain(
-            factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(block.chainid, tokenMetadata))
+            factory.createToken(
+                name,
+                symbol,
+                decimals,
+                1e18,
+                recipient,
+                abi.encode(block.chainid, address(this), tokenMetadata),
+                bytes32("test")
+            )
         );
         vm.snapshotGasLastCall("deploy new UERC20 Superchain");
     }
