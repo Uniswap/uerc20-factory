@@ -5,8 +5,6 @@ import {Test} from "forge-std/Test.sol";
 import {UERC20Factory} from "../src/factories/UERC20Factory.sol";
 import {UERC20} from "../src/tokens/UERC20.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
-import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
-import {IUERC20Factory} from "../src/interfaces/IUERC20Factory.sol";
 import {ITokenFactory} from "../src/interfaces/ITokenFactory.sol";
 
 contract UERC20FactoryTest is Test {
