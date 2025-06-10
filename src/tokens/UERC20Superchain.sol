@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import {ERC20} from "@solady/src/tokens/ERC20.sol";
 import {BaseUERC20} from "../tokens/BaseUERC20.sol";
 import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
+import {IERC165} from "@openzeppelin/contracts/interfaces/IERC165.sol";
+import {IERC7802} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Predeploys} from "@optimism/src/libraries/Predeploys.sol";
-import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 /// @title UERC20Superchain
 /// @notice ERC20 token contract that is Superchain interop compatible
