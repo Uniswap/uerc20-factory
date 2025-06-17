@@ -102,6 +102,9 @@ function createToken(
 
 The architecture is designed to be extensible by allowing new token factories to inherit from the base ITokenFactory interface. This enables developers to create specialized implementations with custom functionality while maintaining a consistent interface for token creation.
 
+## License
+MIT
+
 ## Usage
 
 ### Compile and Run Tests
