@@ -2,13 +2,13 @@
 pragma solidity 0.8.28;
 
 import {BaseUERC20} from "../tokens/BaseUERC20.sol";
-import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.sol";
+import {IUSUPERC20Factory} from "../interfaces/IUSUPERC20Factory.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
 import {Predeploys} from "@optimism/src/libraries/Predeploys.sol";
 
-/// @title UERC20Superchain
+/// @title USUPERC20
 /// @notice ERC20 token contract that is Superchain interop compatible
-contract UERC20Superchain is BaseUERC20, IERC7802 {
+contract USUPERC20 is BaseUERC20, IERC7802 {
     /// @dev The address of the Superchain Token Bridge (0x4200000000000000000000000000000000000028)
     address public constant SUPERCHAIN_TOKEN_BRIDGE = Predeploys.SUPERCHAIN_TOKEN_BRIDGE;
 
@@ -22,7 +22,7 @@ contract UERC20Superchain is BaseUERC20, IERC7802 {
     error RecipientCannotBeZeroAddress();
 
     constructor() {
-        IUERC20SuperchainFactory.Parameters memory params = IUERC20SuperchainFactory(msg.sender).getParameters();
+        IUSUPERC20Factory.Parameters memory params = IUSUPERC20Factory(msg.sender).getParameters();
 
         _name = params.name;
         _nameHash = keccak256(bytes(_name));

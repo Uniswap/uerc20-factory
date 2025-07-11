@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import {UERC20Superchain} from "../tokens/UERC20Superchain.sol";
-import {IUERC20SuperchainFactory} from "../interfaces/IUERC20SuperchainFactory.sol";
+import {USUPERC20} from "../tokens/USUPERC20.sol";
+import {IUSUPERC20Factory} from "../interfaces/IUSUPERC20Factory.sol";
 import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
 import {UERC20Metadata} from "../libraries/UERC20MetadataLibrary.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
-/// @title UERC20SuperchainFactory
-/// @notice Deploys new UERC20Superchain contracts
-contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
+/// @title USUPERC20Factory
+/// @notice Deploys new USUPERC20 contracts
+contract USUPERC20Factory is IUSUPERC20Factory {
     /// @dev Parameters stored transiently for token initialization
     Parameters private parameters;
 
-    /// @inheritdoc IUERC20SuperchainFactory
-    function getUERC20SuperchainAddress(
+    /// @inheritdoc IUSUPERC20Factory
+    function getUSUPERC20Address(
         string memory name,
         string memory symbol,
         uint8 decimals,
@@ -23,11 +23,11 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         bytes32 graffiti
     ) external view returns (address) {
         bytes32 salt = keccak256(abi.encode(name, symbol, decimals, homeChainId, creator, graffiti));
-        bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20Superchain).creationCode));
+        bytes32 initCodeHash = keccak256(abi.encodePacked(type(USUPERC20).creationCode));
         return Create2.computeAddress(salt, initCodeHash, address(this));
     }
 
-    /// @inheritdoc IUERC20SuperchainFactory
+    /// @inheritdoc IUSUPERC20Factory
     function getParameters() external view returns (Parameters memory) {
         return parameters;
     }
@@ -84,7 +84,7 @@ contract UERC20SuperchainFactory is IUERC20SuperchainFactory {
         });
 
         // Deploy the token with the computed salt
-        tokenAddress = address(new UERC20Superchain{salt: salt}());
+        tokenAddress = address(new USUPERC20{salt: salt}());
 
         // Clear parameters after deployment
         delete parameters;
