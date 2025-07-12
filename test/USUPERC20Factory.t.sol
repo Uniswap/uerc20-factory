@@ -2,14 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
-import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
+import {USUPERC20Factory} from "../src/factories/USUPERC20Factory.sol";
+import {USUPERC20} from "../src/tokens/USUPERC20.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
-import {IUERC20SuperchainFactory} from "../src/interfaces/IUERC20SuperchainFactory.sol";
+import {IUSUPERC20Factory} from "../src/interfaces/IUSUPERC20Factory.sol";
 import {ITokenFactory} from "../src/interfaces/ITokenFactory.sol";
 
-contract UERC20SuperchainFactoryTest is Test {
-    UERC20SuperchainFactory public factory;
+contract USUPERC20FactoryTest is Test {
+    USUPERC20Factory public factory;
     UERC20Metadata public tokenMetadata;
     address recipient = makeAddr("recipient");
     string name = "Test Token";
@@ -20,7 +20,7 @@ contract UERC20SuperchainFactoryTest is Test {
     event TokenCreated(address tokenAddress);
 
     function setUp() public {
-        factory = new UERC20SuperchainFactory();
+        factory = new USUPERC20Factory();
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
@@ -29,7 +29,7 @@ contract UERC20SuperchainFactoryTest is Test {
     }
 
     function test_create_succeeds_withMint() public {
-        UERC20Superchain token = UERC20Superchain(
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -50,9 +50,9 @@ contract UERC20SuperchainFactoryTest is Test {
         assertEq(token.balanceOf(recipient), 1e18);
     }
 
-    function test_create_uerc20superchain_revertsWithNotCreator() public {
+    function test_create_usuperc20_revertsWithNotCreator() public {
         vm.prank(bob);
-        vm.expectRevert(abi.encodeWithSelector(IUERC20SuperchainFactory.NotCreator.selector, bob, address(this)));
+        vm.expectRevert(abi.encodeWithSelector(IUSUPERC20Factory.NotCreator.selector, bob, address(this)));
         factory.createToken(
             name,
             symbol,
@@ -64,7 +64,7 @@ contract UERC20SuperchainFactoryTest is Test {
         );
     }
 
-    function test_create_uerc20superchain_revertsWithRecipientCannotBeZeroAddress() public {
+    function test_create_usuperc20_revertsWithRecipientCannotBeZeroAddress() public {
         vm.expectRevert(abi.encodeWithSelector(ITokenFactory.RecipientCannotBeZeroAddress.selector));
         factory.createToken(
             name,
@@ -77,7 +77,7 @@ contract UERC20SuperchainFactoryTest is Test {
         );
     }
 
-    function test_create_uerc20superchain_revertsWithTotalSupplyCannotBeZero() public {
+    function test_create_usuperc20_revertsWithTotalSupplyCannotBeZero() public {
         vm.expectRevert(abi.encodeWithSelector(ITokenFactory.TotalSupplyCannotBeZero.selector));
         factory.createToken(
             name, symbol, decimals, 0, recipient, abi.encode(block.chainid, address(this), tokenMetadata), bytes32(0)
@@ -85,7 +85,7 @@ contract UERC20SuperchainFactoryTest is Test {
     }
 
     function test_create_succeeds_withoutMintOnDifferentChain() public {
-        UERC20Superchain token = UERC20Superchain(
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -110,7 +110,7 @@ contract UERC20SuperchainFactoryTest is Test {
 
     function test_create_succeeds_withoutMintOnDifferentChainAndNotCreator() public {
         vm.prank(bob);
-        UERC20Superchain token = UERC20Superchain(
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -133,12 +133,12 @@ contract UERC20SuperchainFactoryTest is Test {
         assertEq(token.balanceOf(recipient), 0);
     }
 
-    function test_getUERC20SuperchainAddress_succeeds() public {
-        // Calculate expected address using getUERC20SuperchainAddress and verify against actual deployment
+    function test_getUSUPERC20Address_succeeds() public {
+        // Calculate expected address using getUSUPERC20Address and verify against actual deployment
         address expectedAddress =
-            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
+            factory.getUSUPERC20Address(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
 
-        UERC20Superchain token = UERC20Superchain(
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -155,7 +155,7 @@ contract UERC20SuperchainFactoryTest is Test {
 
     function test_create_succeeds_withEventEmitted() public {
         address tokenAddress =
-            factory.getUERC20SuperchainAddress(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
+            factory.getUSUPERC20Address(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
 
         vm.expectEmit(true, true, true, true);
         emit TokenCreated(tokenAddress);
@@ -172,7 +172,7 @@ contract UERC20SuperchainFactoryTest is Test {
 
     function test_create_succeeds_withDifferentAddresses() public {
         // Deploy first token
-        UERC20Superchain token = UERC20Superchain(
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -186,10 +186,9 @@ contract UERC20SuperchainFactoryTest is Test {
 
         // Deploy second token with different symbol
         string memory differentSymbol = "TOKEN2";
-        address expectedNewAddress = factory.getUERC20SuperchainAddress(
-            name, differentSymbol, decimals, block.chainid, address(this), bytes32("test")
-        );
-        UERC20Superchain newToken = UERC20Superchain(
+        address expectedNewAddress =
+            factory.getUSUPERC20Address(name, differentSymbol, decimals, block.chainid, address(this), bytes32("test"));
+        USUPERC20 newToken = USUPERC20(
             factory.createToken(
                 name,
                 differentSymbol,
@@ -229,7 +228,7 @@ contract UERC20SuperchainFactoryTest is Test {
     }
 
     function test_create_metadataClearedOnDifferentChain() public {
-        UERC20Superchain token = UERC20Superchain(
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -247,12 +246,12 @@ contract UERC20SuperchainFactoryTest is Test {
         assertEq(website, "");
     }
 
-    function test_bytecodeSize_uerc20superchainfactory() public {
-        vm.snapshotValue("UERC20 Superchain Factory bytecode size", address(factory).code.length);
+    function test_bytecodeSize_usuperc20factory() public {
+        vm.snapshotValue("USUPERC20 Factory bytecode size", address(factory).code.length);
     }
 
-    function test_bytecodeSize_uerc20superchain() public {
-        UERC20Superchain token = UERC20Superchain(
+    function test_bytecodeSize_usuperc20() public {
+        USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -263,18 +262,18 @@ contract UERC20SuperchainFactoryTest is Test {
                 bytes32("test")
             )
         );
-        vm.snapshotValue("UERC20 Superchain bytecode size", address(token).code.length);
+        vm.snapshotValue("USUPERC20 bytecode size", address(token).code.length);
     }
 
-    function test_initcodeHash_uerc20superchain() public {
-        bytes32 initCodeHash = keccak256(abi.encodePacked(type(UERC20Superchain).creationCode));
-        vm.snapshotValue("UERC20 Superchain initcode hash", uint256(initCodeHash));
+    function test_initcodeHash_usuperc20() public {
+        bytes32 initCodeHash = keccak256(abi.encodePacked(type(USUPERC20).creationCode));
+        vm.snapshotValue("USUPERC20 initcode hash", uint256(initCodeHash));
     }
 
     /// forge-config: default.isolate = true
     /// forge-config: ci.isolate = true
-    function test_create_uerc20superchain_succeeds_withMint_gas() public {
-        UERC20Superchain(
+    function test_create_usuperc20_succeeds_withMint_gas() public {
+        USUPERC20(
             factory.createToken(
                 name,
                 symbol,
@@ -285,6 +284,6 @@ contract UERC20SuperchainFactoryTest is Test {
                 bytes32("test")
             )
         );
-        vm.snapshotGasLastCall("deploy new UERC20 Superchain");
+        vm.snapshotGasLastCall("deploy new USUPERC20");
     }
 }

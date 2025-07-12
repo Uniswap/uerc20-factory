@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {UERC20Superchain} from "../src/tokens/UERC20Superchain.sol";
-import {UERC20SuperchainFactory} from "../src/factories/UERC20SuperchainFactory.sol";
+import {USUPERC20} from "../src/tokens/USUPERC20.sol";
+import {USUPERC20Factory} from "../src/factories/USUPERC20Factory.sol";
 import {UERC20Metadata} from "../src/libraries/UERC20MetadataLibrary.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC7802, IERC165} from "@optimism/interfaces/L2/IERC7802.sol";
@@ -11,7 +11,7 @@ import {Base64} from "./libraries/base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
-contract UERC20SuperchainTest is Test {
+contract USUPERC20Test is Test {
     using Base64 for string;
     using Strings for address;
 
@@ -21,8 +21,8 @@ contract UERC20SuperchainTest is Test {
     uint256 constant TRANSFER_AMOUNT = 1e18;
     uint8 constant DECIMALS = 18;
 
-    UERC20Superchain token;
-    UERC20SuperchainFactory factory;
+    USUPERC20 token;
+    USUPERC20Factory factory;
     UERC20Metadata tokenMetadata;
 
     address recipient = makeAddr("recipient");
@@ -71,8 +71,8 @@ contract UERC20SuperchainTest is Test {
             website: "https://example.com",
             image: "https://example.com/image.png"
         });
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -85,13 +85,13 @@ contract UERC20SuperchainTest is Test {
         );
     }
 
-    function test_uerc20superchain_data_succeeds() public view {
+    function test_usuperc20_data_succeeds() public view {
         assertEq(token.homeChainId(), block.chainid);
         assertEq(token.creator(), address(this));
         assertEq(token.graffiti(), bytes32(0));
     }
 
-    function test_uerc20superchain_crosschainMint_succeeds() public {
+    function test_usuperc20_crosschainMint_succeeds() public {
         vm.expectEmit(true, false, true, true);
         emit CrosschainMint(bob, TRANSFER_AMOUNT, SUPERCHAIN_ERC20_BRIDGE);
         vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
@@ -102,7 +102,7 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT * 2);
     }
 
-    function test_uerc20superchain_fuzz_crosschainMint_succeeds(address to, uint256 amount) public {
+    function test_usuperc20_fuzz_crosschainMint_succeeds(address to, uint256 amount) public {
         vm.assume(to != address(0));
         // Prevent overflow
         amount = bound(amount, 0, type(uint256).max - token.totalSupply());
@@ -123,25 +123,25 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.balanceOf(to), toBalanceBefore + amount);
     }
 
-    function test_uerc20superchain_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
+    function test_usuperc20_crosschainMint_revertsWithNotSuperchainERC20Bridge() public {
         vm.prank(bob);
         vm.expectRevert(
-            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(USUPERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
         token.crosschainMint(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), 0);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
-    function test_uerc20superchain_crosschainMint_revertsWithRecipientCannotBeZeroAddress() public {
+    function test_usuperc20_crosschainMint_revertsWithRecipientCannotBeZeroAddress() public {
         vm.prank(SUPERCHAIN_ERC20_BRIDGE);
-        vm.expectRevert(abi.encodeWithSelector(UERC20Superchain.RecipientCannotBeZeroAddress.selector));
+        vm.expectRevert(abi.encodeWithSelector(USUPERC20.RecipientCannotBeZeroAddress.selector));
         token.crosschainMint(address(0), TRANSFER_AMOUNT);
         assertEq(token.balanceOf(address(0)), 0);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
-    function test_uerc20superchain_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(
+    function test_usuperc20_fuzz_crosschainMint_revertsWithNotSuperchainERC20Bridge(
         address caller,
         address to,
         uint256 amount
@@ -149,14 +149,14 @@ contract UERC20SuperchainTest is Test {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
-            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(USUPERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
         );
 
         vm.prank(caller);
         token.crosschainMint(to, amount);
     }
 
-    function test_uerc20superchain_crosschainBurn_succeeds() public {
+    function test_usuperc20_crosschainBurn_succeeds() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         vm.expectEmit(true, false, true, true);
@@ -166,7 +166,7 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.balanceOf(bob), 0);
     }
 
-    function test_uerc20superchain_fuzz_crosschainBurn_succeeds(uint256 amount) public {
+    function test_usuperc20_fuzz_crosschainBurn_succeeds(uint256 amount) public {
         amount = bound(amount, 0, token.totalSupply());
 
         uint256 totalSupplyBefore = token.totalSupply();
@@ -185,18 +185,18 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.balanceOf(recipient), recipientBalanceBefore - amount);
     }
 
-    function test_uerc20superchain_crosschainBurn_revertsWithNotSuperchainERC20Bridge() public {
+    function test_usuperc20_crosschainBurn_revertsWithNotSuperchainERC20Bridge() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
         vm.prank(bob);
         vm.expectRevert(
-            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(USUPERC20.NotSuperchainTokenBridge.selector, bob, SUPERCHAIN_ERC20_BRIDGE)
         );
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
     }
 
-    function test_uerc20superchain_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(
+    function test_usuperc20_fuzz_crosschainBurn_revertsWithNotSuperchainERC20Bridge(
         address caller,
         address from,
         uint256 amount
@@ -204,14 +204,14 @@ contract UERC20SuperchainTest is Test {
         vm.assume(caller != SUPERCHAIN_ERC20_BRIDGE);
 
         vm.expectRevert(
-            abi.encodeWithSelector(UERC20Superchain.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
+            abi.encodeWithSelector(USUPERC20.NotSuperchainTokenBridge.selector, caller, SUPERCHAIN_ERC20_BRIDGE)
         );
 
         vm.prank(caller);
         token.crosschainBurn(from, amount);
     }
 
-    function test_uerc20superchain_supportsInterface() public view {
+    function test_usuperc20_supportsInterface() public view {
         assertTrue(bytes4(0x01ffc9a7) == type(IERC165).interfaceId);
         assertTrue(token.supportsInterface(0x01ffc9a7)); // IERC165
         assertTrue(bytes4(0x33331994) == type(IERC7802).interfaceId);
@@ -222,7 +222,7 @@ contract UERC20SuperchainTest is Test {
         assertTrue(token.supportsInterface(0x9d8ff7da)); // IERC20Permit
     }
 
-    function test_uerc20superchain_fuzz_supportsInterface(bytes4 interfaceId) public view {
+    function test_usuperc20_fuzz_supportsInterface(bytes4 interfaceId) public view {
         vm.assume(interfaceId != type(IERC165).interfaceId);
         vm.assume(interfaceId != type(IERC7802).interfaceId);
         vm.assume(interfaceId != type(IERC20).interfaceId);
@@ -230,7 +230,7 @@ contract UERC20SuperchainTest is Test {
         assertFalse(token.supportsInterface(interfaceId));
     }
 
-    function test_uerc20superchain_permit2CanTransferWithoutAllowance() public {
+    function test_usuperc20_permit2CanTransferWithoutAllowance() public {
         vm.startPrank(PERMIT2);
         token.transferFrom(recipient, bob, TRANSFER_AMOUNT);
         assertEq(token.balanceOf(bob), TRANSFER_AMOUNT);
@@ -238,14 +238,14 @@ contract UERC20SuperchainTest is Test {
         vm.stopPrank();
     }
 
-    function test_uerc20superchain_nonPermit2CannotTransferWithoutAllowance() public {
+    function test_usuperc20_nonPermit2CannotTransferWithoutAllowance() public {
         vm.startPrank(bob);
         vm.expectRevert();
         token.transferFrom(recipient, bob, TRANSFER_AMOUNT);
         vm.stopPrank();
     }
 
-    function test_uerc20superchain_nonPermit2CanTransferWithAllowance() public {
+    function test_usuperc20_nonPermit2CanTransferWithAllowance() public {
         vm.prank(recipient);
         token.approve(bob, TRANSFER_AMOUNT);
 
@@ -257,18 +257,18 @@ contract UERC20SuperchainTest is Test {
         assertEq(token.allowance(recipient, bob), 0);
     }
 
-    function test_uerc20superchain_permit2InfiniteAllowance() public view {
+    function test_usuperc20_permit2InfiniteAllowance() public view {
         assertEq(token.allowance(recipient, PERMIT2), type(uint256).max);
     }
 
-    function test_uerc20superchain_nameSymbolDecimalsTotalSupply() public view {
+    function test_usuperc20_nameSymbolDecimalsTotalSupply() public view {
         assertEq(token.name(), "Test");
         assertEq(token.symbol(), "TEST");
         assertEq(token.decimals(), DECIMALS);
         assertEq(token.totalSupply(), INITIAL_BALANCE);
     }
 
-    function test_uerc20superchain_tokenURI_allFields() public view {
+    function test_usuperc20_tokenURI_allFields() public view {
         bytes memory data = decode(token);
         JsonTokenAllFields memory jsonToken = abi.decode(data, (JsonTokenAllFields));
 
@@ -278,14 +278,14 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
-    function test_uerc20superchain_tokenURI_maliciousInjectionDetected() public {
+    function test_usuperc20_tokenURI_maliciousInjectionDetected() public {
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
             image: "Normal description\" , \"Website\": \"https://malicious.com"
         });
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -306,10 +306,10 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.image, "Normal description\" , \"Website\": \"https://malicious.com");
     }
 
-    function test_uerc20superchain_tokenURI_descriptionWebsite() public {
+    function test_usuperc20_tokenURI_descriptionWebsite() public {
         tokenMetadata = UERC20Metadata({description: "A test token", website: "https://example.com", image: ""});
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -329,11 +329,11 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.website, "https://example.com");
     }
 
-    function test_uerc20superchain_tokenURI_descriptionImage() public {
+    function test_usuperc20_tokenURI_descriptionImage() public {
         tokenMetadata =
             UERC20Metadata({description: "A test token", website: "", image: "https://example.com/image.png"});
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -353,11 +353,11 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
-    function test_uerc20superchain_tokenURI_websiteImage() public {
+    function test_usuperc20_tokenURI_websiteImage() public {
         tokenMetadata =
             UERC20Metadata({description: "", website: "https://example.com", image: "https://example.com/image.png"});
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -377,10 +377,10 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
-    function test_uerc20superchain_tokenURI_description() public {
+    function test_usuperc20_tokenURI_description() public {
         tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: ""});
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -399,10 +399,10 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.description, "A test token");
     }
 
-    function test_uerc20superchain_tokenURI_website() public {
+    function test_usuperc20_tokenURI_website() public {
         tokenMetadata = UERC20Metadata({description: "", website: "https://example.com", image: ""});
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -421,10 +421,10 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.website, "https://example.com");
     }
 
-    function test_uerc20superchain_tokenURI_image() public {
+    function test_usuperc20_tokenURI_image() public {
         tokenMetadata = UERC20Metadata({description: "", website: "", image: "https://example.com/image.png"});
-        factory = new UERC20SuperchainFactory();
-        token = UERC20Superchain(
+        factory = new USUPERC20Factory();
+        token = USUPERC20(
             factory.createToken(
                 "Test",
                 "TEST",
@@ -443,7 +443,7 @@ contract UERC20SuperchainTest is Test {
         assertEq(jsonToken.image, "https://example.com/image.png");
     }
 
-    function decode(UERC20Superchain _token) private view returns (bytes memory) {
+    function decode(USUPERC20 _token) private view returns (bytes memory) {
         // The prefix length is calculated by converting the string to bytes and finding its length
         uint256 prefixLength = bytes("data:application/json;base64,").length;
 
@@ -468,7 +468,7 @@ contract UERC20SuperchainTest is Test {
 
     /// forge-config: default.isolate = true
     /// forge-config: ci.isolate = true
-    function test_uerc20superchain_crosschainMint_succeeds_gas() public {
+    function test_usuperc20_crosschainMint_succeeds_gas() public {
         vm.startPrank(SUPERCHAIN_ERC20_BRIDGE);
         token.crosschainMint(bob, TRANSFER_AMOUNT);
         vm.snapshotGasLastCall("crosschainMint: first mint");
@@ -478,7 +478,7 @@ contract UERC20SuperchainTest is Test {
 
     /// forge-config: default.isolate = true
     /// forge-config: ci.isolate = true
-    function test_uerc20superchain_crosschainBurn_succeeds_gas() public {
+    function test_usuperc20_crosschainBurn_succeeds_gas() public {
         deal(address(token), bob, TRANSFER_AMOUNT);
         vm.prank(SUPERCHAIN_ERC20_BRIDGE);
         token.crosschainBurn(bob, TRANSFER_AMOUNT);
@@ -487,7 +487,7 @@ contract UERC20SuperchainTest is Test {
 
     /// forge-config: default.isolate = true
     /// forge-config: ci.isolate = true
-    function test_uerc20superchain_permit_gas() public {
+    function test_usuperc20_permit_gas() public {
         uint256 privateKey = 1;
         address owner = vm.addr(privateKey);
 
@@ -516,13 +516,13 @@ contract UERC20SuperchainTest is Test {
 
         // Execute permit with valid signature
         token.permit(owner, bob, TRANSFER_AMOUNT, deadline, v, r, s);
-        vm.snapshotGasLastCall("UERC20 Superchain permit");
+        vm.snapshotGasLastCall("USUPERC20 permit");
 
         // Verify that permit worked correctly
         assertEq(token.allowance(owner, bob), TRANSFER_AMOUNT);
     }
 
-    function test_uerc20superchain_domainSeparator() public view {
+    function test_usuperc20_domainSeparator() public view {
         bytes32 domainSeparator = keccak256(
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
