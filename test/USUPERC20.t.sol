@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.26;
 
 import {Test} from "forge-std/Test.sol";
 import {USUPERC20} from "../src/tokens/USUPERC20.sol";
@@ -67,9 +67,7 @@ contract USUPERC20Test is Test {
 
     function setUp() public {
         tokenMetadata = UERC20Metadata({
-            description: "A test token",
-            website: "https://example.com",
-            image: "https://example.com/image.png"
+            description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
         });
         factory = new USUPERC20Factory();
         token = USUPERC20(

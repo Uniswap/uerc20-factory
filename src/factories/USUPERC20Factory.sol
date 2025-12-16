@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.28;
+pragma solidity ^0.8.26;
 
 import {USUPERC20} from "../tokens/USUPERC20.sol";
 import {IUSUPERC20Factory} from "../interfaces/IUSUPERC20Factory.sol";
