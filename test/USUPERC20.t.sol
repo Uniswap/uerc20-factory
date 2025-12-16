@@ -30,8 +30,8 @@ contract USUPERC20Test is Test {
 
     struct JsonTokenAllFields {
         string description;
-        string image;
         string website;
+        string image;
     }
 
     struct JsonTokenDescriptionWebsite {
@@ -45,8 +45,8 @@ contract USUPERC20Test is Test {
     }
 
     struct JsonTokenWebsiteImage {
-        string image;
         string website;
+        string image;
     }
 
     struct JsonTokenDescription {
