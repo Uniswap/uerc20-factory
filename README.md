@@ -121,3 +121,16 @@ forge test
 forge fmt
 ```
 
+## Deployment Addresses
+
+### UERC20Factory
+
+| Network | Address | Commit Hash | Version |
+|---------|---------|------------|---------|
+| Mainnet | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | fd5be9b7a918ca3d925d985dff9bcde82b3b8a9d | v1.0.0-candidate |
+
+
+## Audits
+- 3/14 [OpenZeppelin](./docs/The%20Uniswap%20ERC-20%20Token%20Factory%20Audit.pdf)
+- 6/3 [OpenZeppelin](./docs/UERC20%20Factory%20Separation%20Diff%20Audit.pdf)
+
