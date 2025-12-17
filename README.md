@@ -132,17 +132,17 @@ forge fmt
 
 ### UERC20Factory
 
-| Network | Address                                    | Commit Hash                              |
-| ------- | ------------------------------------------ | ---------------------------------------- |
-| Mainnet | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44 |
-| Sepolia | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44 |
+| Network | Address                                    | Commit Hash                              | Version          |
+| ------- | ------------------------------------------ | ---------------------------------------- | ---------------- |
+| Mainnet | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
+| Sepolia | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
 
 ### USUPERC20Factory
 
-| Network          | Address                                    | Commit Hash                              |
-| ---------------- | ------------------------------------------ | ---------------------------------------- |
-| Unichain         | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44 |
-| Unichain Sepolia | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44 |
+| Network          | Address                                    | Commit Hash                              | Version          |
+| ---------------- | ------------------------------------------ | ---------------------------------------- | ---------------- |
+| Unichain         | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
+| Unichain Sepolia | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
 
 ## Audits
 
