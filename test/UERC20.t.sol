@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.26;
 
 import {Test} from "forge-std/Test.sol";
 import {UERC20} from "../src/tokens/UERC20.sol";
@@ -29,8 +29,8 @@ contract UERC20Test is Test {
 
     struct JsonTokenAllFields {
         string description;
-        string image;
         string website;
+        string image;
     }
 
     struct JsonTokenDescriptionWebsite {
@@ -44,8 +44,8 @@ contract UERC20Test is Test {
     }
 
     struct JsonTokenWebsiteImage {
-        string image;
         string website;
+        string image;
     }
 
     struct JsonTokenDescription {
@@ -62,9 +62,7 @@ contract UERC20Test is Test {
 
     function setUp() public {
         tokenMetadata = UERC20Metadata({
-            description: "A test token",
-            website: "https://example.com",
-            image: "https://example.com/image.png"
+            description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
         });
         factory = new UERC20Factory();
         token = UERC20(
@@ -139,8 +137,8 @@ contract UERC20Test is Test {
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.description, "A test token");
-        assertEq(jsonToken.website, "https://example.com");
         assertEq(jsonToken.image, "https://example.com/image.png");
+        assertEq(jsonToken.website, "https://example.com");
     }
 
     function test_uerc20_tokenURI_maliciousInjectionDetected() public {
@@ -161,8 +159,8 @@ contract UERC20Test is Test {
 
         // Parse JSON to extract individual fields
         assertEq(jsonToken.description, "A test token");
-        assertEq(jsonToken.website, "https://example.com");
         assertEq(jsonToken.image, "Normal description\" , \"Website\": \"https://malicious.com");
+        assertEq(jsonToken.website, "https://example.com");
     }
 
     function test_uerc20_tokenURI_descriptionWebsite() public {

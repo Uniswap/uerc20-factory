@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.26;
 
 import {Test} from "forge-std/Test.sol";
 import {UERC20Factory} from "../src/factories/UERC20Factory.sol";
@@ -21,9 +21,7 @@ contract UERC20FactoryTest is Test {
     function setUp() public {
         factory = new UERC20Factory();
         tokenMetadata = UERC20Metadata({
-            description: "A test token",
-            website: "https://example.com",
-            image: "https://example.com/image.png"
+            description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
         });
     }
 

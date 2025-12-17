@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.28;
+pragma solidity ^0.8.26;
 
 import {IUERC20Factory} from "../interfaces/IUERC20Factory.sol";
 import {BaseUERC20} from "./BaseUERC20.sol";
