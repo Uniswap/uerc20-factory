@@ -1,0 +1,17 @@
+# Summary
+- [Home](README.md)
+# src
+  - [❱ factories](src/factories/README.md)
+    - [UERC20Factory](src/factories/UERC20Factory.sol/contract.UERC20Factory.md)
+    - [USUPERC20Factory](src/factories/USUPERC20Factory.sol/contract.USUPERC20Factory.md)
+  - [❱ interfaces](src/interfaces/README.md)
+    - [ITokenFactory](src/interfaces/ITokenFactory.sol/interface.ITokenFactory.md)
+    - [IUERC20Factory](src/interfaces/IUERC20Factory.sol/interface.IUERC20Factory.md)
+    - [IUSUPERC20Factory](src/interfaces/IUSUPERC20Factory.sol/interface.IUSUPERC20Factory.md)
+  - [❱ libraries](src/libraries/README.md)
+    - [UERC20Metadata](src/libraries/UERC20MetadataLibrary.sol/struct.UERC20Metadata.md)
+    - [UERC20MetadataLibrary](src/libraries/UERC20MetadataLibrary.sol/library.UERC20MetadataLibrary.md)
+  - [❱ tokens](src/tokens/README.md)
+    - [BaseUERC20](src/tokens/BaseUERC20.sol/abstract.BaseUERC20.md)
+    - [UERC20](src/tokens/UERC20.sol/contract.UERC20.md)
+    - [USUPERC20](src/tokens/USUPERC20.sol/contract.USUPERC20.md)
