@@ -125,9 +125,17 @@ forge fmt
 
 ### UERC20Factory
 
-| Network | Address | Commit Hash | Version |
-|---------|---------|------------|---------|
-| Mainnet | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | fd5be9b7a918ca3d925d985dff9bcde82b3b8a9d | v1.0.0-candidate |
+| Network | Address | Commit Hash
+|---------|---------|------------|
+| Mainnet | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44
+| Sepolia | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44
+
+### USUPERC20Factory
+
+| Network | Address | Commit Hash
+|---------|---------|------------|
+| Unichain | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44
+| Unichain Sepolia | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44
 
 
 ## Audits
