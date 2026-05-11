@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {UERC20Metadata} from "../libraries/UERC20MetadataLibrary.sol";
+
 /// @title ITokenFactory
 /// @notice Generic interface for a token factory.
 interface ITokenFactory {
     /// @notice Emitted when a new token is created
-    event TokenCreated(address tokenAddress);
+    event TokenCreated(address tokenAddress, UERC20Metadata metadata);
 
     /// @notice Thrown when the recipient is the zero address
     error RecipientCannotBeZeroAddress();

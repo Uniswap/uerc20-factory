@@ -16,7 +16,7 @@ contract UERC20FactoryTest is Test {
     uint8 decimals = 18;
     address bob = makeAddr("bob");
 
-    event TokenCreated(address tokenAddress);
+    event TokenCreated(address tokenAddress, UERC20Metadata metadata);
 
     function setUp() public {
         factory = new UERC20Factory();
@@ -62,7 +62,7 @@ contract UERC20FactoryTest is Test {
         address tokenAddress = factory.getUERC20Address(name, symbol, decimals, address(this), bytes32(0));
 
         vm.expectEmit(true, true, true, true);
-        emit TokenCreated(tokenAddress);
+        emit TokenCreated(tokenAddress, tokenMetadata);
         factory.createToken(name, symbol, decimals, 1e18, recipient, abi.encode(tokenMetadata), bytes32(0));
     }
 

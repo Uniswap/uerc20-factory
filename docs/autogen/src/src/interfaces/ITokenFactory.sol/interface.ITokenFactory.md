@@ -49,7 +49,7 @@ Emitted when a new token is created
 
 
 ```solidity
-event TokenCreated(address tokenAddress);
+event TokenCreated(address tokenAddress, UERC20Metadata metadata);
 ```
 
 ## Errors

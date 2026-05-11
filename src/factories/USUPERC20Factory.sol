@@ -89,6 +89,6 @@ contract USUPERC20Factory is IUSUPERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress);
+        emit TokenCreated(tokenAddress, metadata);
     }
 }

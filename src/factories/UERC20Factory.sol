@@ -71,6 +71,6 @@ contract UERC20Factory is IUERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress);
+        emit TokenCreated(tokenAddress, metadata);
     }
 }
