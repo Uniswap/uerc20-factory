@@ -34,6 +34,8 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
   - **Website**
   - **Image**
 - **tokenURI()**: Returns base64-encoded JSON metadata
+- Token creation emits optional X account proof data:
+  - **Proof**: capped at 300 characters to fit current X verification tokens with room for small backend changes
 
 ### UERC20 (Ethereum Mainnet)
 
@@ -100,8 +102,8 @@ function createToken(
 ```
 
 - **data**: Factory-specific encoded data
-  - UERC20Factory: `abi.encode(UERC20Metadata)`
-  - UERC20SuperchainFactory: `abi.encode(homeChainId, creator, UERC20Metadata)`
+  - UERC20Factory: `abi.encode(UERC20Metadata, string xAccountProof)`
+  - UERC20SuperchainFactory: `abi.encode(homeChainId, creator, UERC20Metadata, string xAccountProof)`
 - **graffiti**: Additional data for salt generation to enable address customization
 
 ## Extensibility

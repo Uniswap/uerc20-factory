@@ -23,6 +23,7 @@ contract UERC20Test is Test {
     UERC20 token;
     UERC20Factory factory;
     UERC20Metadata tokenMetadata;
+    string xAccountProof;
 
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
@@ -64,10 +65,17 @@ contract UERC20Test is Test {
         tokenMetadata = UERC20Metadata({
             description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
         });
+        xAccountProof = "verification-token";
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
     }
@@ -150,7 +158,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 
@@ -168,7 +182,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 
@@ -186,7 +206,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 
@@ -204,7 +230,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 
@@ -221,7 +253,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 
@@ -237,7 +275,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 
@@ -253,7 +297,13 @@ contract UERC20Test is Test {
         factory = new UERC20Factory();
         token = UERC20(
             factory.createToken(
-                "Test", "TEST", DECIMALS, INITIAL_BALANCE, recipient, abi.encode(tokenMetadata), bytes32("test")
+                "Test",
+                "TEST",
+                DECIMALS,
+                INITIAL_BALANCE,
+                recipient,
+                abi.encode(tokenMetadata, xAccountProof),
+                bytes32("test")
             )
         );
 

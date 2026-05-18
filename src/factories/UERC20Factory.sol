@@ -10,6 +10,8 @@ import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 /// @title UERC20Factory
 /// @notice Deploys new UERC20 contracts
 contract UERC20Factory is IUERC20Factory {
+    uint256 private constant MAX_X_ACCOUNT_PROOF_LENGTH = 300;
+
     /// @dev Parameters stored transiently for token initialization
     Parameters private parameters;
 
@@ -41,13 +43,16 @@ contract UERC20Factory is IUERC20Factory {
         bytes calldata data,
         bytes32 graffiti
     ) external returns (address tokenAddress) {
-        (UERC20Metadata memory metadata) = abi.decode(data, (UERC20Metadata));
+        (UERC20Metadata memory metadata, string memory xAccountProof) = abi.decode(data, (UERC20Metadata, string));
 
         if (recipient == address(0)) {
             revert RecipientCannotBeZeroAddress();
         }
         if (totalSupply == 0) {
             revert TotalSupplyCannotBeZero();
+        }
+        if (bytes(xAccountProof).length > MAX_X_ACCOUNT_PROOF_LENGTH) {
+            revert XAccountProofTooLong();
         }
 
         // Store parameters transiently for token to access during construction
@@ -71,6 +76,6 @@ contract UERC20Factory is IUERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress, metadata);
+        emit TokenCreated(tokenAddress, metadata, xAccountProof);
     }
 }

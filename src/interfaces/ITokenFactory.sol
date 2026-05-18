@@ -7,7 +7,10 @@ import {UERC20Metadata} from "../libraries/UERC20MetadataLibrary.sol";
 /// @notice Generic interface for a token factory.
 interface ITokenFactory {
     /// @notice Emitted when a new token is created
-    event TokenCreated(address tokenAddress, UERC20Metadata metadata);
+    event TokenCreated(address tokenAddress, UERC20Metadata metadata, string xAccountProof);
+
+    /// @notice Thrown when the X account proof exceeds the maximum length
+    error XAccountProofTooLong();
 
     /// @notice Thrown when the recipient is the zero address
     error RecipientCannotBeZeroAddress();

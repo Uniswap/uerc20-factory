@@ -11,19 +11,21 @@ import {ITokenFactory} from "../src/interfaces/ITokenFactory.sol";
 contract USUPERC20FactoryTest is Test {
     USUPERC20Factory public factory;
     UERC20Metadata public tokenMetadata;
+    string public xAccountProof;
     address recipient = makeAddr("recipient");
     string name = "Test Token";
     string symbol = "TOKEN";
     uint8 decimals = 18;
     address bob = makeAddr("bob");
 
-    event TokenCreated(address tokenAddress, UERC20Metadata metadata);
+    event TokenCreated(address tokenAddress, UERC20Metadata metadata, string xAccountProof);
 
     function setUp() public {
         factory = new USUPERC20Factory();
         tokenMetadata = UERC20Metadata({
             description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
         });
+        xAccountProof = "verification-token";
     }
 
     function test_create_succeeds_withMint() public {
@@ -34,7 +36,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );
@@ -57,7 +59,7 @@ contract USUPERC20FactoryTest is Test {
             decimals,
             1e18,
             recipient,
-            abi.encode(block.chainid, address(this), tokenMetadata),
+            abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
             bytes32("test")
         );
     }
@@ -70,7 +72,7 @@ contract USUPERC20FactoryTest is Test {
             decimals,
             1e18,
             address(0),
-            abi.encode(block.chainid, address(this), tokenMetadata),
+            abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
             bytes32(0)
         );
     }
@@ -78,7 +80,28 @@ contract USUPERC20FactoryTest is Test {
     function test_create_usuperc20_revertsWithTotalSupplyCannotBeZero() public {
         vm.expectRevert(abi.encodeWithSelector(ITokenFactory.TotalSupplyCannotBeZero.selector));
         factory.createToken(
-            name, symbol, decimals, 0, recipient, abi.encode(block.chainid, address(this), tokenMetadata), bytes32(0)
+            name,
+            symbol,
+            decimals,
+            0,
+            recipient,
+            abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+            bytes32(0)
+        );
+    }
+
+    function test_create_usuperc20_revertsWithXAccountProofTooLong() public {
+        string memory longXAccountProof = new string(301);
+
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.XAccountProofTooLong.selector));
+        factory.createToken(
+            name,
+            symbol,
+            decimals,
+            1e18,
+            recipient,
+            abi.encode(block.chainid, address(this), tokenMetadata, longXAccountProof),
+            bytes32(0)
         );
     }
 
@@ -90,7 +113,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid + 1, address(this), tokenMetadata),
+                abi.encode(block.chainid + 1, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         ); // the home chain of this token is different than the current chain
@@ -115,7 +138,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid + 1, address(this), tokenMetadata),
+                abi.encode(block.chainid + 1, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         ); // the home chain of this token is different than the current chain
@@ -143,7 +166,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );
@@ -156,14 +179,14 @@ contract USUPERC20FactoryTest is Test {
             factory.getUSUPERC20Address(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
 
         vm.expectEmit(true, true, true, true);
-        emit TokenCreated(tokenAddress, tokenMetadata);
+        emit TokenCreated(tokenAddress, tokenMetadata, xAccountProof);
         factory.createToken(
             name,
             symbol,
             decimals,
             1e18,
             recipient,
-            abi.encode(block.chainid, address(this), tokenMetadata),
+            abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
             bytes32("test")
         );
     }
@@ -177,7 +200,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );
@@ -193,7 +216,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );
@@ -209,7 +232,7 @@ contract USUPERC20FactoryTest is Test {
             decimals,
             1e18,
             recipient,
-            abi.encode(block.chainid, address(this), tokenMetadata),
+            abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
             bytes32("test")
         );
 
@@ -220,18 +243,19 @@ contract USUPERC20FactoryTest is Test {
             decimals,
             1e18,
             recipient,
-            abi.encode(block.chainid, address(this), tokenMetadata),
+            abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
             bytes32("test")
         );
     }
 
     function test_create_metadataClearedOnDifferentChain() public {
         UERC20Metadata memory emptyMetadata = UERC20Metadata({description: "", website: "", image: ""});
+        string memory emptyXAccountProof = "";
         address tokenAddress =
             factory.getUSUPERC20Address(name, symbol, decimals, block.chainid + 1, address(this), bytes32("test"));
 
         vm.expectEmit(true, true, true, true);
-        emit TokenCreated(tokenAddress, emptyMetadata);
+        emit TokenCreated(tokenAddress, emptyMetadata, emptyXAccountProof);
         USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
@@ -239,7 +263,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid + 1, address(this), tokenMetadata),
+                abi.encode(block.chainid + 1, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );
@@ -262,7 +286,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );
@@ -284,7 +308,7 @@ contract USUPERC20FactoryTest is Test {
                 decimals,
                 1e18,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32("test")
             )
         );

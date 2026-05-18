@@ -24,6 +24,7 @@ contract USUPERC20Test is Test {
     USUPERC20 token;
     USUPERC20Factory factory;
     UERC20Metadata tokenMetadata;
+    string xAccountProof;
 
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
@@ -69,6 +70,7 @@ contract USUPERC20Test is Test {
         tokenMetadata = UERC20Metadata({
             description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
         });
+        xAccountProof = "verification-token";
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -77,7 +79,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -290,7 +292,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -314,7 +316,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -338,7 +340,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -362,7 +364,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -385,7 +387,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -407,7 +409,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
@@ -429,7 +431,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata),
+                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
                 bytes32(0)
             )
         );
