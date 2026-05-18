@@ -10,8 +10,6 @@ import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 /// @title USUPERC20Factory
 /// @notice Deploys new USUPERC20 contracts
 contract USUPERC20Factory is IUSUPERC20Factory {
-    uint256 private constant MAX_X_ACCOUNT_PROOF_LENGTH = 300;
-
     /// @dev Parameters stored transiently for token initialization
     Parameters private parameters;
 
@@ -44,8 +42,8 @@ contract USUPERC20Factory is IUSUPERC20Factory {
         bytes calldata data,
         bytes32 graffiti
     ) external returns (address tokenAddress) {
-        (uint256 homeChainId, address creator, UERC20Metadata memory metadata, string memory xAccountProof) =
-            abi.decode(data, (uint256, address, UERC20Metadata, string));
+        (uint256 homeChainId, address creator, UERC20Metadata memory metadata) =
+            abi.decode(data, (uint256, address, UERC20Metadata));
 
         // Check validity only on home chain
         if (block.chainid == homeChainId) {
@@ -59,9 +57,6 @@ contract USUPERC20Factory is IUSUPERC20Factory {
             if (totalSupply == 0) {
                 revert TotalSupplyCannotBeZero();
             }
-            if (bytes(xAccountProof).length > MAX_X_ACCOUNT_PROOF_LENGTH) {
-                revert XAccountProofTooLong();
-            }
         }
 
         // Compute salt based on the core parameters that define a token's identity
@@ -73,7 +68,7 @@ contract USUPERC20Factory is IUSUPERC20Factory {
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
-            xAccountProof = "";
+            metadata.xAccountProof = "";
         }
 
         // Store parameters transiently for token to access during construction
@@ -95,6 +90,6 @@ contract USUPERC20Factory is IUSUPERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress, metadata, xAccountProof);
+        emit TokenCreated(tokenAddress, metadata);
     }
 }

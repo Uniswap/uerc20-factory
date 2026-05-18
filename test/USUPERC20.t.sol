@@ -24,7 +24,6 @@ contract USUPERC20Test is Test {
     USUPERC20 token;
     USUPERC20Factory factory;
     UERC20Metadata tokenMetadata;
-    string xAccountProof;
 
     address recipient = makeAddr("recipient");
     address bob = makeAddr("bob");
@@ -68,9 +67,11 @@ contract USUPERC20Test is Test {
 
     function setUp() public {
         tokenMetadata = UERC20Metadata({
-            description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
+            description: "A test token",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            xAccountProof: "verification-token"
         });
-        xAccountProof = "verification-token";
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -79,7 +80,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -282,7 +283,8 @@ contract USUPERC20Test is Test {
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
-            image: "Normal description\" , \"Website\": \"https://malicious.com"
+            image: "Normal description\" , \"Website\": \"https://malicious.com",
+            xAccountProof: "verification-token"
         });
         factory = new USUPERC20Factory();
         token = USUPERC20(
@@ -292,7 +294,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -307,7 +309,9 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_descriptionWebsite() public {
-        tokenMetadata = UERC20Metadata({description: "A test token", website: "https://example.com", image: ""});
+        tokenMetadata = UERC20Metadata({
+            description: "A test token", website: "https://example.com", image: "", xAccountProof: "verification-token"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -316,7 +320,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -330,8 +334,12 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_descriptionImage() public {
-        tokenMetadata =
-            UERC20Metadata({description: "A test token", website: "", image: "https://example.com/image.png"});
+        tokenMetadata = UERC20Metadata({
+            description: "A test token",
+            website: "",
+            image: "https://example.com/image.png",
+            xAccountProof: "verification-token"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -340,7 +348,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -354,8 +362,12 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_websiteImage() public {
-        tokenMetadata =
-            UERC20Metadata({description: "", website: "https://example.com", image: "https://example.com/image.png"});
+        tokenMetadata = UERC20Metadata({
+            description: "",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            xAccountProof: "verification-token"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -364,7 +376,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -378,7 +390,8 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_description() public {
-        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: ""});
+        tokenMetadata =
+            UERC20Metadata({description: "A test token", website: "", image: "", xAccountProof: "verification-token"});
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -387,7 +400,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -400,7 +413,9 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_website() public {
-        tokenMetadata = UERC20Metadata({description: "", website: "https://example.com", image: ""});
+        tokenMetadata = UERC20Metadata({
+            description: "", website: "https://example.com", image: "", xAccountProof: "verification-token"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -409,7 +424,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );
@@ -422,7 +437,9 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_image() public {
-        tokenMetadata = UERC20Metadata({description: "", website: "", image: "https://example.com/image.png"});
+        tokenMetadata = UERC20Metadata({
+            description: "", website: "", image: "https://example.com/image.png", xAccountProof: "verification-token"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -431,7 +448,7 @@ contract USUPERC20Test is Test {
                 DECIMALS,
                 INITIAL_BALANCE,
                 recipient,
-                abi.encode(block.chainid, address(this), tokenMetadata, xAccountProof),
+                abi.encode(block.chainid, address(this), tokenMetadata),
                 bytes32(0)
             )
         );

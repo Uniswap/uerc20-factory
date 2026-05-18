@@ -49,18 +49,10 @@ Emitted when a new token is created
 
 
 ```solidity
-event TokenCreated(address tokenAddress, UERC20Metadata metadata, string xAccountProof);
+event TokenCreated(address tokenAddress, UERC20Metadata metadata);
 ```
 
 ## Errors
-### XAccountProofTooLong
-Thrown when the X account proof exceeds the maximum length
-
-
-```solidity
-error XAccountProofTooLong();
-```
-
 ### RecipientCannotBeZeroAddress
 Thrown when the recipient is the zero address
 
