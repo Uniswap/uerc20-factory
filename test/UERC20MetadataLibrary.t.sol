@@ -13,7 +13,7 @@ contract UERC20MetadataLibraryTest is Test {
             description: "Test Token",
             website: "https://example.com",
             image: "https://example.com/image.png",
-            xAccountProof: "verification-token"
+            xProofTweetId: 18446744073709551615
         });
 
         string memory result = metadata.toJSON();
@@ -28,7 +28,7 @@ contract UERC20MetadataLibraryTest is Test {
     }
 
     function testToJSON_EmptyMetadata() public pure {
-        UERC20Metadata memory metadata = UERC20Metadata({description: "", website: "", image: "", xAccountProof: ""});
+        UERC20Metadata memory metadata = UERC20Metadata({description: "", website: "", image: "", xProofTweetId: 0});
 
         string memory result = metadata.toJSON();
 
@@ -42,7 +42,7 @@ contract UERC20MetadataLibraryTest is Test {
 
     function testToJSON_PartialMetadata() public pure {
         UERC20Metadata memory metadata =
-            UERC20Metadata({description: "Test Token", website: "", image: "", xAccountProof: "verification-token"});
+            UERC20Metadata({description: "Test Token", website: "", image: "", xProofTweetId: 18446744073709551615});
 
         string memory result = metadata.toJSON();
 

@@ -33,7 +33,7 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
   - **Description**
   - **Website**
   - **Image**
-  - **X account proof**
+  - **X proof tweet ID**
 - **tokenURI()**: Returns base64-encoded JSON metadata
 
 ### UERC20 (Ethereum Mainnet)
@@ -48,7 +48,7 @@ The project provides a flexible architecture for deploying ERC20 tokens with dif
 - Supports cross-chain transfers via the `SuperchainTokenBridge` (0x4200000000000000000000000000000000000028)
 - **Home Chain**: The chain where totalSupply is initially minted and metadata is stored
 - Ensures the total supply remains constant across all chains
-- Metadata (creator, description, website, and image) is stored on the home chain only, so off-chain indexing is required to access them on other chains
+- Metadata (creator, description, website, image, and X proof tweet ID) is stored on the home chain only, so off-chain indexing is required to access them on other chains
 - Only mints initial supply when deployed on the home chain
 
 ## Deployment Rules
