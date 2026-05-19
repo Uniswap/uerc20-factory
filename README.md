@@ -21,6 +21,8 @@ The suite includes two token implementations:
 - `UERC20`: a standard ERC-20 token with EIP-2612 permit support, ERC-165 interface detection, creator attribution, and optional token metadata.
 - `USUPERC20`: an `IERC7802`-compatible token for the Superchain. Supply is initially minted on the home chain, metadata is stored on the home chain, and cross-chain minting and burning are restricted to the Superchain Token Bridge.
 
+Token metadata includes optional description, website, image, and `xProofTweetId` fields. For `USUPERC20`, metadata is stored only on the home chain and cleared on non-home-chain deployments.
+
 All factories implement the shared `ITokenFactory` interface:
 
 ```solidity

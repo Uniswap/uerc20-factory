@@ -7,6 +7,7 @@ struct UERC20Metadata {
 string description;
 string website;
 string image;
+uint256 xProofTweetId;
 }
 ```
 

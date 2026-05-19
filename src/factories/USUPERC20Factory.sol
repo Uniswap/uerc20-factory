@@ -68,6 +68,7 @@ contract USUPERC20Factory is IUSUPERC20Factory {
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
+            metadata.xProofTweetId = 0;
         }
 
         // Store parameters transiently for token to access during construction
@@ -89,6 +90,6 @@ contract USUPERC20Factory is IUSUPERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress);
+        emit TokenCreated(tokenAddress, metadata);
     }
 }
