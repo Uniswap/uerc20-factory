@@ -68,7 +68,7 @@ contract USUPERC20Factory is IUSUPERC20Factory {
             metadata.description = "";
             metadata.website = "";
             metadata.image = "";
-            metadata.xProofTweetId = 0;
+            metadata.extraData = "";
         }
 
         // Store parameters transiently for token to access during construction

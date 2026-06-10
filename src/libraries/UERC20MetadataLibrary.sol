@@ -8,7 +8,9 @@ struct UERC20Metadata {
     string description;
     string website;
     string image;
-    uint256 xProofTweetId;
+    /// @dev Opaque, application-defined data emitted on token creation and stored on-chain.
+    /// Not included in the rendered tokenURI JSON; intended for off-chain verification.
+    bytes extraData;
 }
 
 /// @title UERC20MetadataLibrary

@@ -24,7 +24,7 @@ contract UERC20FactoryTest is Test {
             description: "A test token",
             website: "https://example.com",
             image: "https://example.com/image.png",
-            xProofTweetId: 18446744073709551615
+            extraData: hex"1234"
         });
     }
 
