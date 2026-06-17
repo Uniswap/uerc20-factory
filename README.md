@@ -59,26 +59,27 @@ The deployment addresses currently documented in this repository are listed belo
 
 ### UERC20Factory
 
-| Network | Address                                    | Commit Hash                              | Version          |
-| ------- | ------------------------------------------ | ---------------------------------------- | ---------------- |
-| Mainnet | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
-| Sepolia | 0x0cde87c11b959e5eb0924c1abf5250ee3f9bd1b5 | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
+| Network | Address                                    | Commit Hash                              | Version |
+| ------- | ------------------------------------------ | ---------------------------------------- | -------|
+| Mainnet | 0x000000e200088D55C39a11F609E5F667729ad49b | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
+| Sepolia | 0x000000e200088D55C39a11F609E5F667729ad49b | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
 
 ### USUPERC20Factory
 
-| Network          | Address                                    | Commit Hash                              | Version          |
-| ---------------- | ------------------------------------------ | ---------------------------------------- | ---------------- |
-| Unichain         | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
-| Unichain Sepolia | 0x24016ed99a69e9b86d16d84351e1661266b7ac6a | 9705debfea9e6a641bc04352398f9e549055ac44 | v1.0.0-candidate |
+| Network          | Address                                    | Commit Hash                              | Version |
+| ---------------- | ------------------------------------------ | ---------------------------------------- | -------|
+| Base             | 0xeEeeEEE204Afb6BABb1287ffed52cCD6BA0b0fb2 | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
+| Base Sepolia     | 0xeEeeEEE204Afb6BABb1287ffed52cCD6BA0b0fb2 | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
+| Unichain         | 0xeEeeEEE204Afb6BABb1287ffed52cCD6BA0b0fb2 | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
+| Unichain Sepolia | 0xeEeeEEE204Afb6BABb1287ffed52cCD6BA0b0fb2 | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
 
 ## Audits
 
-OpenZeppelin audits dated `03/14` and `06/03` are referenced for this repository. The corresponding report files are not currently present in `docs/`, so report links should be added when the reports are committed or published.
-
-| Date  | Auditor      | Report           |
-| ----- | ------------ | ---------------- |
-| 03/14 | OpenZeppelin | Link to be added |
-| 06/03 | OpenZeppelin | Link to be added |
+| Date          | Auditor      |
+| ------------- | ------------ |
+| 06/17/2026 | OpenZeppelin |
+| 06/03/2025 | [OpenZeppelin](./docs/OpenZeppelin_v1.0.0_diff.pdf) |
+| 03/14/2025 | [OpenZeppelin](./docs/OpenZeppelin_v1.0.0.pdf) |
 
 ## Docs
 
