@@ -8,6 +8,9 @@ struct UERC20Metadata {
     string description;
     string website;
     string image;
+    /// @dev Arbitrary application-defined data emitted on token creation and stored on-chain.
+    /// Not included in the rendered tokenURI JSON, can be fetched by `token.metadata()`.
+    bytes extraData;
 }
 
 /// @title UERC20MetadataLibrary

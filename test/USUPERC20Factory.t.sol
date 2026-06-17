@@ -17,12 +17,15 @@ contract USUPERC20FactoryTest is Test {
     uint8 decimals = 18;
     address bob = makeAddr("bob");
 
-    event TokenCreated(address tokenAddress);
+    event TokenCreated(address tokenAddress, UERC20Metadata metadata);
 
     function setUp() public {
         factory = new USUPERC20Factory();
         tokenMetadata = UERC20Metadata({
-            description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
+            description: "A test token",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            extraData: hex"1234"
         });
     }
 
@@ -156,7 +159,7 @@ contract USUPERC20FactoryTest is Test {
             factory.getUSUPERC20Address(name, symbol, decimals, block.chainid, address(this), bytes32("test"));
 
         vm.expectEmit(true, true, true, true);
-        emit TokenCreated(tokenAddress);
+        emit TokenCreated(tokenAddress, tokenMetadata);
         factory.createToken(
             name,
             symbol,
@@ -226,6 +229,12 @@ contract USUPERC20FactoryTest is Test {
     }
 
     function test_create_metadataClearedOnDifferentChain() public {
+        UERC20Metadata memory emptyMetadata = UERC20Metadata({description: "", website: "", image: "", extraData: ""});
+        address tokenAddress =
+            factory.getUSUPERC20Address(name, symbol, decimals, block.chainid + 1, address(this), bytes32("test"));
+
+        vm.expectEmit(true, true, true, true);
+        emit TokenCreated(tokenAddress, emptyMetadata);
         USUPERC20 token = USUPERC20(
             factory.createToken(
                 name,
@@ -238,10 +247,12 @@ contract USUPERC20FactoryTest is Test {
             )
         );
 
-        (string memory description, string memory website, string memory image) = token.metadata();
+        (string memory description, string memory website, string memory image, bytes memory extraData) =
+            token.metadata();
         assertEq(description, "");
         assertEq(image, "");
         assertEq(website, "");
+        assertEq(extraData, "");
     }
 
     function test_bytecodeSize_usuperc20factory() public {

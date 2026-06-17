@@ -49,7 +49,6 @@ contract UERC20Factory is IUERC20Factory {
         if (totalSupply == 0) {
             revert TotalSupplyCannotBeZero();
         }
-
         // Store parameters transiently for token to access during construction
         parameters = Parameters({
             name: name,
@@ -71,6 +70,6 @@ contract UERC20Factory is IUERC20Factory {
         // Clear parameters after deployment
         delete parameters;
 
-        emit TokenCreated(tokenAddress);
+        emit TokenCreated(tokenAddress, metadata);
     }
 }

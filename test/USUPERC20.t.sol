@@ -67,7 +67,10 @@ contract USUPERC20Test is Test {
 
     function setUp() public {
         tokenMetadata = UERC20Metadata({
-            description: "A test token", website: "https://example.com", image: "https://example.com/image.png"
+            description: "A test token",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            extraData: hex"1234"
         });
         factory = new USUPERC20Factory();
         token = USUPERC20(
@@ -280,7 +283,8 @@ contract USUPERC20Test is Test {
         tokenMetadata = UERC20Metadata({
             description: "A test token",
             website: "https://example.com",
-            image: "Normal description\" , \"Website\": \"https://malicious.com"
+            image: "Normal description\" , \"Website\": \"https://malicious.com",
+            extraData: hex"1234"
         });
         factory = new USUPERC20Factory();
         token = USUPERC20(
@@ -305,7 +309,9 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_descriptionWebsite() public {
-        tokenMetadata = UERC20Metadata({description: "A test token", website: "https://example.com", image: ""});
+        tokenMetadata = UERC20Metadata({
+            description: "A test token", website: "https://example.com", image: "", extraData: hex"1234"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -328,8 +334,9 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_descriptionImage() public {
-        tokenMetadata =
-            UERC20Metadata({description: "A test token", website: "", image: "https://example.com/image.png"});
+        tokenMetadata = UERC20Metadata({
+            description: "A test token", website: "", image: "https://example.com/image.png", extraData: hex"1234"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -352,8 +359,12 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_websiteImage() public {
-        tokenMetadata =
-            UERC20Metadata({description: "", website: "https://example.com", image: "https://example.com/image.png"});
+        tokenMetadata = UERC20Metadata({
+            description: "",
+            website: "https://example.com",
+            image: "https://example.com/image.png",
+            extraData: hex"1234"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -376,7 +387,7 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_description() public {
-        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: ""});
+        tokenMetadata = UERC20Metadata({description: "A test token", website: "", image: "", extraData: hex"1234"});
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -398,7 +409,8 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_website() public {
-        tokenMetadata = UERC20Metadata({description: "", website: "https://example.com", image: ""});
+        tokenMetadata =
+            UERC20Metadata({description: "", website: "https://example.com", image: "", extraData: hex"1234"});
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
@@ -420,7 +432,9 @@ contract USUPERC20Test is Test {
     }
 
     function test_usuperc20_tokenURI_image() public {
-        tokenMetadata = UERC20Metadata({description: "", website: "", image: "https://example.com/image.png"});
+        tokenMetadata = UERC20Metadata({
+            description: "", website: "", image: "https://example.com/image.png", extraData: hex"1234"
+        });
         factory = new USUPERC20Factory();
         token = USUPERC20(
             factory.createToken(
