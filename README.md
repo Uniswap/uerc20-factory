@@ -77,7 +77,7 @@ The deployment addresses currently documented in this repository are listed belo
 
 | Date          | Auditor      |
 | ------------- | ------------ |
-| 06/17/2026 | OpenZeppelin |
+| 06/17/2026 | [OpenZeppelin](./docs/OpenZeppelin_v2.0.0.pdf) |
 | 06/03/2025 | [OpenZeppelin](./docs/OpenZeppelin_v1.0.0_diff.pdf) |
 | 03/14/2025 | [OpenZeppelin](./docs/OpenZeppelin_v1.0.0.pdf) |
 
