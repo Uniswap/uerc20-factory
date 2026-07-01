@@ -37,10 +37,10 @@ contract TokenFactoryTest is Test {
 
     function test_register_assignsSequentialIdsAndStoresCode() public {
         assertEq(id, 1);
-        assertTrue(factory.blueprintOf(1) != address(0));
+        assertTrue(factory.implementationOf(1) != address(0));
         uint256 id2 = factory.register(type(UERC20).creationCode);
         assertEq(id2, 2);
-        assertEq(factory.blueprintCount(), 2);
+        assertEq(factory.implementationCount(), 2);
     }
 
     function test_register_revertsOnEmptyInitCode() public {
@@ -59,7 +59,7 @@ contract TokenFactoryTest is Test {
     }
 
     function test_createToken_revertsOnUnknownId() public {
-        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.UnknownBlueprint.selector, uint256(99)));
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.UnknownImplementation.selector, uint256(99)));
         factory.createToken(99, _config(SUPPLY, recipient), GRAFFITI);
     }
 

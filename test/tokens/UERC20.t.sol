@@ -10,7 +10,7 @@ import {UERC20Config} from "../../src/types/UERC20Config.sol";
 import {Metadata} from "../../src/types/Metadata.sol";
 
 /// @notice Base UERC20: inherits the shared ERC20 conformance suite, then adds only its own logic.
-/// Deploys through a real TokenFactory to exercise the blueprint + `deployment()` callback path.
+/// Deploys through a real TokenFactory to exercise the implementation registry + `deployment()` callback path.
 contract UERC20Test is ERC20ConformanceTest {
     address internal creator = makeAddr("creator");
     address internal recipient = makeAddr("recipient");
@@ -18,13 +18,13 @@ contract UERC20Test is ERC20ConformanceTest {
     bytes32 internal constant GRAFFITI = bytes32(uint256(0xabcd));
 
     TokenFactory internal factory;
-    uint256 internal blueprintId;
+    uint256 internal implementationId;
 
     function _deploy() internal override returns (IERC20 token_, address holder_, uint256 supply_) {
         factory = new TokenFactory();
-        blueprintId = factory.register(type(UERC20).creationCode);
+        implementationId = factory.register(type(UERC20).creationCode);
         vm.prank(creator);
-        address t = factory.createToken(blueprintId, _config(SUPPLY, recipient), GRAFFITI);
+        address t = factory.createToken(implementationId, _config(SUPPLY, recipient), GRAFFITI);
         return (IERC20(t), recipient, SUPPLY);
     }
 
@@ -74,11 +74,11 @@ contract UERC20Test is ERC20ConformanceTest {
 
     function test_createToken_revertsOnZeroRecipient() public {
         vm.expectRevert(UERC20.RecipientCannotBeZeroAddress.selector);
-        factory.createToken(blueprintId, _config(SUPPLY, address(0)), GRAFFITI);
+        factory.createToken(implementationId, _config(SUPPLY, address(0)), GRAFFITI);
     }
 
     function test_createToken_revertsOnZeroSupply() public {
         vm.expectRevert(UERC20.TotalSupplyCannotBeZero.selector);
-        factory.createToken(blueprintId, _config(0, recipient), GRAFFITI);
+        factory.createToken(implementationId, _config(0, recipient), GRAFFITI);
     }
 }

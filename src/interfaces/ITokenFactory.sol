@@ -2,9 +2,9 @@
 pragma solidity 0.8.28;
 
 /// @title ITokenFactory
-/// @notice Permissionless factory. Token creation code is registered once as a blueprint, then
-/// deployed by id via CREATE2. Config is passed as an opaque blob the token decodes itself, so new
-/// token types are added by registration with no factory change.
+/// @notice Permissionless factory. Token creation code is registered once as a reusable
+/// implementation, then deployed by id via CREATE2. Config is passed as an opaque blob the token
+/// decodes itself, so new token types are added by registration with no factory change.
 interface ITokenFactory {
     /// @notice Context a token reads (via `deployment()`) during its construction.
     /// @param creator The `createToken` caller.
@@ -17,24 +17,25 @@ interface ITokenFactory {
     }
 
     /// @notice Emitted when creation code is registered. `initCodeHash` lets integrators allowlist code.
-    event Registered(uint256 indexed id, address blueprint, bytes32 initCodeHash);
+    /// @param pointer The storage contract holding the registered creation code.
+    event Registered(uint256 indexed id, address pointer, bytes32 initCodeHash);
 
     /// @notice Emitted when a token is deployed.
     event TokenCreated(address indexed token, address indexed creator, uint256 indexed id, bytes data);
 
-    error UnknownBlueprint(uint256 id);
+    error UnknownImplementation(uint256 id);
     error EmptyInitCode();
     error Reentrancy();
 
-    /// @notice Registers token creation code as a blueprint.
-    /// @return id The blueprint id to pass to `createToken`.
+    /// @notice Registers token creation code as a reusable implementation.
+    /// @return id The implementation id to pass to `createToken`.
     function register(bytes calldata initCode) external returns (uint256 id);
 
     /// @notice Deployment context for the token currently under construction.
     function deployment() external view returns (DeploymentContext memory);
 
-    /// @notice Deploys a registered blueprint deterministically.
-    /// @param id The blueprint id.
+    /// @notice Deploys a registered implementation deterministically.
+    /// @param id The implementation id.
     /// @param data Opaque config decoded by the token.
     /// @param graffiti Extra salt entropy.
     function createToken(uint256 id, bytes calldata data, bytes32 graffiti) external returns (address token);

@@ -6,14 +6,14 @@ import {SSTORE2} from "@solady/src/utils/SSTORE2.sol";
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 /// @title TokenFactory
-/// @notice Permissionless blueprint factory: register a token's creation code once (SSTORE2), then
+/// @notice Permissionless factory: register a token's creation code once (stored via SSTORE2), then
 /// deploy it by id with CREATE2. See {ITokenFactory}.
 contract TokenFactory is ITokenFactory {
-    /// @notice SSTORE2 pointer to each blueprint's creation code. Ids start at 1; 0 means unset.
-    mapping(uint256 id => address pointer) public blueprintOf;
+    /// @notice SSTORE2 pointer to each implementation's creation code. Ids start at 1; 0 means unset.
+    mapping(uint256 id => address pointer) public implementationOf;
 
-    /// @notice Number of registered blueprints (also the last-assigned id).
-    uint256 public blueprintCount;
+    /// @notice Number of registered implementations (also the last-assigned id).
+    uint256 public implementationCount;
 
     /// @dev Set immediately before the CREATE2 deploy and cleared after, so it is only readable by
     /// the token being constructed.
@@ -32,8 +32,8 @@ contract TokenFactory is ITokenFactory {
     function register(bytes calldata initCode) external returns (uint256 id) {
         if (initCode.length == 0) revert EmptyInitCode();
         address pointer = SSTORE2.write(initCode);
-        id = ++blueprintCount;
-        blueprintOf[id] = pointer;
+        id = ++implementationCount;
+        implementationOf[id] = pointer;
         emit Registered(id, pointer, keccak256(initCode));
     }
 
@@ -48,8 +48,8 @@ contract TokenFactory is ITokenFactory {
         nonReentrant
         returns (address token)
     {
-        address pointer = blueprintOf[id];
-        if (pointer == address(0)) revert UnknownBlueprint(id);
+        address pointer = implementationOf[id];
+        if (pointer == address(0)) revert UnknownImplementation(id);
 
         bytes memory initCode = SSTORE2.read(pointer);
         bytes32 salt = keccak256(abi.encode(id, msg.sender, graffiti, keccak256(data)));
@@ -67,8 +67,8 @@ contract TokenFactory is ITokenFactory {
         view
         returns (address)
     {
-        address pointer = blueprintOf[id];
-        if (pointer == address(0)) revert UnknownBlueprint(id);
+        address pointer = implementationOf[id];
+        if (pointer == address(0)) revert UnknownImplementation(id);
         bytes32 salt = keccak256(abi.encode(id, creator, graffiti, dataHash));
         return Create2.computeAddress(salt, keccak256(SSTORE2.read(pointer)), address(this));
     }
