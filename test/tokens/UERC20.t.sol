@@ -5,17 +5,34 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20ConformanceTest} from "../conformance/ERC20ConformanceTest.sol";
 import {UERC20} from "../../src/tokens/UERC20.sol";
+import {TokenFactory} from "../../src/factories/TokenFactory.sol";
 
 /// @notice Base UERC20: inherits the shared ERC20 conformance suite, then adds only its own logic.
+/// Deploys through a real TokenFactory to exercise the blueprint + `deployment()` callback path.
 contract UERC20Test is ERC20ConformanceTest {
     address internal creator = makeAddr("creator");
     address internal recipient = makeAddr("recipient");
     uint256 internal constant SUPPLY = 1_000_000e18;
     bytes32 internal constant GRAFFITI = bytes32(uint256(0xabcd));
 
+    TokenFactory internal factory;
+    uint256 internal blueprintId;
+
     function _deploy() internal override returns (IERC20 token_, address holder_, uint256 supply_) {
-        UERC20 t = new UERC20("Uniswap Token", "UNI", 18, SUPPLY, recipient, creator, GRAFFITI);
-        return (IERC20(address(t)), recipient, SUPPLY);
+        factory = new TokenFactory();
+        blueprintId = factory.register(type(UERC20).creationCode);
+        bytes memory data = _config(SUPPLY, recipient);
+        vm.prank(creator);
+        address t = factory.createToken(blueprintId, data, GRAFFITI);
+        return (IERC20(t), recipient, SUPPLY);
+    }
+
+    function _config(uint256 supply_, address recipient_) internal pure returns (bytes memory) {
+        return abi.encode(
+            UERC20.Config({
+                name: "Uniswap Token", symbol: "UNI", decimals: 18, totalSupply: supply_, recipient: recipient_
+            })
+        );
     }
 
     function test_constructor_setsMetadata() public view {
@@ -27,13 +44,13 @@ contract UERC20Test is ERC20ConformanceTest {
         assertEq(t.graffiti(), GRAFFITI);
     }
 
-    function test_constructor_revertsOnZeroRecipient() public {
+    function test_createToken_revertsOnZeroRecipient() public {
         vm.expectRevert(UERC20.RecipientCannotBeZeroAddress.selector);
-        new UERC20("N", "S", 18, SUPPLY, address(0), creator, GRAFFITI);
+        factory.createToken(blueprintId, _config(SUPPLY, address(0)), GRAFFITI);
     }
 
-    function test_constructor_revertsOnZeroSupply() public {
+    function test_createToken_revertsOnZeroSupply() public {
         vm.expectRevert(UERC20.TotalSupplyCannotBeZero.selector);
-        new UERC20("N", "S", 18, 0, recipient, creator, GRAFFITI);
+        factory.createToken(blueprintId, _config(0, recipient), GRAFFITI);
     }
 }

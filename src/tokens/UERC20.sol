@@ -2,15 +2,26 @@
 pragma solidity 0.8.28;
 
 import {Token} from "../types/Token.sol";
+import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title UERC20
 /// @notice Base fungible token. A thin, fully-explicit ABI surface that wires the standard ERC20
 /// interface to the composed `Token` type — no inheritance of behavior, all logic visible here.
-/// @dev SLICE SCOPE: EIP-2612 permit, Permit2 signature flow, ERC-165, metadata/tokenURI, and the
-/// factory `initData()` construction callback are intentionally deferred to the next increment.
-/// The constructor takes explicit params here so the type-driven wiring can be tested in isolation.
+/// @dev Deployed by a `TokenFactory`: the no-arg constructor reads its config back from the factory
+/// via `deployment()` and decodes its own `Config`, so the factory stays generic.
+/// SLICE SCOPE: EIP-2612 permit, Permit2 signature flow, ERC-165, and metadata/tokenURI are still
+/// deferred to a later increment.
 contract UERC20 is IERC20 {
+    /// @notice Token-defined config, ABI-encoded into the factory's `data` blob by the caller.
+    struct Config {
+        string name;
+        string symbol;
+        uint8 decimals;
+        uint256 totalSupply;
+        address recipient;
+    }
+
     /// @dev The full token state (supply + balance/allowance ledgers), composed rather than inherited.
     Token internal _token;
 
@@ -24,26 +35,21 @@ contract UERC20 is IERC20 {
     error RecipientCannotBeZeroAddress();
     error TotalSupplyCannotBeZero();
 
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint8 decimals_,
-        uint256 totalSupply_,
-        address recipient,
-        address creator_,
-        bytes32 graffiti_
-    ) {
-        if (recipient == address(0)) revert RecipientCannotBeZeroAddress();
-        if (totalSupply_ == 0) revert TotalSupplyCannotBeZero();
+    constructor() {
+        ITokenFactory.DeploymentContext memory ctx = ITokenFactory(msg.sender).deployment();
+        Config memory config = abi.decode(ctx.data, (Config));
 
-        name = name_;
-        symbol = symbol_;
-        decimals = decimals_;
-        creator = creator_;
-        graffiti = graffiti_;
+        if (config.recipient == address(0)) revert RecipientCannotBeZeroAddress();
+        if (config.totalSupply == 0) revert TotalSupplyCannotBeZero();
 
-        _token.mint(recipient, totalSupply_);
-        emit Transfer(address(0), recipient, totalSupply_);
+        name = config.name;
+        symbol = config.symbol;
+        decimals = config.decimals;
+        creator = ctx.creator;
+        graffiti = ctx.graffiti;
+
+        _token.mint(config.recipient, config.totalSupply);
+        emit Transfer(address(0), config.recipient, config.totalSupply);
     }
 
     /// @inheritdoc IERC20
