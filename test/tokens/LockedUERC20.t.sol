@@ -5,6 +5,8 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20ConformanceTest} from "../conformance/ERC20ConformanceTest.sol";
 import {LockedUERC20} from "../../src/tokens/LockedUERC20.sol";
 import {TokenFactory} from "../../src/factories/TokenFactory.sol";
+import {UERC20Config} from "../../src/types/UERC20Config.sol";
+import {Metadata} from "../../src/types/Metadata.sol";
 
 /// @notice LockedUERC20 reuses the shared ERC20 conformance suite (deployed unlocked, so it behaves
 /// as a standard ERC20), then adds tests for its lock-specific behavior on fresh locked instances.
@@ -31,7 +33,15 @@ contract LockedUERC20Test is ERC20ConformanceTest {
     function _newLocked(address owner_, bytes32 graffiti_) internal returns (LockedUERC20) {
         bytes memory data = abi.encode(
             LockedUERC20.Config({
-                name: "Locked", symbol: "LOCK", decimals: 18, totalSupply: SUPPLY, recipient: recipient, owner: owner_
+                base: UERC20Config({
+                    name: "Locked",
+                    symbol: "LOCK",
+                    decimals: 18,
+                    totalSupply: SUPPLY,
+                    recipient: recipient,
+                    metadata: Metadata({description: "", website: "", image: "", extraData: ""})
+                }),
+                owner: owner_
             })
         );
         vm.prank(creator);

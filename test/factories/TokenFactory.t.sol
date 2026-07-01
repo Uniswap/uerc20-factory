@@ -5,6 +5,8 @@ import {Test} from "forge-std/Test.sol";
 import {TokenFactory} from "../../src/factories/TokenFactory.sol";
 import {ITokenFactory} from "../../src/interfaces/ITokenFactory.sol";
 import {UERC20} from "../../src/tokens/UERC20.sol";
+import {UERC20Config} from "../../src/types/UERC20Config.sol";
+import {Metadata} from "../../src/types/Metadata.sol";
 
 contract TokenFactoryTest is Test {
     TokenFactory internal factory;
@@ -21,10 +23,16 @@ contract TokenFactoryTest is Test {
     }
 
     function _config(uint256 supply_, address recipient_) internal pure returns (bytes memory) {
-        return
-            abi.encode(
-                UERC20.Config({name: "N", symbol: "S", decimals: 18, totalSupply: supply_, recipient: recipient_})
-            );
+        return abi.encode(
+            UERC20Config({
+                name: "N",
+                symbol: "S",
+                decimals: 18,
+                totalSupply: supply_,
+                recipient: recipient_,
+                metadata: Metadata({description: "", website: "", image: "", extraData: ""})
+            })
+        );
     }
 
     function test_register_assignsSequentialIdsAndStoresCode() public {
@@ -41,9 +49,8 @@ contract TokenFactoryTest is Test {
     }
 
     function test_createToken_deploysWorkingToken() public {
-        bytes memory data = _config(SUPPLY, recipient);
         vm.prank(creator);
-        address token = factory.createToken(id, data, GRAFFITI);
+        address token = factory.createToken(id, _config(SUPPLY, recipient), GRAFFITI);
 
         assertEq(UERC20(token).creator(), creator);
         assertEq(UERC20(token).graffiti(), GRAFFITI);
