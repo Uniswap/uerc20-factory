@@ -3,18 +3,20 @@ pragma solidity 0.8.28;
 
 import {Token} from "../types/Token.sol";
 import {Metadata} from "../types/Metadata.sol";
+import {Permit} from "../types/Permit.sol";
 import {UERC20Config} from "../types/UERC20Config.sol";
 import {Lockup} from "../extensions/Lockup.sol";
 import {IUERC20} from "../interfaces/IUERC20.sol";
 import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /// @title LockedUERC20
 /// @notice UERC20 whose transfers are blocked unless the owner allowlists a party (as sender or
-/// recipient) or unlocks transfers globally. The initial mint is exempt. Composes the `Token` and
-/// `Lockup` types; the transfer path is gated, the rest wires the standard surface unchanged.
+/// recipient) or unlocks transfers globally. The initial mint is exempt. Composes the `Token`,
+/// `Metadata`, `Permit`, and `Lockup` types; the transfer path is gated, the rest wires unchanged.
 contract LockedUERC20 is IUERC20 {
     /// @notice Config: the shared base plus this token's owner.
     struct Config {
@@ -23,6 +25,7 @@ contract LockedUERC20 is IUERC20 {
     }
 
     Token internal _token;
+    Permit internal _permit;
     Lockup internal _lockup;
 
     uint8 public immutable decimals;
@@ -64,6 +67,7 @@ contract LockedUERC20 is IUERC20 {
         creator = ctx.creator;
         graffiti = ctx.graffiti;
 
+        _permit.init(base.name, address(this));
         _lockup.setOwner(config.owner);
 
         // Mint is not a transfer, so it is not gated by the lock.
@@ -113,7 +117,7 @@ contract LockedUERC20 is IUERC20 {
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId) external view returns (bool) {
         return interfaceId == type(IERC165).interfaceId || interfaceId == type(IERC20).interfaceId
-            || interfaceId == type(IERC20Metadata).interfaceId;
+            || interfaceId == type(IERC20Metadata).interfaceId || interfaceId == type(IERC20Permit).interfaceId;
     }
 
     function totalSupply() external view returns (uint256) {
@@ -128,10 +132,30 @@ contract LockedUERC20 is IUERC20 {
         return _token.allowanceOf(owner_, spender);
     }
 
+    /// @inheritdoc IERC20Permit
+    function nonces(address owner_) external view returns (uint256) {
+        return _permit.nonces[owner_];
+    }
+
+    /// @inheritdoc IERC20Permit
+    // solhint-disable-next-line func-name-mixedcase
+    function DOMAIN_SEPARATOR() external view returns (bytes32) {
+        return _permit.domainSeparator();
+    }
+
     function approve(address spender, uint256 amount) external returns (bool) {
         _token.approve(msg.sender, spender, amount);
         emit Approval(msg.sender, spender, amount);
         return true;
+    }
+
+    /// @inheritdoc IERC20Permit
+    function permit(address owner_, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
+        external
+    {
+        _permit.verify(owner_, spender, value, deadline, v, r, s);
+        _token.approve(owner_, spender, value);
+        emit Approval(owner_, spender, value);
     }
 
     function transfer(address to, uint256 amount) external returns (bool) {

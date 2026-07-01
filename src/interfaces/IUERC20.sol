@@ -2,10 +2,12 @@
 pragma solidity 0.8.28;
 
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-/// @notice Common interface for UERC20 tokens: ERC20 + metadata, creator attribution, and tokenURI.
-interface IUERC20 is IERC20Metadata, IERC165 {
+/// @notice Common interface for UERC20 tokens: ERC20 + EIP-2612 permit + metadata, creator
+/// attribution, and tokenURI.
+interface IUERC20 is IERC20Metadata, IERC20Permit, IERC165 {
     /// @notice The address that created the token via the factory.
     function creator() external view returns (address);
 

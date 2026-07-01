@@ -19,7 +19,7 @@ A single `TokenFactory` deploys every token type. A token implementation's creat
 
 The repository ships:
 
-- `UERC20`: a standard ERC-20 with token metadata, ERC-165 interface detection, and creator attribution.
+- `UERC20`: a standard ERC-20 with EIP-2612 permit, a default infinite allowance to Permit2, token metadata, ERC-165 interface detection, and creator attribution.
 - `LockedUERC20`: a transfer-restricted ERC-20 whose transfers are blocked unless an owner allowlists a party (as sender or recipient) or unlocks transfers globally.
 
 Token metadata includes an optional description, website, image, and a generic `extraData` field. `extraData` is opaque, application-defined data stored on-chain; it is not included in the rendered `tokenURI` JSON.
