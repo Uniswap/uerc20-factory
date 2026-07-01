@@ -28,12 +28,18 @@ contract LockedUERC20 is IUERC20 {
     Permit internal _permit;
     Lockup internal _lockup;
 
+    /// @inheritdoc IERC20Metadata
     uint8 public immutable decimals;
+    /// @inheritdoc IUERC20
     address public immutable creator;
+    /// @inheritdoc IUERC20
     bytes32 public immutable graffiti;
 
+    /// @inheritdoc IERC20Metadata
     string public name;
+    /// @inheritdoc IERC20Metadata
     string public symbol;
+    /// @inheritdoc IUERC20
     Metadata public metadata;
 
     event Allowlisted(address indexed account, bool allowed);
@@ -120,14 +126,17 @@ contract LockedUERC20 is IUERC20 {
             || interfaceId == type(IERC20Metadata).interfaceId || interfaceId == type(IERC20Permit).interfaceId;
     }
 
+    /// @inheritdoc IERC20
     function totalSupply() external view returns (uint256) {
         return _token.totalSupply();
     }
 
+    /// @inheritdoc IERC20
     function balanceOf(address account) external view returns (uint256) {
         return _token.balanceOf(account);
     }
 
+    /// @inheritdoc IERC20
     function allowance(address owner_, address spender) external view returns (uint256) {
         return _token.allowanceOf(owner_, spender);
     }
@@ -143,6 +152,7 @@ contract LockedUERC20 is IUERC20 {
         return _permit.domainSeparator();
     }
 
+    /// @inheritdoc IERC20
     function approve(address spender, uint256 amount) external returns (bool) {
         _token.approve(msg.sender, spender, amount);
         emit Approval(msg.sender, spender, amount);
@@ -158,6 +168,7 @@ contract LockedUERC20 is IUERC20 {
         emit Approval(owner_, spender, value);
     }
 
+    /// @inheritdoc IERC20
     function transfer(address to, uint256 amount) external returns (bool) {
         if (!_lockup.allowlisted(msg.sender, to)) revert TransferLocked(msg.sender, to);
         _token.transfer(msg.sender, to, amount);
@@ -165,6 +176,7 @@ contract LockedUERC20 is IUERC20 {
         return true;
     }
 
+    /// @inheritdoc IERC20
     function transferFrom(address from, address to, uint256 amount) external returns (bool) {
         if (!_lockup.allowlisted(from, to)) revert TransferLocked(from, to);
         _token.transferFrom(msg.sender, from, to, amount);
