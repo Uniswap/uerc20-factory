@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
+import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+
 bytes32 constant DOMAIN_TYPEHASH =
     keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
 bytes32 constant VERSION_HASH = keccak256("1");
@@ -50,9 +53,9 @@ function verify(
 ) {
     if (block.timestamp > deadline) revert PermitExpired();
     bytes32 structHash = keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, self.nonces[owner]++, deadline));
-    bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator(self), structHash));
-    address signer = ecrecover(digest, v, r, s);
-    if (signer == address(0) || signer != owner) revert InvalidPermitSignature();
+    bytes32 digest = MessageHashUtils.toTypedDataHash(domainSeparator(self), structHash);
+    // ECDSA.recover reverts on a malformed or malleable signature; we reject any valid signer != owner.
+    if (ECDSA.recover(digest, v, r, s) != owner) revert InvalidPermitSignature();
 }
 
 function _buildDomainSeparator(Permit storage self) view returns (bytes32) {
