@@ -6,7 +6,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {ERC20ConformanceTest} from "../conformance/ERC20ConformanceTest.sol";
 import {UERC20} from "../../src/tokens/UERC20.sol";
 import {TokenFactory} from "../../src/factories/TokenFactory.sol";
-import {UERC20Config} from "../../src/types/UERC20Config.sol";
+import {UERC20Config, RecipientCannotBeZeroAddress, TotalSupplyCannotBeZero} from "../../src/types/UERC20Config.sol";
 import {Metadata} from "../../src/types/Metadata.sol";
 
 /// @notice Base UERC20: inherits the shared ERC20 conformance suite, then adds only its own logic.
@@ -73,12 +73,12 @@ contract UERC20Test is ERC20ConformanceTest {
     }
 
     function test_createToken_revertsOnZeroRecipient() public {
-        vm.expectRevert(UERC20.RecipientCannotBeZeroAddress.selector);
+        vm.expectRevert(RecipientCannotBeZeroAddress.selector);
         factory.createToken(implementationId, _config(SUPPLY, address(0)), GRAFFITI);
     }
 
     function test_createToken_revertsOnZeroSupply() public {
-        vm.expectRevert(UERC20.TotalSupplyCannotBeZero.selector);
+        vm.expectRevert(TotalSupplyCannotBeZero.selector);
         factory.createToken(implementationId, _config(0, recipient), GRAFFITI);
     }
 }

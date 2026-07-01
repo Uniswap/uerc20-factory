@@ -46,8 +46,6 @@ contract LockedUERC20 is IUERC20 {
     event Unlocked();
     event OwnerChanged(address indexed owner);
 
-    error RecipientCannotBeZeroAddress();
-    error TotalSupplyCannotBeZero();
     error OwnerCannotBeZeroAddress();
     error NotOwner(address caller);
     error TransferLocked(address from, address to);
@@ -62,9 +60,12 @@ contract LockedUERC20 is IUERC20 {
         Config memory config = abi.decode(ctx.data, (Config));
         UERC20Config memory base = config.base;
 
-        if (base.recipient == address(0)) revert RecipientCannotBeZeroAddress();
-        if (base.totalSupply == 0) revert TotalSupplyCannotBeZero();
         if (config.owner == address(0)) revert OwnerCannotBeZeroAddress();
+
+        // Shared validation, permit-domain caching, and initial mint (+ Transfer event). The mint is
+        // not a transfer, so it is not gated by the lock.
+        base.initBase(_token, _permit, address(this));
+        _lockup.setOwner(config.owner);
 
         name = base.name;
         symbol = base.symbol;
@@ -72,13 +73,6 @@ contract LockedUERC20 is IUERC20 {
         metadata = base.metadata;
         creator = ctx.creator;
         graffiti = ctx.graffiti;
-
-        _permit.init(base.name, address(this));
-        _lockup.setOwner(config.owner);
-
-        // Mint is not a transfer, so it is not gated by the lock.
-        _token.mint(base.recipient, base.totalSupply);
-        emit Transfer(address(0), base.recipient, base.totalSupply);
     }
 
     /// @notice Adds or removes `account` from the transfer allowlist.

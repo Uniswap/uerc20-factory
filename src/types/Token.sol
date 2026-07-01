@@ -12,7 +12,17 @@ struct Token {
     Allowances allowances;
 }
 
-using {totalSupply, balanceOf, allowanceOf, approve, transfer, transferFrom, mint, burn} for Token global;
+using {
+    totalSupply,
+    balanceOf,
+    allowanceOf,
+    approve,
+    spendAllowance,
+    transfer,
+    transferFrom,
+    mint,
+    burn
+} for Token global;
 
 function totalSupply(Token storage self) view returns (uint256) {
     return self.supply;
@@ -28,6 +38,12 @@ function allowanceOf(Token storage self, address owner, address spender) view re
 
 function approve(Token storage self, address owner, address spender, uint256 amount) {
     self.allowances.write(owner, spender, amount);
+}
+
+/// @notice Consumes `spender`'s allowance over `owner` without moving balances (e.g. for a burn-based
+/// spend); reverts on overspend. Keeps allowance access behind the `Token` façade.
+function spendAllowance(Token storage self, address owner, address spender, uint256 amount) {
+    self.allowances.spend(owner, spender, amount);
 }
 
 function transfer(Token storage self, address from, address to, uint256 amount) {

@@ -33,15 +33,12 @@ contract UERC20 is IUERC20 {
     /// @inheritdoc IUERC20
     Metadata public metadata;
 
-    error RecipientCannotBeZeroAddress();
-    error TotalSupplyCannotBeZero();
-
     constructor() {
         ITokenFactory.DeploymentContext memory ctx = ITokenFactory(msg.sender).deployment();
         UERC20Config memory config = abi.decode(ctx.data, (UERC20Config));
 
-        if (config.recipient == address(0)) revert RecipientCannotBeZeroAddress();
-        if (config.totalSupply == 0) revert TotalSupplyCannotBeZero();
+        // Shared validation, permit-domain caching, and initial mint (+ Transfer event).
+        config.initBase(_token, _permit, address(this));
 
         name = config.name;
         symbol = config.symbol;
@@ -49,10 +46,6 @@ contract UERC20 is IUERC20 {
         metadata = config.metadata;
         creator = ctx.creator;
         graffiti = ctx.graffiti;
-
-        _permit.init(config.name, address(this));
-        _token.mint(config.recipient, config.totalSupply);
-        emit Transfer(address(0), config.recipient, config.totalSupply);
     }
 
     /// @inheritdoc IUERC20
