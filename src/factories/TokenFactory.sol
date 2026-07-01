@@ -9,11 +9,11 @@ import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 /// @notice Permissionless factory: register a token's creation code once (stored via SSTORE2), then
 /// deploy it by id with CREATE2. See {ITokenFactory}.
 contract TokenFactory is ITokenFactory {
-    /// @notice SSTORE2 pointer to each implementation's creation code. Ids start at 1; 0 means unset.
+    /// @notice SSTORE2 pointer to each implementation's creation code
     mapping(uint256 id => address pointer) public implementationOf;
 
     /// @notice Number of registered implementations (also the last-assigned id).
-    uint256 public implementationCount;
+    uint256 public nextId;
 
     /// @dev Set immediately before the CREATE2 deploy and cleared after, so it is only readable by
     /// the token being constructed.
@@ -32,7 +32,7 @@ contract TokenFactory is ITokenFactory {
     function register(bytes calldata initCode) external returns (uint256 id) {
         if (initCode.length == 0) revert EmptyInitCode();
         address pointer = SSTORE2.write(initCode);
-        id = ++implementationCount;
+        id = ++nextId;
         implementationOf[id] = pointer;
         emit Registered(id, pointer, keccak256(initCode));
     }
@@ -55,7 +55,7 @@ contract TokenFactory is ITokenFactory {
         bytes32 salt = keccak256(abi.encode(id, msg.sender, graffiti, keccak256(data)));
 
         _ctx = DeploymentContext({creator: msg.sender, graffiti: graffiti, data: data});
-        token = _deploy(initCode, salt);
+        token = Create2.deploy(0, salt, initCode);
         delete _ctx;
 
         emit TokenCreated(token, msg.sender, id, data);
@@ -71,16 +71,5 @@ contract TokenFactory is ITokenFactory {
         if (pointer == address(0)) revert UnknownImplementation(id);
         bytes32 salt = keccak256(abi.encode(id, creator, graffiti, dataHash));
         return Create2.computeAddress(salt, keccak256(SSTORE2.read(pointer)), address(this));
-    }
-
-    /// @dev CREATE2-deploys `initCode`, bubbling the constructor's revert reason on failure.
-    function _deploy(bytes memory initCode, bytes32 salt) private returns (address token) {
-        assembly ("memory-safe") {
-            token := create2(0, add(initCode, 0x20), mload(initCode), salt)
-            if iszero(token) {
-                returndatacopy(0, 0, returndatasize())
-                revert(0, returndatasize())
-            }
-        }
     }
 }

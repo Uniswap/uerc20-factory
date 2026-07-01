@@ -40,7 +40,7 @@ contract TokenFactoryTest is Test {
         assertTrue(factory.implementationOf(1) != address(0));
         uint256 id2 = factory.register(type(UERC20).creationCode);
         assertEq(id2, 2);
-        assertEq(factory.implementationCount(), 2);
+        assertEq(factory.nextId(), 2);
     }
 
     function test_register_revertsOnEmptyInitCode() public {
