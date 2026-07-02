@@ -15,11 +15,11 @@ contract TokenFactoryTest is Test {
     bytes32 internal constant GRAFFITI = bytes32(uint256(1));
     uint256 internal constant SUPPLY = 1_000e18;
 
-    uint256 internal id;
+    bytes32 internal deploymentInitCodeHash;
 
     function setUp() public {
         factory = new TokenFactory();
-        id = factory.register(type(UERC20).creationCode);
+        deploymentInitCodeHash = factory.register(type(UERC20).creationCode);
     }
 
     function _config(uint256 supply_, address recipient_) internal pure returns (bytes memory) {
@@ -35,12 +35,9 @@ contract TokenFactoryTest is Test {
         );
     }
 
-    function test_register_assignsSequentialIdsAndStoresCode() public {
-        assertEq(id, 1);
-        assertTrue(factory.implementationOf(1) != address(0));
-        uint256 id2 = factory.register(type(UERC20).creationCode);
-        assertEq(id2, 2);
-        assertEq(factory.nextId(), 2);
+    function test_register_keysByInitCodeHashAndStoresCode() public view {
+        assertEq(deploymentInitCodeHash, keccak256(type(UERC20).creationCode));
+        assertTrue(factory.implementationOf(deploymentInitCodeHash) != address(0));
     }
 
     function test_register_revertsOnEmptyInitCode() public {
@@ -48,9 +45,14 @@ contract TokenFactoryTest is Test {
         factory.register("");
     }
 
+    function test_register_revertsOnDuplicateInitCode() public {
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.AlreadyRegistered.selector, deploymentInitCodeHash));
+        factory.register(type(UERC20).creationCode);
+    }
+
     function test_createToken_deploysWorkingToken() public {
         vm.prank(creator);
-        address token = factory.createToken(id, _config(SUPPLY, recipient), GRAFFITI);
+        address token = factory.createToken(deploymentInitCodeHash, _config(SUPPLY, recipient), GRAFFITI);
 
         assertEq(UERC20(token).creator(), creator);
         assertEq(UERC20(token).graffiti(), GRAFFITI);
@@ -59,25 +61,31 @@ contract TokenFactoryTest is Test {
     }
 
     function test_createToken_revertsOnUnknownId() public {
-        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.UnknownImplementation.selector, uint256(99)));
-        factory.createToken(99, _config(SUPPLY, recipient), GRAFFITI);
+        bytes32 unknown = keccak256("unknown");
+        vm.expectRevert(abi.encodeWithSelector(ITokenFactory.UnknownImplementation.selector, unknown));
+        factory.createToken(unknown, _config(SUPPLY, recipient), GRAFFITI);
     }
 
     function test_getAddress_predictsDeployedAddress() public {
         bytes memory data = _config(SUPPLY, recipient);
-        address predicted = factory.getAddress(id, creator, GRAFFITI, keccak256(data));
+        address predicted = factory.getAddress(deploymentInitCodeHash, creator, GRAFFITI, keccak256(data));
 
         vm.prank(creator);
-        address actual = factory.createToken(id, data, GRAFFITI);
+        address actual = factory.createToken(deploymentInitCodeHash, data, GRAFFITI);
 
         assertEq(actual, predicted);
     }
 
     function test_getAddress_variesWithInputs() public view {
         bytes memory data = _config(SUPPLY, recipient);
-        address base = factory.getAddress(id, creator, GRAFFITI, keccak256(data));
-        assertTrue(base != factory.getAddress(id, creator, bytes32(uint256(2)), keccak256(data)));
-        assertTrue(base != factory.getAddress(id, address(0xdead), GRAFFITI, keccak256(data)));
-        assertTrue(base != factory.getAddress(id, creator, GRAFFITI, keccak256(_config(SUPPLY + 1, recipient))));
+        address base = factory.getAddress(deploymentInitCodeHash, creator, GRAFFITI, keccak256(data));
+        assertTrue(base != factory.getAddress(deploymentInitCodeHash, creator, bytes32(uint256(2)), keccak256(data)));
+        assertTrue(base != factory.getAddress(deploymentInitCodeHash, address(0xdead), GRAFFITI, keccak256(data)));
+        assertTrue(
+            base
+                != factory.getAddress(
+                    deploymentInitCodeHash, creator, GRAFFITI, keccak256(_config(SUPPLY + 1, recipient))
+                )
+        );
     }
 }

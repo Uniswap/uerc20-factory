@@ -7,13 +7,10 @@ import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
 
 /// @title TokenFactory
 /// @notice Permissionless factory: register a token's creation code once (stored via SSTORE2), then
-/// deploy it by id with CREATE2. See {ITokenFactory}.
+/// deploy it by its creation-code hash with CREATE2. See {ITokenFactory}.
 contract TokenFactory is ITokenFactory {
-    /// @notice SSTORE2 pointer to each implementation's creation code
-    mapping(uint256 id => address pointer) public implementationOf;
-
-    /// @notice Number of registered implementations (also the last-assigned id).
-    uint256 public nextId;
+    /// @notice SSTORE2 pointer to each implementation's creation code, keyed by its hash.
+    mapping(bytes32 initCodeHash => address pointer) public implementationOf;
 
     /// @dev Set immediately before the CREATE2 deploy and cleared after, so it is only readable by
     /// the token being constructed.
@@ -29,12 +26,13 @@ contract TokenFactory is ITokenFactory {
     }
 
     /// @inheritdoc ITokenFactory
-    function register(bytes calldata initCode) external returns (uint256 id) {
+    function register(bytes calldata initCode) external returns (bytes32 initCodeHash) {
         if (initCode.length == 0) revert EmptyInitCode();
+        initCodeHash = keccak256(initCode);
+        if (implementationOf[initCodeHash] != address(0)) revert AlreadyRegistered(initCodeHash);
         address pointer = SSTORE2.write(initCode);
-        id = ++nextId;
-        implementationOf[id] = pointer;
-        emit Registered(id, pointer, keccak256(initCode));
+        implementationOf[initCodeHash] = pointer;
+        emit Registered(initCodeHash, pointer);
     }
 
     /// @inheritdoc ITokenFactory
@@ -43,33 +41,33 @@ contract TokenFactory is ITokenFactory {
     }
 
     /// @inheritdoc ITokenFactory
-    function createToken(uint256 id, bytes calldata data, bytes32 graffiti)
+    function createToken(bytes32 initCodeHash, bytes calldata data, bytes32 graffiti)
         external
         nonReentrant
         returns (address token)
     {
-        address pointer = implementationOf[id];
-        if (pointer == address(0)) revert UnknownImplementation(id);
+        address pointer = implementationOf[initCodeHash];
+        if (pointer == address(0)) revert UnknownImplementation(initCodeHash);
 
         bytes memory initCode = SSTORE2.read(pointer);
-        bytes32 salt = keccak256(abi.encode(id, msg.sender, graffiti, keccak256(data)));
+        bytes32 salt = keccak256(abi.encode(msg.sender, graffiti, keccak256(data)));
 
         _ctx = DeploymentContext({creator: msg.sender, graffiti: graffiti, data: data});
         token = Create2.deploy(0, salt, initCode);
         delete _ctx;
 
-        emit TokenCreated(token, msg.sender, id, data);
+        emit TokenCreated(token, msg.sender, initCodeHash, data);
     }
 
     /// @inheritdoc ITokenFactory
-    function getAddress(uint256 id, address creator, bytes32 graffiti, bytes32 dataHash)
+    function getAddress(bytes32 initCodeHash, address creator, bytes32 graffiti, bytes32 dataHash)
         external
         view
         returns (address)
     {
-        address pointer = implementationOf[id];
-        if (pointer == address(0)) revert UnknownImplementation(id);
-        bytes32 salt = keccak256(abi.encode(id, creator, graffiti, dataHash));
+        address pointer = implementationOf[initCodeHash];
+        if (pointer == address(0)) revert UnknownImplementation(initCodeHash);
+        bytes32 salt = keccak256(abi.encode(creator, graffiti, dataHash));
         return Create2.computeAddress(salt, keccak256(SSTORE2.read(pointer)), address(this));
     }
 }

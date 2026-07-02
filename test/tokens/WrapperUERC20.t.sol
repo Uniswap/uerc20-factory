@@ -21,13 +21,13 @@ contract WrapperUERC20Test is ERC20ConformanceTest {
 
     TokenFactory internal factory;
     MockERC20 internal underlying;
-    uint256 internal id;
+    bytes32 internal deploymentInitCodeHash;
 
     /// @dev Conformance deploys through the factory; the wrapper is a standard ERC20.
     function _deploy() internal override returns (IERC20 token_, address holder_, uint256 supply_) {
         factory = new TokenFactory();
         underlying = new MockERC20("Underlying", "UND", 18);
-        id = factory.register(type(WrapperUERC20).creationCode);
+        deploymentInitCodeHash = factory.register(type(WrapperUERC20).creationCode);
         WrapperUERC20 t = _newWrapper(GRAFFITI, 18);
         return (IERC20(address(t)), recipient, SUPPLY);
     }
@@ -51,7 +51,10 @@ contract WrapperUERC20Test is ERC20ConformanceTest {
 
     function _newWrapper(bytes32 graffiti_, uint8 decimals_) internal returns (WrapperUERC20) {
         vm.prank(creator);
-        return WrapperUERC20(factory.createToken(id, _encode(decimals_, address(underlying)), graffiti_));
+        return
+            WrapperUERC20(
+                factory.createToken(deploymentInitCodeHash, _encode(decimals_, address(underlying)), graffiti_)
+            );
     }
 
     /// @dev Deploys a fresh wrapper and funds it with `funding` of the underlying.
@@ -70,14 +73,14 @@ contract WrapperUERC20Test is ERC20ConformanceTest {
     function test_constructor_revertsOnZeroUnderlying() public {
         vm.prank(creator);
         vm.expectRevert(WrapperUERC20.UnderlyingCannotBeZeroAddress.selector);
-        factory.createToken(id, _encode(18, address(0)), bytes32(uint256(2)));
+        factory.createToken(deploymentInitCodeHash, _encode(18, address(0)), bytes32(uint256(2)));
     }
 
     function test_constructor_revertsOnDecimalsMismatch() public {
         // underlying is 18 decimals; config declares 6 → mismatch
         vm.prank(creator);
         vm.expectRevert(abi.encodeWithSelector(WrapperUERC20.DecimalsMismatch.selector, uint8(6), uint8(18)));
-        factory.createToken(id, _encode(6, address(underlying)), bytes32(uint256(3)));
+        factory.createToken(deploymentInitCodeHash, _encode(6, address(underlying)), bytes32(uint256(3)));
     }
 
     function test_supportsInterface_advertisesVirtualERC20() public {

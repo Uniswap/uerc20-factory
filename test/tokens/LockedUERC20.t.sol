@@ -18,12 +18,12 @@ contract LockedUERC20Test is ERC20ConformanceTest {
     bytes32 internal constant GRAFFITI = bytes32(uint256(0xabcd));
 
     TokenFactory internal factory;
-    uint256 internal id;
+    bytes32 internal deploymentInitCodeHash;
 
     /// @dev Conformance deploys through the factory and unlocks so standard ERC20 holds.
     function _deploy() internal override returns (IERC20 token_, address holder_, uint256 supply_) {
         factory = new TokenFactory();
-        id = factory.register(type(LockedUERC20).creationCode);
+        deploymentInitCodeHash = factory.register(type(LockedUERC20).creationCode);
         // owner = this test contract, so we can unlock() directly for the conformance suite.
         LockedUERC20 t = _newLocked(address(this), GRAFFITI);
         t.unlock();
@@ -45,7 +45,7 @@ contract LockedUERC20Test is ERC20ConformanceTest {
             })
         );
         vm.prank(creator);
-        return LockedUERC20(factory.createToken(id, data, graffiti_));
+        return LockedUERC20(factory.createToken(deploymentInitCodeHash, data, graffiti_));
     }
 
     // ---- lock behavior (fresh locked instances) ----

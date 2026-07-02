@@ -18,13 +18,13 @@ contract UERC20Test is ERC20ConformanceTest {
     bytes32 internal constant GRAFFITI = bytes32(uint256(0xabcd));
 
     TokenFactory internal factory;
-    uint256 internal implementationId;
+    bytes32 internal deploymentInitCodeHash;
 
     function _deploy() internal override returns (IERC20 token_, address holder_, uint256 supply_) {
         factory = new TokenFactory();
-        implementationId = factory.register(type(UERC20).creationCode);
+        deploymentInitCodeHash = factory.register(type(UERC20).creationCode);
         vm.prank(creator);
-        address t = factory.createToken(implementationId, _config(SUPPLY, recipient), GRAFFITI);
+        address t = factory.createToken(deploymentInitCodeHash, _config(SUPPLY, recipient), GRAFFITI);
         return (IERC20(t), recipient, SUPPLY);
     }
 
@@ -74,11 +74,11 @@ contract UERC20Test is ERC20ConformanceTest {
 
     function test_createToken_revertsOnZeroRecipient() public {
         vm.expectRevert(RecipientCannotBeZeroAddress.selector);
-        factory.createToken(implementationId, _config(SUPPLY, address(0)), GRAFFITI);
+        factory.createToken(deploymentInitCodeHash, _config(SUPPLY, address(0)), GRAFFITI);
     }
 
     function test_createToken_revertsOnZeroSupply() public {
         vm.expectRevert(TotalSupplyCannotBeZero.selector);
-        factory.createToken(implementationId, _config(0, recipient), GRAFFITI);
+        factory.createToken(deploymentInitCodeHash, _config(0, recipient), GRAFFITI);
     }
 }
