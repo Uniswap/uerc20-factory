@@ -62,6 +62,7 @@ The deployment addresses currently documented in this repository are listed belo
 | Network | Address                                    | Commit Hash                              | Version |
 | ------- | ------------------------------------------ | ---------------------------------------- | -------|
 | Mainnet | 0x000000e200088D55C39a11F609E5F667729ad49b | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
+| Robinhood | 0x000000e200088D55C39a11F609E5F667729ad49b | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
 | Sepolia | 0x000000e200088D55C39a11F609E5F667729ad49b | de5bacd215f6aae50e524297c18fcf78b69b6312 | v2.0.0 |
 
 ### USUPERC20Factory
